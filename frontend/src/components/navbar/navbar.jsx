@@ -34,16 +34,13 @@ const Navbar = () => {
 
   const goMyDashboard = () => {
     if (!user) return;
-    console.log("User object:", user);
-
     if (user.role === "ADMIN") navigate("/dashboard");
     else if (user.role === "DOCTOR") navigate("/doctor-dashboard");
     else if (user.role === "PATIENT") navigate("/patient-dashboard");
-    else navigate("/"); // fallback
+    else navigate("/");
     setOpenProfile(false);
   };
 
-  // Public links
   const links = [
     { id: "home", label: "Home", icon: "🏠" },
     { id: "book", label: "Book Session", icon: "📅" },
@@ -54,14 +51,14 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 shadow-lg">
-      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div className="container mx-auto px-6 py-3 flex justify-between items-center">
         {/* Logo */}
         <div
           onClick={() => navigate("/")}
-          className="flex items-center text-white cursor-pointer"
+          className="flex items-center text-white cursor-pointer select-none"
         >
-          <img src="/logo.png" alt="Logo" className="w-10 h-10 mr-2" />
-          <span className="font-bold text-xl">Paxify</span>
+          <img src="/logo.png" alt="Logo" className="w-9 h-9 mr-2" />
+          <span className="font-bold text-xl tracking-wide">Paxify</span>
         </div>
 
         {/* Desktop Links */}
@@ -70,31 +67,31 @@ const Navbar = () => {
             <button
               key={link.id}
               onClick={() => handleLinkClick(link.id)}
-              className={`px-3 py-2 rounded ${
-                activeLink === link.id
-                  ? "bg-white/20 text-white"
-                  : "text-blue-100 hover:text-white hover:bg-white/10"
-              }`}
+              className={`px-3 py-2 rounded transition-colors
+                ${
+                  activeLink === link.id
+                    ? "bg-white/20 text-white"
+                    : "text-blue-100 hover:text-white hover:bg-white/10"
+                }`}
             >
-              {link.icon} {link.label}
+              <span className="mr-1">{link.icon}</span>{link.label}
             </button>
           ))}
 
-          {/* Dashboard link if logged in */}
           {user && (
             <button
               onClick={goMyDashboard}
-              className={`px-3 py-2 rounded ${
-                activeLink.includes("dashboard")
-                  ? "bg-white/20 text-white"
-                  : "text-blue-100 hover:text-white hover:bg-white/10"
-              }`}
+              className={`px-3 py-2 rounded transition-colors
+                ${
+                  activeLink.includes("dashboard")
+                    ? "bg-white/20 text-white"
+                    : "text-blue-100 hover:text-white hover:bg-white/10"
+                }`}
             >
               📊 Dashboard
             </button>
           )}
 
-          {/* Signin for Doctors if not logged in */}
           {!user && (
             <button
               onClick={() => navigate("/doctor-login")}
@@ -105,43 +102,37 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Profile Section */}
-        <div className="relative" ref={dropdownRef}>
-          <button className="relative p-2 text-white hover:text-blue-200 transition-colors duration-300">
+        {/* Right controls */}
+        <div className="relative flex items-center gap-3" ref={dropdownRef}>
+          <button className="relative p-2 text-white hover:text-blue-200 transition-colors">
             <span className="text-xl">🔔</span>
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-blue-700" />
           </button>
+
           <button
-            onClick={() => setOpenProfile(!openProfile)}
-            className="w-10 h-10 bg-white/20 rounded-full text-white"
+            onClick={() => setOpenProfile((v) => !v)}
+            className="w-10 h-10 bg-white/20 hover:bg-white/25 rounded-full text-white transition-colors"
+            title="Profile"
           >
             👤
           </button>
+
           {openProfile && (
-            <div className="absolute right-0 mt-2 w-64 bg-white rounded shadow-lg text-gray-800">
+            <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl text-gray-800 overflow-hidden">
               {user ? (
                 <>
-                  {/* User Info */}
                   <div className="px-4 py-3 border-b border-gray-200">
-                    <p className="text-sm font-semibold text-gray-900">
-                      {user.name || "Unknown User"}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate">
-                      {user.email}
-                    </p>
+                    <p className="text-sm font-semibold">{user.name || "User"}</p>
+                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
                   </div>
 
-                  {/* Links */}
                   <button
                     onClick={goMyDashboard}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                   >
                     My Dashboard
                   </button>
-                  <Link
-                    to="/settings"
-                    className="block px-4 py-2 hover:bg-gray-100"
-                  >
+                  <Link to="/settings" className="block px-4 py-2 hover:bg-gray-100">
                     Settings
                   </Link>
                   <button
@@ -156,16 +147,10 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <Link
-                    to="/login"
-                    className="block px-4 py-2 hover:bg-gray-100"
-                  >
+                  <Link to="/login" className="block px-4 py-2 hover:bg-gray-100">
                     Login
                   </Link>
-                  <Link
-                    to="/signup"
-                    className="block px-4 py-2 hover:bg-gray-100"
-                  >
+                  <Link to="/signup" className="block px-4 py-2 hover:bg-gray-100">
                     Sign up
                   </Link>
                 </>
@@ -173,6 +158,45 @@ const Navbar = () => {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Mobile menu trigger */}
+      <div className="md:hidden container mx-auto px-6 pb-3">
+        <button
+          className="text-white/90 hover:text-white"
+          onClick={() => setMobileMenuOpen((v) => !v)}
+        >
+          ☰
+        </button>
+        {isMobileMenuOpen && (
+          <div className="mt-3 bg-white/10 backdrop-blur rounded-xl p-2">
+            {links.map((link) => (
+              <button
+                key={link.id}
+                onClick={() => handleLinkClick(link.id)}
+                className={`block w-full text-left px-3 py-2 rounded
+                  ${activeLink === link.id ? "bg-white/20 text-white" : "text-blue-100 hover:text-white hover:bg-white/10"}`}
+              >
+                <span className="mr-1">{link.icon}</span>{link.label}
+              </button>
+            ))}
+            {user ? (
+              <button
+                onClick={goMyDashboard}
+                className="block w-full text-left px-3 py-2 rounded text-blue-100 hover:text-white hover:bg-white/10"
+              >
+                📊 Dashboard
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/doctor-login")}
+                className="block w-full text-left px-3 py-2 rounded text-blue-100 hover:text-white hover:bg-white/10"
+              >
+                | Signin For Doctors |
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );
