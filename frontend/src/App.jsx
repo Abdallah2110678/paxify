@@ -10,8 +10,8 @@ import About from "./pages/about/About.jsx";
 import Settings from "./pages/settings/Settings.jsx";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard.jsx";
 import PatientDashboard from "./pages/patients/PatientDashboard.jsx";
-import Login from "./auth/pages/Login.jsx";
-import Register from "./auth/pages/Register.jsx";
+import Login from "./pages/login/Login.jsx";
+import Register from "./pages/register/Register.jsx";
 import ProtectedRoute from "./auth/ProtectedRoute.jsx";
 
 function App() {
