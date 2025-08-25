@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import api from "../lib/axios.jsx";
 import { jwtDecode } from "jwt-decode";
+
 const Ctx = createContext(null);
 export const useAuth = () => useContext(Ctx);
 
@@ -42,11 +43,12 @@ export const AuthProvider = ({ children }) => {
     const u = {
       id: decoded.userId || decoded.id,
       role: decoded.role ? decoded.role.toUpperCase() : null,
-      email: decoded.email,
-      name: decoded.name,
+      email: decoded.sub,
+      name: decoded.name || decoded.sub.split("@")[0],
     };
+
     setUser(u);
-    localStorage.setItem("user", JSON.stringify(u));
+    localStorage.setItem("user", JSON.stringify(u)); // ✅ FIXED
   };
 
   const signup = async (payload) => {

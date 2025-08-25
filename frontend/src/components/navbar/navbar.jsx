@@ -74,7 +74,8 @@ const Navbar = () => {
                     : "text-blue-100 hover:text-white hover:bg-white/10"
                 }`}
             >
-              <span className="mr-1">{link.icon}</span>{link.label}
+              <span className="mr-1">{link.icon}</span>
+              {link.label}
             </button>
           ))}
 
@@ -118,12 +119,16 @@ const Navbar = () => {
           </button>
 
           {openProfile && (
-            <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl text-gray-800 overflow-hidden">
+            <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl text-gray-800 overflow-hidden z-50">
               {user ? (
                 <>
                   <div className="px-4 py-3 border-b border-gray-200">
-                    <p className="text-sm font-semibold">{user.name || "User"}</p>
-                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                    <p className="text-sm font-semibold">
+                      {user.name || "User"}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {user.email}
+                    </p>
                   </div>
 
                   <button
@@ -132,8 +137,11 @@ const Navbar = () => {
                   >
                     My Dashboard
                   </button>
-                  <Link to="/settings" className="block px-4 py-2 hover:bg-gray-100">
-                    Settings
+                  <Link
+                    to="/profile"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    My Profile
                   </Link>
                   <button
                     onClick={() => {
@@ -147,10 +155,16 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="block px-4 py-2 hover:bg-gray-100">
+                  <Link
+                    to="/login"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
                     Login
                   </Link>
-                  <Link to="/signup" className="block px-4 py-2 hover:bg-gray-100">
+                  <Link
+                    to="/signup"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
                     Sign up
                   </Link>
                 </>
@@ -175,9 +189,14 @@ const Navbar = () => {
                 key={link.id}
                 onClick={() => handleLinkClick(link.id)}
                 className={`block w-full text-left px-3 py-2 rounded
-                  ${activeLink === link.id ? "bg-white/20 text-white" : "text-blue-100 hover:text-white hover:bg-white/10"}`}
+                  ${
+                    activeLink === link.id
+                      ? "bg-white/20 text-white"
+                      : "text-blue-100 hover:text-white hover:bg-white/10"
+                  }`}
               >
-                <span className="mr-1">{link.icon}</span>{link.label}
+                <span className="mr-1">{link.icon}</span>
+                {link.label}
               </button>
             ))}
             {user ? (
