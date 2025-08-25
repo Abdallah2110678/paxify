@@ -50,14 +50,20 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 shadow-lg">
-      <div className="container mx-auto px-6 py-3 flex justify-between items-center">
+    <nav
+      className="
+        fixed -top-[1px] left-0 right-0 z-50
+        bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800
+        shadow-none border-none -mb-[1px] transform-gpu
+      "
+    >
+      <div className="container mx-auto px-6 py-4 md:py-5 flex justify-between items-center">
         {/* Logo */}
         <div
           onClick={() => navigate("/")}
           className="flex items-center text-white cursor-pointer select-none"
         >
-          <img src="/logo.png" alt="Logo" className="w-9 h-9 mr-2" />
+          <img src="/logo.png" alt="Logo" className="w-10 h-10 mr-2" />
           <span className="font-bold text-xl tracking-wide">Paxify</span>
         </div>
 
@@ -67,12 +73,11 @@ const Navbar = () => {
             <button
               key={link.id}
               onClick={() => handleLinkClick(link.id)}
-              className={`px-3 py-2 rounded transition-colors
-                ${
-                  activeLink === link.id
-                    ? "bg-white/20 text-white"
-                    : "text-blue-100 hover:text-white hover:bg-white/10"
-                }`}
+              className={`px-3 py-2 rounded transition-colors ${
+                activeLink === link.id
+                  ? "bg-white/20 text-white"
+                  : "text-blue-100 hover:text-white hover:bg-white/10"
+              }`}
             >
               <span className="mr-1">{link.icon}</span>
               {link.label}
@@ -82,12 +87,11 @@ const Navbar = () => {
           {user && (
             <button
               onClick={goMyDashboard}
-              className={`px-3 py-2 rounded transition-colors
-                ${
-                  activeLink.includes("dashboard")
-                    ? "bg-white/20 text-white"
-                    : "text-blue-100 hover:text-white hover:bg-white/10"
-                }`}
+              className={`px-3 py-2 rounded transition-colors ${
+                activeLink.includes("dashboard")
+                  ? "bg-white/20 text-white"
+                  : "text-blue-100 hover:text-white hover:bg-white/10"
+              }`}
             >
               📊 Dashboard
             </button>
@@ -175,7 +179,7 @@ const Navbar = () => {
       </div>
 
       {/* Mobile menu trigger */}
-      <div className="md:hidden container mx-auto px-6 pb-3">
+      <div className="md:hidden container mx-auto px-6 pb-4">
         <button
           className="text-white/90 hover:text-white"
           onClick={() => setMobileMenuOpen((v) => !v)}
@@ -188,12 +192,11 @@ const Navbar = () => {
               <button
                 key={link.id}
                 onClick={() => handleLinkClick(link.id)}
-                className={`block w-full text-left px-3 py-2 rounded
-                  ${
-                    activeLink === link.id
-                      ? "bg-white/20 text-white"
-                      : "text-blue-100 hover:text-white hover:bg-white/10"
-                  }`}
+                className={`block w-full text-left px-3 py-2 rounded ${
+                  activeLink === link.id
+                    ? "bg-white/20 text-white"
+                    : "text-blue-100 hover:text-white hover:bg-white/10"
+                }`}
               >
                 <span className="mr-1">{link.icon}</span>
                 {link.label}
