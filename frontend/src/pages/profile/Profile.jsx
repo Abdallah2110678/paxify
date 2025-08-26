@@ -1,12 +1,49 @@
 import { useAuth } from "../../context/AuthContext.jsx";
+import api from "../../lib/axios.jsx";
+import { useState } from "react";
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, logout, refreshUser } = useAuth();
+
+  const [form, setForm] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = async () => {
+    try {
+      await api.patch(`/api/users/${user.id}/patient`, {
+        name: form.name,
+        email: form.email,
+      });
+      await refreshUser();
+
+      alert("Profile updated successfully!");
+    } catch (err) {
+      console.error("Update failed:", err);
+      alert("Update failed: " + (err.response?.data || err.message));
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete your account?"))
+      return;
+    try {
+      await api.delete(`/api/users/${user.id}/patient`);
+      logout();
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Delete failed: " + (err.response?.data || err.message));
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8">Profile</h1>
-
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           {/* Profile Section */}
@@ -31,8 +68,9 @@ const Profile = () => {
                   </label>
                   <input
                     type="text"
-                    value={user?.name || ""}
-                    readOnly
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
@@ -42,8 +80,9 @@ const Profile = () => {
                   </label>
                   <input
                     type="email"
-                    value={user?.email || ""}
-                    readOnly
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
@@ -51,7 +90,7 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Preferences Section */}
+          {/* Preferences Section (unchanged) */}
           <div className="p-6 border-b">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">
               Preferences
@@ -84,7 +123,10 @@ const Profile = () => {
               <button className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors text-left">
                 Two-Factor Authentication
               </button>
-              <button className="w-full bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition-colors text-left">
+              <button
+                onClick={handleDelete}
+                className="w-full bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 transition-colors text-left"
+              >
                 Delete Account
               </button>
             </div>
@@ -95,7 +137,10 @@ const Profile = () => {
           <button className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
             Cancel
           </button>
-          <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button
+            onClick={handleSave}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
             Save Changes
           </button>
         </div>

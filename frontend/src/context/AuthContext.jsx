@@ -5,16 +5,10 @@ import { jwtDecode } from "jwt-decode";
 const Ctx = createContext(null);
 export const useAuth = () => useContext(Ctx);
 
-// Normalize various JWT claim shapes to our app's user model
+// Extract only minimal claims (id + role) from JWT
 function mapClaimsToUser(claims = {}) {
-  // id
-  const id =
-    claims.userId ||
-    claims.id ||
-    claims.sub ||
-    null;
+  const id = claims.userId || claims.id || claims.sub || null;
 
-  // role
   const roleRaw =
     claims.role ||
     (Array.isArray(claims.roles) ? claims.roles[0] : null) ||
@@ -26,28 +20,10 @@ function mapClaimsToUser(claims = {}) {
     typeof roleRaw === "string"
       ? roleRaw.toUpperCase()
       : roleRaw && roleRaw.name
-        ? String(roleRaw.name).toUpperCase()
-        : null;
+      ? String(roleRaw.name).toUpperCase()
+      : null;
 
-  // email / username
-  const email =
-    claims.email ||
-    claims.userEmail ||
-    (claims.sub && String(claims.sub).includes("@") ? claims.sub : null) ||
-    claims.username ||
-    null;
-
-  // display name
-  const name =
-    claims.name ||
-    claims.fullName ||
-    [claims.firstName, claims.lastName].filter(Boolean).join(" ").trim() ||
-    claims.given_name ||
-    claims.preferred_username ||
-    (email ? email.split("@")[0] : null) ||
-    null;
-
-  return { id, role, email, name };
+  return { id, role };
 }
 
 export const AuthProvider = ({ children }) => {
@@ -58,7 +34,7 @@ export const AuthProvider = ({ children }) => {
       : null
   );
 
-  // Attach Authorization header; clean up interceptor on change
+  // Attach Authorization header
   useEffect(() => {
     const interceptorId = api.interceptors.request.use((cfg) => {
       const url = `${cfg.baseURL || ""}${cfg.url || ""}`;
@@ -75,14 +51,19 @@ export const AuthProvider = ({ children }) => {
     return () => api.interceptors.request.eject(interceptorId);
   }, [token]);
 
-  // If token exists on load/refresh, derive user from it
+  // On app refresh: decode token -> fetch latest user from backend
   useEffect(() => {
     if (token && !user) {
       try {
         const decoded = jwtDecode(token);
         const mapped = mapClaimsToUser(decoded);
-        setUser(mapped);
-        localStorage.setItem("user", JSON.stringify(mapped));
+
+        if (mapped.id) {
+          api.get(`/api/users/${mapped.id}`).then((res) => {
+            setUser(res.data);
+            localStorage.setItem("user", JSON.stringify(res.data));
+          });
+        }
       } catch (e) {
         console.warn("Failed to decode token on mount:", e);
       }
@@ -90,6 +71,7 @@ export const AuthProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
+  // Login: fetch fresh user from backend
   const login = async (email, password) => {
     const { data } = await api.post(
       "/api/auth/login",
@@ -103,19 +85,23 @@ export const AuthProvider = ({ children }) => {
     try {
       const decoded = jwtDecode(data.token);
       const mapped = mapClaimsToUser(decoded);
-      setUser(mapped);
-      localStorage.setItem("user", JSON.stringify(mapped));
+
+      if (mapped.id) {
+        const res = await api.get(`/api/users/${mapped.id}`);
+        setUser(res.data);
+        localStorage.setItem("user", JSON.stringify(res.data));
+      }
     } catch (e) {
-      console.error("Failed to decode login token:", e);
-      // fallback so UI still shows something sensible
-      const mapped = {
+      console.error("Failed to fetch user after login:", e);
+      // fallback: at least set email so UI doesn't break
+      const fallbackUser = {
         id: null,
         role: null,
         email,
-        name: email ? email.split("@")[0] : "User",
+        name: email.split("@")[0],
       };
-      setUser(mapped);
-      localStorage.setItem("user", JSON.stringify(mapped));
+      setUser(fallbackUser);
+      localStorage.setItem("user", JSON.stringify(fallbackUser));
     }
   };
 
@@ -124,7 +110,9 @@ export const AuthProvider = ({ children }) => {
       "/api/auth/register",
       {
         ...payload,
-        gender: payload?.gender ? String(payload.gender).toUpperCase() : undefined,
+        gender: payload?.gender
+          ? String(payload.gender).toUpperCase()
+          : undefined,
       },
       { headers: { "Content-Type": "application/json" } }
     );
@@ -137,8 +125,20 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
   };
 
+  // Refresh user (after profile update)
+  const refreshUser = async () => {
+    if (!user?.id) return;
+    try {
+      const { data } = await api.get(`/api/users/${user.id}`);
+      setUser(data);
+      localStorage.setItem("user", JSON.stringify(data));
+    } catch (err) {
+      console.error("Failed to refresh user:", err);
+    }
+  };
+
   return (
-    <Ctx.Provider value={{ user, token, login, logout, signup }}>
+    <Ctx.Provider value={{ user, token, login, logout, signup, refreshUser }}>
       {children}
     </Ctx.Provider>
   );

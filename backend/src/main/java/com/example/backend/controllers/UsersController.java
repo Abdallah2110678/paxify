@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.dto.DoctorCreateRequest;
 import com.example.backend.dto.DoctorUpdateRequest;
 import com.example.backend.dto.PatientCreateRequest;
+import com.example.backend.dto.PatientUpdateRequest;
 import com.example.backend.dto.UserResponse;
 import com.example.backend.dto.UserUpdateRequest;
 import com.example.backend.services.UserCrudService;
@@ -81,6 +82,14 @@ public class UsersController {
         return ResponseEntity.ok(service.updateCommon(id, req));
     }
 
+    @PatchMapping("/{id}/patient")
+    @PreAuthorize("hasAnyAuthority('ADMIN','PATIENT')")
+    public ResponseEntity<UserResponse> updatePatient(
+            @PathVariable UUID id,
+            @RequestBody PatientUpdateRequest req) {
+        return ResponseEntity.ok(service.updatePatient(id, req));
+    }
+
     // Update doctor-only fields
     @PatchMapping("/{id}/doctor")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -94,6 +103,13 @@ public class UsersController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/patient")
+    @PreAuthorize("hasAnyAuthority('ADMIN','PATIENT')")
+    public ResponseEntity<Void> deletePatient(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

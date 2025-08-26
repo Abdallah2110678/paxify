@@ -21,7 +21,10 @@ const Navbar = () => {
     "User";
 
   const displayEmail =
-    user?.email || user?.userEmail || user?.username || (typeof user?.sub === "string" ? user.sub : "");
+    user?.email ||
+    user?.userEmail ||
+    user?.username ||
+    (typeof user?.sub === "string" ? user.sub : "");
 
   useEffect(() => {
     const currentPath = location.pathname.replace("/", "") || "home";
@@ -149,13 +152,19 @@ const Navbar = () => {
                 <div className="px-4 py-3 border-b border-slate-100">
                   {user ? (
                     <>
-                      <p className="text-sm font-semibold text-slate-900">{displayName}</p>
+                      <p className="text-sm font-semibold text-slate-900">
+                        {displayName}
+                      </p>
                       {displayEmail && (
-                        <p className="text-xs text-slate-500 truncate">{displayEmail}</p>
+                        <p className="text-xs text-slate-500 truncate">
+                          {displayEmail}
+                        </p>
                       )}
                     </>
                   ) : (
-                    <p className="text-sm font-semibold text-slate-900">Welcome</p>
+                    <p className="text-sm font-semibold text-slate-900">
+                      Welcome
+                    </p>
                   )}
                 </div>
 
@@ -171,11 +180,11 @@ const Navbar = () => {
                         My Dashboard
                       </button>
                       <Link
-                        to="/settings"
+                        to="/profile"
                         className="block px-4 py-2 hover:bg-indigo-50"
                         role="menuitem"
                       >
-                        Settings
+                        Profile
                       </Link>
                       <div className="h-px bg-slate-100 my-1" />
                       <button
@@ -199,7 +208,7 @@ const Navbar = () => {
                         Login
                       </Link>
                       <Link
-                        to="/signup"
+                        to="/register"
                         className="block px-4 py-2 hover:bg-indigo-50"
                         role="menuitem"
                       >

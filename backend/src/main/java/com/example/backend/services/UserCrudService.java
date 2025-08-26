@@ -127,6 +127,27 @@ public class UserCrudService {
         return toResponse(userRepo.save(d));
     }
 
+    @Transactional
+    public UserResponse updatePatient(UUID id, PatientUpdateRequest req) {
+        Patient p = (Patient) userRepo.findById(id)
+                .filter(u -> u instanceof Patient)
+                .orElseThrow(() -> new NoSuchElementException("Patient not found"));
+
+        if (req.name() != null)
+            p.setName(req.name());
+        if (req.email() != null)
+            p.setEmail(req.email().toLowerCase());
+        if (req.phoneNumber() != null)
+            p.setPhoneNumber(req.phoneNumber());
+        if (req.address() != null)
+            p.setAddress(req.address());
+        if (req.gender() != null) {
+            p.setGender(req.gender());
+        }
+
+        return toResponse(userRepo.save(p));
+    }
+
     /* ======== DELETE ======== */
 
     @Transactional
