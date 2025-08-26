@@ -11,6 +11,18 @@ const Navbar = () => {
   const { user, logout } = useAuth() || { user: null, logout: () => { } };
   const dropdownRef = useRef(null);
 
+  // Derive safe display fields from user object
+  const displayName =
+    user?.name ||
+    user?.fullName ||
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
+    user?.preferred_username ||
+    (user?.email ? user.email.split("@")[0] : "") ||
+    "User";
+
+  const displayEmail =
+    user?.email || user?.userEmail || user?.username || (typeof user?.sub === "string" ? user.sub : "");
+
   useEffect(() => {
     const currentPath = location.pathname.replace("/", "") || "home";
     setActiveLink(currentPath);
@@ -107,7 +119,10 @@ const Navbar = () => {
 
         {/* Right controls */}
         <div className="relative flex items-center gap-3" ref={dropdownRef}>
-          <button className="relative p-2 text-white hover:text-blue-200 transition-colors">
+          <button
+            className="relative p-2 text-white hover:text-blue-200 transition-colors"
+            aria-label="Notifications"
+          >
             <span className="text-xl">🔔</span>
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-blue-700" />
           </button>
@@ -116,48 +131,82 @@ const Navbar = () => {
             onClick={() => setOpenProfile((v) => !v)}
             className="w-10 h-10 bg-white/20 hover:bg-white/25 rounded-full text-white transition-colors"
             title="Profile"
+            aria-haspopup="menu"
+            aria-expanded={openProfile}
           >
             👤
           </button>
 
+          {/* Profile dropdown */}
           {openProfile && (
-            <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl text-gray-800 overflow-hidden">
-              {user ? (
-                <>
-                  <div className="px-4 py-3 border-b border-gray-200">
-                    <p className="text-sm font-semibold">{user.name || "User"}</p>
-                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                  </div>
+            <div className="absolute right-0 top-full mt-3 w-72 z-[60]">
+              {/* caret */}
+              <span className="absolute right-6 -top-2 h-4 w-4 rotate-45 bg-white shadow ring-1 ring-black/5" />
+              <div className="bg-white rounded-xl shadow-2xl ring-1 ring-black/5 overflow-hidden max-h-[70vh]">
+                {/* Header */}
+                <div className="px-4 py-3 border-b border-slate-100">
+                  {user ? (
+                    <>
+                      <p className="text-sm font-semibold text-slate-900">{displayName}</p>
+                      {displayEmail && (
+                        <p className="text-xs text-slate-500 truncate">{displayEmail}</p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm font-semibold text-slate-900">Welcome</p>
+                  )}
+                </div>
 
-                  <button
-                    onClick={goMyDashboard}
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                  >
-                    My Dashboard
-                  </button>
-                  <Link to="/settings" className="block px-4 py-2 hover:bg-gray-100">
-                    Settings
-                  </Link>
-                  <button
-                    onClick={() => {
-                      logout();
-                      navigate("/");
-                    }}
-                    className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
-                  >
-                    Sign out
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link to="/login" className="block px-4 py-2 hover:bg-gray-100">
-                    Login
-                  </Link>
-                  <Link to="/signup" className="block px-4 py-2 hover:bg-gray-100">
-                    Sign up
-                  </Link>
-                </>
-              )}
+                {/* Body */}
+                <div className="py-1 text-slate-700">
+                  {user ? (
+                    <>
+                      <button
+                        onClick={goMyDashboard}
+                        className="w-full text-left px-4 py-2 hover:bg-indigo-50"
+                        role="menuitem"
+                      >
+                        My Dashboard
+                      </button>
+                      <Link
+                        to="/settings"
+                        className="block px-4 py-2 hover:bg-indigo-50"
+                        role="menuitem"
+                      >
+                        Settings
+                      </Link>
+                      <div className="h-px bg-slate-100 my-1" />
+                      <button
+                        onClick={() => {
+                          logout();
+                          navigate("/");
+                        }}
+                        className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                        role="menuitem"
+                      >
+                        Sign out
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        to="/login"
+                        className="block px-4 py-2 hover:bg-indigo-50"
+                        role="menuitem"
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        to="/signup"
+                        className="block px-4 py-2 hover:bg-indigo-50"
+                        role="menuitem"
+                      >
+                        Sign up
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -168,6 +217,7 @@ const Navbar = () => {
         <button
           className="text-white/90 hover:text-white"
           onClick={() => setMobileMenuOpen((v) => !v)}
+          aria-label="Toggle menu"
         >
           ☰
         </button>

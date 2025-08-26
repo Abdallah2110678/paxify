@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AdminPanel from "../admin/AdminPanel";
 import DoctorPanel from "../doctor/DoctorPanel";
 import PatientPanel from "../patients/PatientPanel";
-import AddDoctor from "../doctor/AddDoctor";
+import AddDoctor from "./AddDoctor";
 import AddPatient from "../patients/AddPatient";
 import Products from "../products/Products";
 import AddProduct from "../products/AddProduct";
