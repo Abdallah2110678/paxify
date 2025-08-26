@@ -8,7 +8,7 @@ const Navbar = () => {
   const [openProfile, setOpenProfile] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth() || { user: null, logout: () => { } };
+  const { user, logout } = useAuth() || { user: null, logout: () => {} };
   const dropdownRef = useRef(null);
 
   // Derive safe display fields from user object
@@ -85,10 +85,11 @@ const Navbar = () => {
             <button
               key={link.id}
               onClick={() => handleLinkClick(link.id)}
-              className={`px-3 py-2 rounded transition-colors ${activeLink === link.id
+              className={`px-3 py-2 rounded transition-colors ${
+                activeLink === link.id
                   ? "bg-white/20 text-white"
                   : "text-blue-100 hover:text-white hover:bg-white/10"
-                }`}
+              }`}
             >
               <span className="mr-1">{link.icon}</span>
               {link.label}
@@ -98,10 +99,11 @@ const Navbar = () => {
           {user && (
             <button
               onClick={goMyDashboard}
-              className={`px-3 py-2 rounded transition-colors ${activeLink.includes("dashboard")
+              className={`px-3 py-2 rounded transition-colors ${
+                activeLink.includes("dashboard")
                   ? "bg-white/20 text-white"
                   : "text-blue-100 hover:text-white hover:bg-white/10"
-                }`}
+              }`}
             >
               📊 Dashboard
             </button>
@@ -227,10 +229,11 @@ const Navbar = () => {
               <button
                 key={link.id}
                 onClick={() => handleLinkClick(link.id)}
-                className={`block w-full text-left px-3 py-2 rounded ${activeLink === link.id
+                className={`block w-full text-left px-3 py-2 rounded ${
+                  activeLink === link.id
                     ? "bg-white/20 text-white"
                     : "text-blue-100 hover:text-white hover:bg-white/10"
-                  }`}
+                }`}
               >
                 <span className="mr-1">{link.icon}</span>
                 {link.label}

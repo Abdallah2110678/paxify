@@ -7,7 +7,7 @@ import BookSession from "./pages/book/BookSession.jsx";
 import FindTherapists from "./pages/therapists/FindTherapists.jsx";
 import Games from "./pages/games/Games.jsx";
 import About from "./pages/about/About.jsx";
-import Settings from "./pages/settings/Settings.jsx";
+import Profile from "./pages/profile/Profile.jsx";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard.jsx";
 import PatientDashboard from "./pages/patients/PatientDashboard.jsx";
 import Login from "./pages/login/Login.jsx";
@@ -55,7 +55,7 @@ function App() {
                   <Route path="/therapists" element={<FindTherapists />} />
                   <Route path="/games" element={<Games />} />
                   <Route path="/about" element={<About />} />
-                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/profile" element={<Profile />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                 </Routes>
