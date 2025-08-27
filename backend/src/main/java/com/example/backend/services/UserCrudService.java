@@ -175,6 +175,8 @@ public class UserCrudService {
 
     private UserResponse toResponse(User u) {
         String type = (u instanceof Doctor) ? "DOCTOR" : (u instanceof Patient) ? "PATIENT" : "USER";
+        String profilePic = (u instanceof Doctor d) ? d.getProfilePictureUrl() : null;
+
         return new UserResponse(
                 u.getId(),
                 type,
@@ -183,6 +185,7 @@ public class UserCrudService {
                 u.getPhoneNumber(),
                 u.getAddress(),
                 u.getRole(),
-                u.getGender());
+                u.getGender(),
+                profilePic);
     }
 }

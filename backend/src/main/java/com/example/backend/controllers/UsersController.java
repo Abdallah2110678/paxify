@@ -1,5 +1,9 @@
 package com.example.backend.controllers;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,7 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.backend.dto.DoctorCreateRequest;
 import com.example.backend.dto.DoctorUpdateRequest;
@@ -22,6 +28,7 @@ import com.example.backend.dto.UserResponse;
 import com.example.backend.dto.UserUpdateRequest;
 import com.example.backend.services.UserCrudService;
 
+import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -44,6 +51,41 @@ public class UsersController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<UserResponse> createDoctor(@RequestBody DoctorCreateRequest req) {
         return ResponseEntity.ok(service.createDoctor(req));
+    }
+
+    @PostMapping("/{id}/profile-picture")
+    @PreAuthorize("hasAuthority('DOCTOR')")
+    public ResponseEntity<UserResponse> uploadProfilePicture(
+            @PathVariable UUID id,
+            @RequestParam("file") MultipartFile file) throws java.io.IOException {
+
+        // Save file locally (or to cloud/S3 etc.)
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path uploadPath = Paths.get("uploads/profile-pictures");
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        Files.copy(file.getInputStream(), uploadPath.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+
+        // Store relative path in DB
+        String fileUrl = "/uploads/profile-pictures/" + filename;
+
+        DoctorUpdateRequest req = new DoctorUpdateRequest(
+                null, // name
+                null, // email
+                null, // phoneNumber
+                null, // address
+                null, // gender
+                null, // password
+                null, // specialty
+                null, // bio
+                null, // rate
+                null, // consultationFee
+                null, // availability
+                fileUrl // profilePictureUrl
+        );
+
+        return ResponseEntity.ok(service.updateDoctor(id, req));
     }
 
     /* ======== READ ======== */

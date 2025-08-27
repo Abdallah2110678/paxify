@@ -136,10 +136,16 @@ const Navbar = () => {
             onClick={() => setOpenProfile((v) => !v)}
             className="w-10 h-10 bg-white/20 hover:bg-white/25 rounded-full text-white transition-colors"
             title="Profile"
-            aria-haspopup="menu"
-            aria-expanded={openProfile}
           >
-            👤
+            {user?.profilePictureUrl ? (
+              <img
+                src={`http://localhost:8080${user.profilePictureUrl}`}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              "👤"
+            )}
           </button>
 
           {/* Profile dropdown */}

@@ -32,15 +32,15 @@ const DoctorRegister = () => {
 
     try {
       const formData = new FormData();
-      Object.entries(form).forEach(([key, value]) => {
-        formData.append(key, value);
+      Object.keys(form).forEach((key) => {
+        if (form[key]) formData.append(key, form[key]);
       });
       if (profilePicture) {
-        formData.append("profilePicture", profilePicture);
+        formData.append("file", profilePicture); // FIXED
       }
 
-      await api.post("/api/auth/register-doctor", form, {
-        headers: { "Content-Type": "application/json" },
+      await api.post("/api/auth/register-doctor", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       alert("Doctor registered successfully!");

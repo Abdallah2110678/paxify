@@ -6,6 +6,7 @@ import com.example.backend.dto.DoctorCreateRequest;
 import com.example.backend.dto.LoginRequest;
 import com.example.backend.dto.RegisterRequest;
 import com.example.backend.models.Doctor;
+import com.example.backend.models.Gender;
 import com.example.backend.models.Patient;
 import com.example.backend.models.Role;
 import com.example.backend.models.User;
@@ -13,6 +14,14 @@ import com.example.backend.repositories.PatientRepo;
 import com.example.backend.repositories.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
+
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +32,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -73,25 +83,41 @@ public class AuthController {
     }
 
     @PostMapping("/register-doctor")
-    public ResponseEntity<?> registerDoctor(@RequestBody DoctorCreateRequest req) {
-        if (userRepo.findByEmail(req.email()).isPresent()) {
+    public ResponseEntity<?> registerDoctor(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam String name,
+            @RequestParam String email,
+            @RequestParam String password,
+            @RequestParam String phoneNumber,
+            @RequestParam String gender,
+            @RequestParam String specialty,
+            @RequestParam String bio,
+            @RequestParam BigDecimal consultationFee,
+            @RequestParam String availability) throws java.io.IOException {
+
+        if (userRepo.findByEmail(email).isPresent()) {
             return ResponseEntity.badRequest().body("Email already exists");
         }
 
+        // Save file
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path uploadPath = Paths.get("uploads/profile-pictures");
+        if (!Files.exists(uploadPath))
+            Files.createDirectories(uploadPath);
+        Files.copy(file.getInputStream(), uploadPath.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+
         Doctor doctor = new Doctor();
-        doctor.setName(req.name());
-        doctor.setEmail(req.email().toLowerCase());
-        doctor.setPassword(encoder.encode(req.password()));
+        doctor.setName(name);
+        doctor.setEmail(email.toLowerCase());
+        doctor.setPassword(encoder.encode(password));
+        doctor.setPhoneNumber(phoneNumber);
+        doctor.setGender(Gender.valueOf(gender.toUpperCase()));
+        doctor.setSpecialty(specialty);
+        doctor.setBio(bio);
+        doctor.setConsultationFee(consultationFee);
+        doctor.setAvailability(availability);
+        doctor.setProfilePictureUrl("/uploads/profile-pictures/" + filename);
         doctor.setRole(Role.DOCTOR);
-        doctor.setGender(req.gender());
-        doctor.setPhoneNumber(req.phoneNumber());
-        doctor.setAddress(req.address());
-        doctor.setSpecialty(req.specialty());
-        doctor.setBio(req.bio());
-        doctor.setRate(req.rate());
-        doctor.setConsultationFee(req.consultationFee());
-        doctor.setAvailability(req.availability());
-        doctor.setProfilePictureUrl(req.profilePictureUrl());
 
         userRepo.save(doctor);
 
