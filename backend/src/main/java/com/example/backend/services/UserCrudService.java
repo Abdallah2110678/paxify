@@ -109,22 +109,36 @@ public class UserCrudService {
 
     @Transactional
     public UserResponse updateDoctor(UUID id, DoctorUpdateRequest req) {
-        Doctor d = (Doctor) userRepo.findById(id)
-                .filter(u -> u instanceof Doctor)
-                .orElseThrow(() -> new NoSuchElementException("Doctor not found"));
+        Doctor doctor = doctorRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        // Common fields
+        if (req.name() != null)
+            doctor.setName(req.name());
+        if (req.email() != null)
+            doctor.setEmail(req.email().toLowerCase());
+        if (req.phoneNumber() != null)
+            doctor.setPhoneNumber(req.phoneNumber());
+        if (req.address() != null)
+            doctor.setAddress(req.address());
+        if (req.password() != null)
+            doctor.setPassword(encoder.encode(req.password()));
+
+        // Doctor-specific fields
         if (req.specialty() != null)
-            d.setSpecialty(req.specialty());
+            doctor.setSpecialty(req.specialty());
         if (req.bio() != null)
-            d.setBio(req.bio());
+            doctor.setBio(req.bio());
         if (req.rate() != null)
-            d.setRate(req.rate());
+            doctor.setRate(req.rate());
         if (req.consultationFee() != null)
-            d.setConsultationFee(req.consultationFee());
+            doctor.setConsultationFee(req.consultationFee());
         if (req.availability() != null)
-            d.setAvailability(req.availability());
+            doctor.setAvailability(req.availability());
         if (req.profilePictureUrl() != null)
-            d.setProfilePictureUrl(req.profilePictureUrl());
-        return toResponse(userRepo.save(d));
+            doctor.setProfilePictureUrl(req.profilePictureUrl());
+
+        return toResponse(userRepo.save(doctor));
     }
 
     @Transactional

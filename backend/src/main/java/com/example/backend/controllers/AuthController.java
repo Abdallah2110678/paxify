@@ -2,6 +2,7 @@ package com.example.backend.controllers;
 
 import com.example.backend.services.JwtService;
 import com.example.backend.dto.AuthResponse;
+import com.example.backend.dto.DoctorCreateRequest;
 import com.example.backend.dto.LoginRequest;
 import com.example.backend.dto.RegisterRequest;
 import com.example.backend.models.Doctor;
@@ -69,6 +70,33 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Registration error: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/register-doctor")
+    public ResponseEntity<?> registerDoctor(@RequestBody DoctorCreateRequest req) {
+        if (userRepo.findByEmail(req.email()).isPresent()) {
+            return ResponseEntity.badRequest().body("Email already exists");
+        }
+
+        Doctor doctor = new Doctor();
+        doctor.setName(req.name());
+        doctor.setEmail(req.email().toLowerCase());
+        doctor.setPassword(encoder.encode(req.password()));
+        doctor.setRole(Role.DOCTOR);
+        doctor.setGender(req.gender());
+        doctor.setPhoneNumber(req.phoneNumber());
+        doctor.setAddress(req.address());
+        doctor.setSpecialty(req.specialty());
+        doctor.setBio(req.bio());
+        doctor.setRate(req.rate());
+        doctor.setConsultationFee(req.consultationFee());
+        doctor.setAvailability(req.availability());
+        doctor.setProfilePictureUrl(req.profilePictureUrl());
+
+        userRepo.save(doctor);
+
+        String token = jwt.generateToken(doctor);
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 
     @PostMapping("/register-admin")

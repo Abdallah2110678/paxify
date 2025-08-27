@@ -92,7 +92,7 @@ public class UsersController {
 
     // Update doctor-only fields
     @PatchMapping("/{id}/doctor")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DOCTOR')")
     public ResponseEntity<UserResponse> updateDoctor(@PathVariable UUID id,
             @RequestBody DoctorUpdateRequest req) {
         return ResponseEntity.ok(service.updateDoctor(id, req));
@@ -110,6 +110,13 @@ public class UsersController {
     @DeleteMapping("/{id}/patient")
     @PreAuthorize("hasAnyAuthority('ADMIN','PATIENT')")
     public ResponseEntity<Void> deletePatient(@PathVariable UUID id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/doctor")
+    @PreAuthorize("hasAnyAuthority('ADMIN','DOCTOR')")
+    public ResponseEntity<Void> deleteDoctor(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

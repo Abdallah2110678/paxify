@@ -114,10 +114,10 @@ const Navbar = () => {
 
           {!user && (
             <button
-              onClick={() => navigate("/doctor-login")}
+              onClick={() => navigate("/doctor-register")}
               className="ml-3 px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20"
             >
-              | Signin For Doctors |
+              | Register For Doctors |
             </button>
           )}
         </div>
@@ -248,19 +248,19 @@ const Navbar = () => {
                 {link.label}
               </button>
             ))}
-            {user ? (
+            {!user ? (
+              <button
+                onClick={() => navigate("/doctor-register")}
+                className="block w-full text-left px-3 py-2 rounded text-blue-100 hover:text-white hover:bg-white/10"
+              >
+                | Register For Doctors |
+              </button>
+            ) : (
               <button
                 onClick={goMyDashboard}
                 className="block w-full text-left px-3 py-2 rounded text-blue-100 hover:text-white hover:bg-white/10"
               >
                 📊 Dashboard
-              </button>
-            ) : (
-              <button
-                onClick={() => navigate("/doctor-login")}
-                className="block w-full text-left px-3 py-2 rounded text-blue-100 hover:text-white hover:bg-white/10"
-              >
-                | Signin For Doctors |
               </button>
             )}
           </div>

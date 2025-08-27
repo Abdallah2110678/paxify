@@ -14,14 +14,26 @@ const Profile = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // helper: decide endpoint suffix based on role
+  const getRolePath = () => {
+    if (user?.role === "PATIENT") return "patient";
+    if (user?.role === "DOCTOR") return "doctor";
+    return ""; // for ADMIN or fallback
+  };
+
   const handleSave = async () => {
     try {
-      await api.patch(`/api/users/${user.id}/patient`, {
+      const rolePath = getRolePath();
+      const url = rolePath
+        ? `/api/users/${user.id}/${rolePath}`
+        : `/api/users/${user.id}`;
+
+      await api.patch(url, {
         name: form.name,
         email: form.email,
       });
-      await refreshUser();
 
+      await refreshUser();
       alert("Profile updated successfully!");
     } catch (err) {
       console.error("Update failed:", err);
@@ -33,7 +45,12 @@ const Profile = () => {
     if (!window.confirm("Are you sure you want to delete your account?"))
       return;
     try {
-      await api.delete(`/api/users/${user.id}/patient`);
+      const rolePath = getRolePath();
+      const url = rolePath
+        ? `/api/users/${user.id}/${rolePath}`
+        : `/api/users/${user.id}`;
+
+      await api.delete(url);
       logout();
       window.location.href = "/";
     } catch (err) {

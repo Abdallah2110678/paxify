@@ -13,6 +13,7 @@ import PatientDashboard from "./pages/patients/PatientDashboard.jsx";
 import Login from "./pages/login/Login.jsx";
 import Register from "./pages/register/Register.jsx";
 import ProtectedRoute from "./auth/ProtectedRoute.jsx";
+import DoctorRegister from "./pages/doctor/DoctorRegister.jsx";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+                  <Route path="/doctor-register" element={<DoctorRegister />} />
                 </Routes>
               </div>
               <Footer />

@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .cors().and()
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/register-admin",
+                                "/api/auth/register-doctor",
                                 "/api/auth/debug-auth")
                         .permitAll()
                         .anyRequest().authenticated())
