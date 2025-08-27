@@ -26,7 +26,7 @@ import com.example.backend.dto.PatientCreateRequest;
 import com.example.backend.dto.PatientUpdateRequest;
 import com.example.backend.dto.UserResponse;
 import com.example.backend.dto.UserUpdateRequest;
-import com.example.backend.services.UserCrudService;
+import com.example.backend.services.UserService;
 
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UsersController {
 
-    private final UserCrudService service;
+    private final UserService service;
 
     /* ======== CREATE ======== */
     // Patients can be created via public register OR admin here

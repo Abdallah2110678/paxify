@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserCrudService {
+public class UserService {
 
     private final UserRepo userRepo;
     private final PatientRepo patientRepo;

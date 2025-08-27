@@ -117,7 +117,7 @@ const Navbar = () => {
               onClick={() => navigate("/doctor-register")}
               className="ml-3 px-4 py-2 rounded bg-white/10 text-white hover:bg-white/20"
             >
-              | Register For Doctors |
+              Join Our Team
             </button>
           )}
         </div>
@@ -259,7 +259,7 @@ const Navbar = () => {
                 onClick={() => navigate("/doctor-register")}
                 className="block w-full text-left px-3 py-2 rounded text-blue-100 hover:text-white hover:bg-white/10"
               >
-                | Register For Doctors |
+                Join Our Team
               </button>
             ) : (
               <button
