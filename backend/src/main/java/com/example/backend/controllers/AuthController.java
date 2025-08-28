@@ -1,20 +1,5 @@
 package com.example.backend.controllers;
 
-import com.example.backend.services.JwtService;
-import com.example.backend.dto.AuthResponse;
-import com.example.backend.dto.DoctorCreateRequest;
-import com.example.backend.dto.LoginRequest;
-import com.example.backend.dto.RegisterRequest;
-import com.example.backend.models.Doctor;
-import com.example.backend.models.Gender;
-import com.example.backend.models.Patient;
-import com.example.backend.models.Role;
-import com.example.backend.models.User;
-import com.example.backend.repositories.PatientRepo;
-import com.example.backend.repositories.UserRepo;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +7,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,8 +17,27 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.example.backend.dto.AuthResponse;
+import com.example.backend.dto.LoginRequest;
+import com.example.backend.dto.RegisterRequest;
+import com.example.backend.models.Doctor;
+import com.example.backend.models.Gender;
+import com.example.backend.models.Patient;
+import com.example.backend.models.Role;
+import com.example.backend.models.User;
+import com.example.backend.repositories.UserRepo;
+import com.example.backend.services.JwtService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -41,7 +46,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class AuthController {
 
     private final UserRepo userRepo;
-    private final PatientRepo patientRepo;
     private final PasswordEncoder encoder;
     private final JwtService jwt;
     private final AuthenticationManager authenticationManager;

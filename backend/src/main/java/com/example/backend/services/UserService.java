@@ -1,16 +1,30 @@
 // services/UserCrudService.java
 package com.example.backend.services;
 
-import com.example.backend.dto.*;
-import com.example.backend.models.*;
-import com.example.backend.repositories.*;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.example.backend.dto.DoctorCreateRequest;
+import com.example.backend.dto.DoctorUpdateRequest;
+import com.example.backend.dto.PatientCreateRequest;
+import com.example.backend.dto.PatientUpdateRequest;
+import com.example.backend.dto.UserResponse;
+import com.example.backend.dto.UserUpdateRequest;
+import com.example.backend.models.Doctor;
+import com.example.backend.models.Patient;
+import com.example.backend.models.Role;
+import com.example.backend.models.User;
+import com.example.backend.repositories.DoctorRepo;
+import com.example.backend.repositories.PatientRepo;
+import com.example.backend.repositories.UserRepo;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -174,18 +188,52 @@ public class UserService {
     /* ======== Mapper ======== */
 
     private UserResponse toResponse(User u) {
-        String type = (u instanceof Doctor) ? "DOCTOR" : (u instanceof Patient) ? "PATIENT" : "USER";
-        String profilePic = (u instanceof Doctor d) ? d.getProfilePictureUrl() : null;
+        if (u instanceof Doctor d) {
+            return new UserResponse(
+                    d.getId(),
+                    "DOCTOR",
+                    d.getName(),
+                    d.getEmail(),
+                    d.getPhoneNumber(),
+                    d.getAddress(),
+                    d.getRole(),
+                    d.getGender(),
+                    d.getProfilePictureUrl(), // profilePictureUrl
 
-        return new UserResponse(
-                u.getId(),
-                type,
-                u.getName(),
-                u.getEmail(),
-                u.getPhoneNumber(),
-                u.getAddress(),
-                u.getRole(),
-                u.getGender(),
-                profilePic);
+                    // doctor-only
+                    d.getSpecialty(),
+                    d.getBio(),
+                    d.getRate(),
+                    d.getConsultationFee(),
+                    d.getAvailability());
+        } else if (u instanceof Patient p) {
+            return new UserResponse(
+                    p.getId(),
+                    "PATIENT",
+                    p.getName(),
+                    p.getEmail(),
+                    p.getPhoneNumber(),
+                    p.getAddress(),
+                    p.getRole(),
+                    p.getGender(),
+                    null, // profilePictureUrl
+
+                    // doctor-only -> nulls
+                    null, null, null, null, null);
+        } else {
+            return new UserResponse(
+                    u.getId(),
+                    "USER",
+                    u.getName(),
+                    u.getEmail(),
+                    u.getPhoneNumber(),
+                    u.getAddress(),
+                    u.getRole(),
+                    u.getGender(),
+                    null, // profilePictureUrl
+
+                    // doctor-only -> nulls
+                    null, null, null, null, null);
+        }
     }
 }

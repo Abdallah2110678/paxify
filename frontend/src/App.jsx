@@ -1,3 +1,4 @@
+// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/navbar/navbar.jsx";
 import Footer from "./components/footer/footer.jsx";
@@ -15,10 +16,18 @@ import Register from "./pages/register/Register.jsx";
 import ProtectedRoute from "./auth/ProtectedRoute.jsx";
 import DoctorRegister from "./pages/doctor/DoctorRegister.jsx";
 
+// ✅ your doctor pages are in src/pages/doctor
+import Doctors from "./pages/doctor/Doctors.jsx";
+import UpdateDoctor from "./pages/doctor/UpdateDoctor.jsx";
+
+// ✅ your AddDoctor is in src/pages/dashboard (per your tree)
+import AddDoctor from "./pages/dashboard/AddDoctor.jsx";
+
 function App() {
   return (
     <Router>
       <Routes>
+        {/* ===== Admin-only ===== */}
         <Route
           path="/dashboard"
           element={
@@ -27,6 +36,32 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/dashboard/doctors"
+          element={
+            <ProtectedRoute roles={["ADMIN"]}>
+              <Doctors />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/doctors/:id/edit"
+          element={
+            <ProtectedRoute roles={["ADMIN"]}>
+              <UpdateDoctor />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/add-doctor"
+          element={
+            <ProtectedRoute roles={["ADMIN"]}>
+              <AddDoctor />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ===== Doctor & Patient dashboards ===== */}
         <Route
           path="/doctor-dashboard"
           element={
@@ -44,6 +79,7 @@ function App() {
           }
         />
 
+        {/* ===== Public site with Navbar/Footer ===== */}
         <Route
           path="*"
           element={

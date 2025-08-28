@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminPanel from "../admin/AdminPanel";
-import DoctorPanel from "../doctor/DoctorPanel";
+import Doctors from "../doctor/Doctors";
 import PatientPanel from "../patients/PatientPanel";
 import AddDoctor from "./AddDoctor";
 import AddPatient from "../patients/AddPatient";
@@ -101,7 +101,7 @@ const Dashboard = () => {
             <main className={`flex-1 ${isSidebarOpen ? 'ml-56' : 'ml-20'} transition-all duration-300`}>
                 {active === "overview" && <DashboardOverview />}
                 {active === "admin" && <AdminPanel />}
-                {active === "doctor" && <DoctorPanel />}
+                {active === "doctor" && <Doctors />}
                 {active === "add-doctor" && <AddDoctor />}
                 {active === "patient" && <PatientPanel />}
                 {active === "add-patient" && <AddPatient />}

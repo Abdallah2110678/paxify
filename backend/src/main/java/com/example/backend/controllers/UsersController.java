@@ -28,7 +28,6 @@ import com.example.backend.dto.UserResponse;
 import com.example.backend.dto.UserUpdateRequest;
 import com.example.backend.services.UserService;
 
-import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
