@@ -24,7 +24,7 @@ import UpdateDoctor from "./pages/doctor/UpdateDoctor.jsx";
 import AddDoctor from "./pages/dashboard/AddDoctor.jsx";
 
 // Patient admin pages (in src/pages/patients)
-import PatientPanel from "./pages/patients/PatientPanel.jsx";
+import Pantients from "./pages/patients/Patients.jsx";
 import AddPatient from "./pages/patients/AddPatient.jsx";
 import UpdatePatient from "./pages/patients/UpdatePatient.jsx";
 
@@ -71,7 +71,7 @@ function App() {
           path="/dashboard/patients"
           element={
             <ProtectedRoute roles={["ADMIN"]}>
-              <PatientPanel />
+              <Pantients />
             </ProtectedRoute>
           }
         />
