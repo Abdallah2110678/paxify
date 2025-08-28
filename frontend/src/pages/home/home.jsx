@@ -617,35 +617,47 @@ export default function Home() {
             {/* SECTION 8: FAQ */}
             <section className="py-16 md:py-20 bg-white">
                 <div className="container mx-auto max-w-5xl px-6">
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-3xl md:text-4xl font-bold text-[#2B2B2B]">FAQ</h2>
-                        <button
-                            onClick={handleBrowseTherapists}
-                            className="rounded-full px-5 py-3 font-semibold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow"
-                        >
-                            Browse Therapists
-                        </button>
+                    <div className="text-center mb-8">
+                        <h2 className="text-3xl md:text-4xl font-bold text-[#2B2B2B] mb-6">FAQ</h2>
                     </div>
 
-                    <div className="mt-8 divide-y divide-[#4CB5AB]/15 border border-[#4CB5AB]/20 rounded-2xl overflow-hidden">
+                    <div className="divide-y divide-[#4CB5AB]/15 border border-[#4CB5AB]/20 rounded-2xl overflow-hidden">
                         {faqs.map((f, idx) => (
                             <div key={idx} className="bg-white">
                                 <button
-                                    className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-[#F4EDE4]"
+                                    className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-[#F4EDE4] transition-colors duration-200"
                                     onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                                     aria-expanded={openFaq === idx}
                                 >
-                                    <span className="font-medium text-[#2B2B2B]">{f.q}</span>
-                                    <span className="text-[#6B6B6B]">{openFaq === idx ? "−" : "+"}</span>
+                                    <span className="font-medium text-[#2B2B2B] pr-4">{f.q}</span>
+                                    <span
+                                        className={`text-[#4CB5AB] text-xl font-bold transition-transform duration-300 flex-shrink-0 ${openFaq === idx ? 'rotate-180' : ''
+                                            }`}
+                                    >
+                                        {openFaq === idx ? "−" : "+"}
+                                    </span>
                                 </button>
                                 {openFaq === idx && (
-                                    <div className="px-6 pb-6 -mt-2 text-[#6B6B6B]">{f.a}</div>
+                                    <div className="px-6 pb-6 -mt-2 text-[#6B6B6B] animate-fadeIn">
+                                        {f.a}
+                                    </div>
                                 )}
                             </div>
                         ))}
+
+                        {/* ✅ Button placed under questions inside same box */}
+                        <div className="text-center py-6 bg-white">
+                            <button
+                                onClick={handleBrowseTherapists}
+                                className="rounded-full px-6 py-3 font-semibold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                            >
+                                Browse Therapists
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
+
         </div>
     );
 }
