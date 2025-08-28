@@ -45,24 +45,19 @@ export default function Home() {
 
     const steps = [
         {
-            title: "Tell Us What You Need",
+            title: "Create your account",
             desc:
-                "Answer a few questions about your child's needs, preferences, and schedule.",
+                " Enter your email and password to get started.",
         },
         {
-            title: "Get Matched with Therapists",
+            title: "Choose the right therapist",
             desc:
-                "We suggest verified professionals specialized in supporting kids and teens.",
+                "Select based on specialty, years of experience, and the budget that suits you.",
         },
         {
-            title: "Book Online or In‑Clinic",
+            title: "Book your session",
             desc:
-                "Choose the time and format that suits your family's routine, then confirm in seconds.",
-        },
-        {
-            title: "Stay in the Loop",
-            desc:
-                "Receive reminders, updates, and invoices right in your inbox—no missed sessions.",
+                "Pick the time and date that work best for you, and pay easily through multiple payment options.",
         },
     ];
 
@@ -445,11 +440,11 @@ export default function Home() {
                 <div className="container mx-auto max-w-7xl px-6">
                     <header className="max-w-3xl">
                         <h2 className="text-3xl md:text-4xl font-bold text-[#2B2B2B]">
-                            Your Child Deserves the Right Therapist. We Help You Find Them.
+                            You don’t have to face your problems alone.
                         </h2>
-                        <p className="mt-4 text-[#6B6B6B]">
-                            We partner only with licensed, compassionate professionals who have experience working with children and adolescents.
-                        </p>
+                        <h3 className="text-1xl md:text-2xl text-[#2B2B2B]">
+                            We work with therapists across all specialties, experienced in helping children, teens, and adults.
+                        </h3>
                     </header>
 
                     <ul className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -502,43 +497,101 @@ export default function Home() {
             {/* SECTION 6: WHY PAXIFY? */}
             <section className="py-16 md:py-20 bg-[#F4EDE4]">
                 <div className="container mx-auto max-w-7xl px-6">
-                    <h2 className="text-3xl md:text-4xl font-bold text-[#2B2B2B]">Why Paxify?</h2>
-                    <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold text-[#2B2B2B] mb-4">Why Paxify?</h2>
+                        <p className="text-lg text-[#6B6B6B] max-w-2xl mx-auto">
+                            We've built a platform that puts your needs first, making therapy accessible, affordable, and genuinely supportive.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                         {[
                             {
-                                title: "Secure and private",
-                                desc: "Your child's information is always protected and never disclosed.",
+                                title: "Therapists who listen",
+                                desc: "We partner only with therapists known for their expertise and their approachable, caring style — so your experience feels smooth, supportive, and truly heard.",
+                                icon: "👂",
+                                gradient: "from-[#4CB5AB]/10 to-[#4CB5AB]/5"
+                            },
+                            {
+                                title: "Full confidentiality",
+                                desc: "We use advanced technology to guarantee your privacy and never share your data with any third party.",
                                 icon: "🔒",
+                                gradient: "from-[#E68A6C]/10 to-[#E68A6C]/5"
                             },
                             {
-                                title: "Flexible options",
-                                desc: "Online or in‑clinic sessions, depending on your comfort and needs.",
-                                icon: "🧭",
+                                title: "Immediate sessions",
+                                desc: "Start your consultation right away — no long waiting lists.",
+                                icon: "⚡",
+                                gradient: "from-[#D4A44A]/10 to-[#D4A44A]/5"
                             },
                             {
-                                title: "All‑in‑one support",
-                                desc: "Book sessions, track progress, and shop therapeutic tools in one place.",
-                                icon: "🧰",
+                                title: "Fits your budget",
+                                desc: "Choose the price that works for you, and we'll recommend the right therapists accordingly.",
+                                icon: "💰",
+                                gradient: "from-[#4CB5AB]/10 to-[#4CB5AB]/5"
+                            },
+                            {
+                                title: "Flexible payment methods",
+                                desc: "Pay safely and easily through multiple payment options.",
+                                icon: "💳",
+                                gradient: "from-[#E68A6C]/10 to-[#E68A6C]/5"
                             },
                         ].map((f, i) => (
                             <div
                                 key={i}
-                                className="rounded-2xl bg-white border border-[#4CB5AB]/15 p-6 shadow-sm"
+                                className={`group rounded-2xl bg-white border border-[#4CB5AB]/15 p-6 shadow-sm hover:shadow-lg 
+                    transition-all duration-300 hover:-translate-y-1 hover:border-[#4CB5AB]/30 relative overflow-hidden
+                    ${i === 4 ? 'sm:col-span-2 lg:col-span-1' : ''}`}
                             >
-                                <div className="text-3xl">{f.icon}</div>
-                                <h3 className="mt-3 font-semibold text-lg text-[#2B2B2B]">{f.title}</h3>
-                                <p className="mt-2 text-[#6B6B6B]">{f.desc}</p>
+                                {/* Gradient background overlay */}
+                                <div className={`absolute inset-0 bg-gradient-to-br ${f.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl`}></div>
+
+                                <div className="relative z-10">
+                                    {/* Icon with background */}
+                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#4CB5AB]/20 to-[#E68A6C]/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                        <span className="text-2xl" role="img" aria-hidden="true">{f.icon}</span>
+                                    </div>
+
+                                    <h3 className="text-xl font-bold text-[#2B2B2B] mb-3 group-hover:text-[#4CB5AB] transition-colors duration-300">
+                                        {f.title}
+                                    </h3>
+
+                                    <p className="text-[#6B6B6B] leading-relaxed">
+                                        {f.desc}
+                                    </p>
+                                </div>
+
+                                {/* Decorative corner element */}
+                                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#4CB5AB]/5 to-transparent rounded-bl-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </div>
                         ))}
                     </div>
 
-                    <div className="mt-8">
-                        <button
-                            onClick={handleBrowseTherapists}
-                            className="rounded-full px-6 py-3 font-semibold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow"
-                        >
-                            Browse Therapists
-                        </button>
+                    {/* Enhanced CTA Section */}
+                    <div className="mt-12 text-center">
+                        <div className="bg-white rounded-2xl p-8 shadow-sm border border-[#4CB5AB]/20 max-w-2xl mx-auto">
+                            <h3 className="text-2xl font-bold text-[#2B2B2B] mb-3">Ready to get started?</h3>
+                            <p className="text-[#6B6B6B] mb-6">Join thousands of families who have found their perfect therapist match.</p>
+
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                <button
+                                    onClick={handleBrowseTherapists}
+                                    className="group rounded-full px-8 py-4 font-bold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                                >
+                                    <span className="flex items-center justify-center gap-2">
+                                        Browse Therapists
+                                        <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                                    </span>
+                                </button>
+
+                                <button
+                                    onClick={handleKnowMore}
+                                    className="rounded-full px-8 py-4 font-semibold bg-transparent hover:bg-[#4CB5AB]/10 text-[#4CB5AB] border-2 border-[#4CB5AB] hover:border-[#44A08D] hover:text-[#44A08D] transition-all duration-300"
+                                >
+                                    Learn More
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -548,7 +601,7 @@ export default function Home() {
                 <div className="container mx-auto max-w-5xl px-6 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold">Help Is One Click Away</h2>
                     <p className="mt-4 text-white/90 text-lg">
-                        Whether you've just started looking or have been searching for a while, Paxify makes it easy to move forward — and we'll be with you every step of the way.
+                        Book your session today and take the first step toward the peace of mind you’ve been searching for.
                     </p>
                     <div className="mt-8">
                         <button
