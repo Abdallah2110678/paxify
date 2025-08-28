@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminPanel from "../admin/AdminPanel";
 import Doctors from "../doctor/Doctors";
-import PatientPanel from "../patients/PatientPanel";
+import Pantients from "../patients/Pantients";
 import AddDoctor from "./AddDoctor";
 import AddPatient from "../patients/AddPatient";
 import Products from "../products/Products";
@@ -103,7 +103,7 @@ const Dashboard = () => {
                 {active === "admin" && <AdminPanel />}
                 {active === "doctor" && <Doctors />}
                 {active === "add-doctor" && <AddDoctor />}
-                {active === "patient" && <PatientPanel />}
+                {active === "patient" && <Pantients />}
                 {active === "add-patient" && <AddPatient />}
                 {active === "product" && <Products />}
                 {active === "add-product" && <AddProduct />}

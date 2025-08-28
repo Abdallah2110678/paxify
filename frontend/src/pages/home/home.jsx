@@ -205,34 +205,52 @@ export default function Home() {
                     </div>
 
                     {/* Right quick actions */}
-                    <div className="bg-white/95 rounded-2xl shadow-2xl p-6 md:p-8 backdrop-blur-sm">
-                        <h3 className="text-xl font-semibold text-[#2B2B2B]">Quick actions</h3>
+                    <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 border border-[#4CB5AB]/20">
+                        <h3 className="text-xl font-semibold text-[#2B2B2B] mb-1">Quick actions</h3>
+                        <div className="w-12 h-1 bg-gradient-to-r from-[#4CB5AB] to-[#E68A6C] rounded mb-4"></div>
+
                         <div className="mt-4 grid grid-cols-2 gap-4">
                             <button
                                 onClick={() => handleBooking("in-person")}
-                                className="h-28 rounded-xl border border-[#4CB5AB]/50 hover:border-[#4CB5AB] hover:shadow-md transition flex flex-col items-center justify-center"
+                                className="group h-28 rounded-xl bg-gradient-to-br from-[#4CB5AB] to-[#44A08D] text-white transition-all duration-500 ease-out flex flex-col items-center justify-center relative overflow-hidden
+            hover:shadow-2xl hover:shadow-[#4CB5AB]/30 hover:-translate-y-1 hover:scale-105
+            before:absolute before:inset-0 before:bg-white/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100
+            after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent after:-translate-x-full after:transition-transform after:duration-700 hover:after:translate-x-full"
                             >
-                                <span className="text-2xl">👥</span>
-                                <span className="mt-2 font-medium text-[#2B2B2B]">Book In‑Clinic</span>
+                                <span className="text-2xl group-hover:scale-110 transition-transform duration-300 relative z-10">👥</span>
+                                <span className="mt-2 font-medium relative z-10 group-hover:text-white transition-colors">Book In‑Clinic</span>
                             </button>
+
                             <button
                                 onClick={() => handleBooking("online")}
-                                className="h-28 rounded-xl border border-[#4CB5AB]/50 hover:border-[#4CB5AB] hover:shadow-md transition flex flex-col items-center justify-center"
+                                className="group h-28 rounded-xl bg-gradient-to-br from-[#E68A6C] to-[#D4A44A] text-white transition-all duration-500 ease-out flex flex-col items-center justify-center relative overflow-hidden
+            hover:shadow-2xl hover:shadow-[#E68A6C]/30 hover:-translate-y-1 hover:scale-105
+            before:absolute before:inset-0 before:bg-white/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100
+            after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent after:-translate-x-full after:transition-transform after:duration-700 hover:after:translate-x-full"
                             >
-                                <span className="text-2xl">💻</span>
-                                <span className="mt-2 font-medium text-[#2B2B2B]">Book Online</span>
+                                <span className="text-2xl group-hover:scale-110 transition-transform duration-300 relative z-10">💻</span>
+                                <span className="mt-2 font-medium relative z-10 group-hover:text-white transition-colors">Book Online</span>
                             </button>
+
                             <button
                                 onClick={() => handleBooking("shop")}
-                                className="h-28 rounded-xl border border-[#4CB5AB]/50 hover:border-[#4CB5AB] hover:shadow-md transition flex flex-col items-center justify-center col-span-2"
+                                className="group h-28 rounded-xl bg-gradient-to-r from-[#D4B896] via-[#4CB5AB] to-[#E68A6C] text-white transition-all duration-500 ease-out flex flex-col items-center justify-center col-span-2 relative overflow-hidden
+            hover:shadow-2xl hover:shadow-[#4CB5AB]/25 hover:-translate-y-1 hover:scale-105
+            before:absolute before:inset-0 before:bg-white/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100
+            after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/15 after:to-transparent after:-translate-x-full after:transition-transform after:duration-700 hover:after:translate-x-full"
                             >
-                                <span className="text-2xl">🛒</span>
-                                <span className="mt-2 font-medium text-[#2B2B2B]">Shop Therapeutic Tools</span>
+                                <span className="text-2xl group-hover:scale-110 transition-transform duration-300 relative z-10">🛒</span>
+                                <span className="mt-2 font-medium relative z-10 group-hover:text-white transition-colors">Shop Therapeutic Tools</span>
                             </button>
                         </div>
-                        <p className="mt-4 text-sm text-[#6B6B6B]">
-                            Secure & private • Licensed therapists • Arabic & English support
-                        </p>
+
+                        <div className="mt-6 p-3 bg-gradient-to-r from-[#4CB5AB]/10 to-[#E68A6C]/10 rounded-lg hover:from-[#4CB5AB]/15 hover:to-[#E68A6C]/15 transition-all duration-300">
+                            <p className="text-sm text-[#6B6B6B] text-center">
+                                <span className="text-[#4CB5AB] font-medium hover:text-[#44A08D] transition-colors cursor-default">Secure & private</span> •
+                                <span className="text-[#E68A6C] font-medium hover:text-[#D4A44A] transition-colors cursor-default"> Licensed therapists</span> •
+                                <span className="text-[#D4A44A] font-medium hover:text-[#E68A6C] transition-colors cursor-default"> Arabic & English support</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </section>
