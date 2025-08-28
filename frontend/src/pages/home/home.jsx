@@ -68,28 +68,24 @@ export default function Home() {
 
     const helpBoxes = [
         {
-            icon: "📅",
-            title: "Book Appointments with Confidence",
+            title: "Sessions with licensed specialists",
             desc:
-                "Browse verified therapist profiles and schedule sessions that fit your family's routine — whether online or in‑clinic.",
+                " Book a session with a qualified therapist in less than 5 minutes — private, secure, and affordable.",
         },
         {
-            icon: "🧩",
-            title: "Explore a Wide Range of Specialties",
+            title: "Store",
             desc:
-                "From ADHD to trauma recovery to anxiety and beyond, find professionals who specialize in supporting children and teens.",
+                " We’ve created a store with carefully selected products to support you step by step.",
         },
         {
-            icon: "🛍️",
-            title: "Shop Therapist‑Recommended Products",
+            title: "Therapeutic Games",
             desc:
-                "Access a curated store of supplements, wellness tools, and sensory aids — all selected to complement your child's journey.",
+                " We offer therapeutic games designed by professionals to help you face challenges in a lighter way.",
         },
         {
-            icon: "🔔",
-            title: "Stay in the Loop",
+            title: "Smart Reminders",
             desc:
-                "Get clear updates, appointment reminders, and invoices directly to your inbox — no confusion, no missed sessions.",
+                "We’ll send you reminders and notifications so you never miss a session.",
         },
     ];
 
@@ -165,87 +161,121 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-white text-[#6B6B6B]">
+        <div className="min-h-screen bg-white text-[#6B6B6B] overflow-x-hidden max-w-full">
             {/* SECTION 1: HERO */}
-            <section className="relative overflow-hidden pt-20 md:pt-24">
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: "url('/hero_section.jpg')" }}
-                />
-
-                <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
-                <div className="relative container mx-auto max-w-7xl px-6 py-28 md:py-36 grid md:grid-cols-2 gap-10 items-center">
-                    {/* Left copy */}
-                    <div>
-                        <h1 className="text-4xl md:text-6xl font-bold leading-tight" style={{ color: '#D4B896' }}>
+            <section className="relative overflow-hidden flex flex-col md:flex-row min-h-[calc(100vh-80px)]">
+                {/* Left Half - Background Color Only */}
+                <div className="w-full md:w-1/2 bg-[#F4EDE4] flex items-center justify-center p-6 sm:p-8 md:p-12 lg:p-16 min-h-[50vh] md:min-h-full">
+                    <div className="max-w-lg w-full">
+                        <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight break-words" style={{
+                            color: '#2B2B2B',
+                            fontWeight: 'normal'
+                        }}>
                             Your peace of mind starts here with the <span style={{
-                                color: '#4ECDC4',
-                                textShadow: '0 0 15px rgba(78, 205, 196, 0.6)',
-                                fontWeight: 'bolder'
-                            }}>right therapist</span>
+                                fontWeight: 'bold',
+                                fontStyle: 'italic',
+                                fontFamily: '"Playfair Display", "Georgia", "Times New Roman", serif',
+                                position: 'relative',
+                                display: 'inline-block',
+                                letterSpacing: '0.02em'
+                            }}>
+                                right therapist
+                                <svg
+                                    style={{
+                                        position: 'absolute',
+                                        bottom: '-6px',
+                                        left: '0',
+                                        width: '100%',
+                                        height: '10px'
+                                    }}
+                                    viewBox="0 0 200 10"
+                                    preserveAspectRatio="none"
+                                >
+                                    <path
+                                        d="M0,6 Q100,3 200,6"
+                                        stroke="#4ECDC4"
+                                        strokeWidth="4"
+                                        fill="none"
+                                        strokeLinecap="round"
+                                    />
+                                </svg>
+                            </span>
                         </h1>
-                        <p className="mt-6 text-white/90 text-lg md:text-xl">
+
+                        <p className="mt-4 sm:mt-6 text-[#6B6B6B] text-base sm:text-lg md:text-xl font-medium break-words">
                             Book your session online or in-person, with full confidentiality and a price that works for you.
                         </p>
 
-                        <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
                             <button
                                 onClick={handleBrowseTherapists}
-                                className="rounded-full px-6 py-3 font-semibold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow-lg"
+                                className="rounded-full px-6 py-3 font-semibold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow-lg text-center"
                             >
                                 Browse Therapists
                             </button>
                             <button
                                 onClick={handleKnowMore}
-                                className="rounded-full px-6 py-3 font-semibold bg-white/90 hover:bg-white text-[#2B2B2B] shadow-lg"
+                                className="rounded-full px-6 py-3 font-semibold bg-white hover:bg-white/80 text-[#2B2B2B] shadow-lg border border-[#4CB5AB]/20 text-center"
                             >
                                 Know more
                             </button>
                         </div>
                     </div>
+                </div>
 
-                    {/* Right quick actions */}
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 border border-[#4CB5AB]/20">
-                        <h3 className="text-xl font-semibold text-[#2B2B2B] mb-1">Quick actions</h3>
+                {/* Right Half - Background Image with Quick Actions */}
+                <div
+                    className="w-full md:w-1/2 relative flex items-center justify-center p-6 sm:p-8 md:p-12 lg:p-16 min-h-[50vh] md:min-h-full"
+                    style={{
+                        backgroundImage: "url('/hero_section.jpg')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }}
+                >
+                    {/* Dark overlay */}
+                    <div className="absolute inset-0 bg-black/40"></div>
+
+                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl border border-white/20 relative z-10 w-full max-w-sm sm:max-w-md">
+                        <h3 className="text-lg sm:text-xl font-semibold text-[#2B2B2B] mb-1">Quick actions</h3>
                         <div className="w-12 h-1 bg-gradient-to-r from-[#4CB5AB] to-[#E68A6C] rounded mb-4"></div>
 
-                        <div className="mt-4 grid grid-cols-2 gap-4">
+                        <div className="mt-4 grid grid-cols-2 gap-3 sm:gap-4">
                             <button
                                 onClick={() => handleBooking("in-person")}
-                                className="group h-28 rounded-xl bg-gradient-to-br from-[#4CB5AB] to-[#44A08D] text-white transition-all duration-500 ease-out flex flex-col items-center justify-center relative overflow-hidden
-            hover:shadow-2xl hover:shadow-[#4CB5AB]/30 hover:-translate-y-1 hover:scale-105
-            before:absolute before:inset-0 before:bg-white/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100
-            after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent after:-translate-x-full after:transition-transform after:duration-700 hover:after:translate-x-full"
+                                className="group h-24 sm:h-28 rounded-xl bg-gradient-to-br from-[#4CB5AB] to-[#44A08D] text-white transition-all duration-500 ease-out flex flex-col items-center justify-center relative overflow-hidden
+                    hover:shadow-2xl hover:shadow-[#4CB5AB]/30 hover:-translate-y-1 hover:scale-105
+                    before:absolute before:inset-0 before:bg-white/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100
+                    after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent after:-translate-x-full after:transition-transform after:duration-700 hover:after:translate-x-full"
                             >
-                                <span className="text-2xl group-hover:scale-110 transition-transform duration-300 relative z-10">👥</span>
-                                <span className="mt-2 font-medium relative z-10 group-hover:text-white transition-colors">Book In‑Clinic</span>
+                                <span className="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300 relative z-10">👥</span>
+                                <span className="mt-1 sm:mt-2 font-medium text-xs sm:text-sm relative z-10 group-hover:text-white transition-colors text-center px-1 break-words">Book In‑Clinic</span>
                             </button>
 
                             <button
                                 onClick={() => handleBooking("online")}
-                                className="group h-28 rounded-xl bg-gradient-to-br from-[#E68A6C] to-[#D4A44A] text-white transition-all duration-500 ease-out flex flex-col items-center justify-center relative overflow-hidden
-            hover:shadow-2xl hover:shadow-[#E68A6C]/30 hover:-translate-y-1 hover:scale-105
-            before:absolute before:inset-0 before:bg-white/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100
-            after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent after:-translate-x-full after:transition-transform after:duration-700 hover:after:translate-x-full"
+                                className="group h-24 sm:h-28 rounded-xl bg-gradient-to-br from-[#E68A6C] to-[#D4A44A] text-white transition-all duration-500 ease-out flex flex-col items-center justify-center relative overflow-hidden
+                    hover:shadow-2xl hover:shadow-[#E68A6C]/30 hover:-translate-y-1 hover:scale-105
+                    before:absolute before:inset-0 before:bg-white/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100
+                    after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent after:-translate-x-full after:transition-transform after:duration-700 hover:after:translate-x-full"
                             >
-                                <span className="text-2xl group-hover:scale-110 transition-transform duration-300 relative z-10">💻</span>
-                                <span className="mt-2 font-medium relative z-10 group-hover:text-white transition-colors">Book Online</span>
+                                <span className="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300 relative z-10">💻</span>
+                                <span className="mt-1 sm:mt-2 font-medium text-xs sm:text-sm relative z-10 group-hover:text-white transition-colors text-center px-1 break-words">Book Online</span>
                             </button>
 
                             <button
                                 onClick={() => handleBooking("shop")}
-                                className="group h-28 rounded-xl bg-gradient-to-r from-[#D4B896] via-[#4CB5AB] to-[#E68A6C] text-white transition-all duration-500 ease-out flex flex-col items-center justify-center col-span-2 relative overflow-hidden
-            hover:shadow-2xl hover:shadow-[#4CB5AB]/25 hover:-translate-y-1 hover:scale-105
-            before:absolute before:inset-0 before:bg-white/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100
-            after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/15 after:to-transparent after:-translate-x-full after:transition-transform after:duration-700 hover:after:translate-x-full"
+                                className="group h-24 sm:h-28 rounded-xl bg-gradient-to-r from-[#D4B896] via-[#4CB5AB] to-[#E68A6C] text-white transition-all duration-500 ease-out flex flex-col items-center justify-center col-span-2 relative overflow-hidden
+                    hover:shadow-2xl hover:shadow-[#4CB5AB]/25 hover:-translate-y-1 hover:scale-105
+                    before:absolute before:inset-0 before:bg-white/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100
+                    after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/15 after:to-transparent after:-translate-x-full after:transition-transform after:duration-700 hover:after:translate-x-full"
                             >
-                                <span className="text-2xl group-hover:scale-110 transition-transform duration-300 relative z-10">🛒</span>
-                                <span className="mt-2 font-medium relative z-10 group-hover:text-white transition-colors">Shop Therapeutic Tools</span>
+                                <span className="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300 relative z-10">🛒</span>
+                                <span className="mt-1 sm:mt-2 font-medium text-xs sm:text-sm relative z-10 group-hover:text-white transition-colors text-center px-1 break-words">Shop Therapeutic Tools</span>
                             </button>
                         </div>
 
-                        <div className="mt-6 p-3 bg-gradient-to-r from-[#4CB5AB]/10 to-[#E68A6C]/10 rounded-lg hover:from-[#4CB5AB]/15 hover:to-[#E68A6C]/15 transition-all duration-300">
-                            <p className="text-sm text-[#6B6B6B] text-center">
+                        <div className="mt-4 sm:mt-6 p-2 sm:p-3 bg-gradient-to-r from-[#4CB5AB]/10 to-[#E68A6C]/10 rounded-lg hover:from-[#4CB5AB]/15 hover:to-[#E68A6C]/15 transition-all duration-300">
+                            <p className="text-xs sm:text-sm text-[#6B6B6B] text-center break-words leading-relaxed">
                                 <span className="text-[#4CB5AB] font-medium hover:text-[#44A08D] transition-colors cursor-default">Secure & private</span> •
                                 <span className="text-[#E68A6C] font-medium hover:text-[#D4A44A] transition-colors cursor-default"> Licensed therapists</span> •
                                 <span className="text-[#D4A44A] font-medium hover:text-[#E68A6C] transition-colors cursor-default"> Arabic & English support</span>
@@ -258,8 +288,9 @@ export default function Home() {
             {/* SECTION 2: TESTIMONIALS */}
             <section className="py-16 md:py-20 bg-[#F4EDE4]">
                 <div className="container mx-auto max-w-7xl px-6">
+                    <h4 className="text-center text-2xl md:text-1xl font-bold text-[#2B2B2B]">"The doctor just wants to give me a prescription and send me away."</h4>
                     <h2 className="text-center text-3xl md:text-4xl font-bold text-[#2B2B2B]">
-                        You're Not Alone — Here is what others saying.
+                        With us, it’s different… hear what our clients have to say
                     </h2>
 
                     <div className="mt-10 relative">
@@ -336,6 +367,40 @@ export default function Home() {
                 </div>
             </section>
 
+
+
+            {/* SECTION 4: HOW WE HELP */}
+            <section className="py-16 md:py-20 bg-[#F4EDE4]">
+                <div className="container mx-auto max-w-7xl px-6">
+                    <header className="text-center max-w-3xl mx-auto">
+                        <h2 className="text-3xl md:text-4xl font-bold text-[#2B2B2B]">
+                            How we support you on your journey to recovery…
+                        </h2>
+                    </header>
+
+                    <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {helpBoxes.map((box, i) => (
+                            <div
+                                key={i}
+                                className="bg-white rounded-2xl border border-[#4CB5AB]/15 shadow-sm p-6 flex flex-col"
+                            >
+                                <div className="text-3xl" aria-hidden>{box.icon}</div>
+                                <h3 className="mt-4 text-lg font-semibold text-[#2B2B2B]">{box.title}</h3>
+                                <p className="mt-2 leading-relaxed text-[#6B6B6B]">{box.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-10 flex justify-center">
+                        <button
+                            onClick={handleBrowseTherapists}
+                            className="rounded-full px-6 py-3 font-semibold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow"
+                        >
+                            Browse Therapists
+                        </button>
+                    </div>
+                </div>
+            </section>
             {/* SECTION 3: HOW IT WORKS */}
             <section className="py-16 md:py-20 bg-white">
                 <div className="container mx-auto max-w-5xl px-6">
@@ -375,43 +440,6 @@ export default function Home() {
                     </div>
                 </div>
             </section>
-
-            {/* SECTION 4: HOW WE HELP */}
-            <section className="py-16 md:py-20 bg-[#F4EDE4]">
-                <div className="container mx-auto max-w-7xl px-6">
-                    <header className="text-center max-w-3xl mx-auto">
-                        <h2 className="text-3xl md:text-4xl font-bold text-[#2B2B2B]">
-                            Support That's Thoughtful, Flexible, and Built Around You
-                        </h2>
-                        <p className="mt-4 text-[#6B6B6B]">
-                            Practical tools and trusted professionals, all in one place.
-                        </p>
-                    </header>
-
-                    <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {helpBoxes.map((box, i) => (
-                            <div
-                                key={i}
-                                className="bg-white rounded-2xl border border-[#4CB5AB]/15 shadow-sm p-6 flex flex-col"
-                            >
-                                <div className="text-3xl" aria-hidden>{box.icon}</div>
-                                <h3 className="mt-4 text-lg font-semibold text-[#2B2B2B]">{box.title}</h3>
-                                <p className="mt-2 leading-relaxed text-[#6B6B6B]">{box.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="mt-10 flex justify-center">
-                        <button
-                            onClick={handleBrowseTherapists}
-                            className="rounded-full px-6 py-3 font-semibold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow"
-                        >
-                            Browse Therapists
-                        </button>
-                    </div>
-                </div>
-            </section>
-
             {/* SECTION 5: MEET OUR THERAPISTS */}
             <section className="py-16 md:py-20 bg-white">
                 <div className="container mx-auto max-w-7xl px-6">
