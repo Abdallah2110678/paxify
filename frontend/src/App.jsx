@@ -16,12 +16,17 @@ import Register from "./pages/register/Register.jsx";
 import ProtectedRoute from "./auth/ProtectedRoute.jsx";
 import DoctorRegister from "./pages/doctor/DoctorRegister.jsx";
 
-// ✅ your doctor pages are in src/pages/doctor
+// Doctor admin pages (in src/pages/doctor)
 import Doctors from "./pages/doctor/Doctors.jsx";
 import UpdateDoctor from "./pages/doctor/UpdateDoctor.jsx";
 
-// ✅ your AddDoctor is in src/pages/dashboard (per your tree)
+// AddDoctor (per your tree) in src/pages/dashboard
 import AddDoctor from "./pages/dashboard/AddDoctor.jsx";
+
+// Patient admin pages (in src/pages/patients)
+import PatientPanel from "./pages/patients/PatientPanel.jsx";
+import AddPatient from "./pages/patients/AddPatient.jsx";
+import UpdatePatient from "./pages/patients/UpdatePatient.jsx";
 
 function App() {
   return (
@@ -36,6 +41,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        {/* Doctors CRUD */}
         <Route
           path="/dashboard/doctors"
           element={
@@ -57,6 +63,31 @@ function App() {
           element={
             <ProtectedRoute roles={["ADMIN"]}>
               <AddDoctor />
+            </ProtectedRoute>
+          }
+        />
+        {/* Patients CRUD */}
+        <Route
+          path="/dashboard/patients"
+          element={
+            <ProtectedRoute roles={["ADMIN"]}>
+              <PatientPanel />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/patients/:id/edit"
+          element={
+            <ProtectedRoute roles={["ADMIN"]}>
+              <UpdatePatient />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/add-patient"
+          element={
+            <ProtectedRoute roles={["ADMIN"]}>
+              <AddPatient />
             </ProtectedRoute>
           }
         />
