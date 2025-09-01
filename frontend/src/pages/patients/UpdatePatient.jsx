@@ -1,67 +1,7 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import api from "../../lib/axios.jsx";
+import useUpdatePatient from "../../hooks/useUpdatePatient";
 
 const UpdatePatient = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [err, setErr] = useState("");
-
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        phoneNumber: "",
-        address: "",
-        gender: "",
-    });
-
-    const load = async () => {
-        setLoading(true);
-        setErr("");
-        try {
-            const { data } = await api.get(`/api/users/${id}`);
-            setForm({
-                name: data?.name || "",
-                email: data?.email || "",
-                phoneNumber: data?.phoneNumber || "",
-                address: data?.address || "",
-                gender: data?.gender || "",
-            });
-        } catch (e) {
-            setErr(e?.response?.data?.message || e.message || "Failed to load patient");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        load();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        setSaving(true);
-        setErr("");
-
-        try {
-            const payload = {
-                name: form.name || null,
-                email: form.email || null,
-                phoneNumber: form.phoneNumber || null,
-                address: form.address || null,
-                gender: form.gender ? form.gender.toUpperCase() : null,
-            };
-            await api.patch(`/api/users/${id}/patient`, payload);
-            navigate("/dashboard/patients");
-        } catch (e) {
-            setErr(e?.response?.data?.message || e.message || "Failed to update patient");
-            setSaving(false);
-        }
-    };
+    const { id, form, setForm, loading, saving, err, onSubmit, goBack, goPatients } = useUpdatePatient();
 
     return (
         <div className="p-6">
@@ -69,7 +9,7 @@ const UpdatePatient = () => {
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-2xl font-bold text-gray-800">Edit Patient</h2>
                     <button
-                        onClick={() => navigate(-1)}
+                        onClick={goBack}
                         className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50"
                     >
                         ← Back
@@ -144,7 +84,7 @@ const UpdatePatient = () => {
                         <div className="flex justify-end gap-2 pt-2">
                             <button
                                 type="button"
-                                onClick={() => navigate("/dashboard/patients")}
+                                onClick={goPatients}
                                 className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50"
                                 disabled={saving}
                             >

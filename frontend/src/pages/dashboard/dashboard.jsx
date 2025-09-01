@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import useDashboard from "../../hooks/useDashboard";
 import AdminPanel from "../admin/AdminPanel";
 import Doctors from "../doctor/Doctors";
 import Pantients from "./../patients/Patients";
@@ -10,23 +9,7 @@ import AddProduct from "../products/AddProduct";
 import DashboardOverview from "./DashboardOverview";
 
 const Dashboard = () => {
-    const [active, setActive] = useState("overview");
-    const [isSidebarOpen, setSidebarOpen] = useState(true);
-    const navigate = useNavigate();
-
-    const toggleSidebar = () => {
-        setSidebarOpen(!isSidebarOpen);
-    };
-
-    const buttons = [
-        { id: "admin", label: "Admin", icon: "🛡️" },
-        { id: "doctor", label: "Doctor", icon: "🩺" },
-        { id: "add-doctor", label: "Add Doctor", icon: "➕" },
-        { id: "patient", label: "Patient", icon: "👤" },
-        { id: "add-patient", label: "Add Patient", icon: "➕" },
-        { id: "product", label: "Products", icon: "💊" },
-        { id: "add-product", label: "Add Product", icon: "➕" },
-    ];
+    const { active, setActive, isSidebarOpen, toggleSidebar, goHome, buttons } = useDashboard();
 
     return (
         <div className="flex min-h-screen bg-gray-100">
@@ -86,7 +69,7 @@ const Dashboard = () => {
                 {/* Home Button */}
                 <div className="w-full px-4 pb-4">
                     <button
-                        onClick={() => navigate("/")}
+                        onClick={goHome}
                         className="group flex items-center space-x-3 px-5 py-3 rounded-lg font-medium transition-all duration-300 w-full text-left text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10"
                     >
                         <span className="text-xl group-hover:scale-110 transition-transform duration-300">🏠</span>

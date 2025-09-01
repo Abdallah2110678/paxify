@@ -1,23 +1,11 @@
 // DoctorDashboard.jsx
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import useDoctorDashboard from "../../hooks/useDoctorDashboard";
 import DoctorAppointments from "./DoctorAppointments";
 import AddDoctorAppointment from "./AddDoctorAppointment";
 import DoctorOverview from "./DoctorOverview";
 
 const DoctorDashboard = () => {
-  const [active, setActive] = useState("overview");
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const navigate = useNavigate();
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen);
-  };
-
-  const buttons = [
-    { id: "appointments", label: "Appointments", icon: "📅" },
-    { id: "add-appointment", label: "Add Appointment", icon: "➕" },
-  ];
+  const { active, setActive, isSidebarOpen, toggleSidebar, goHome, buttons } = useDoctorDashboard();
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -85,7 +73,7 @@ const DoctorDashboard = () => {
         {/* Home Button */}
         <div className="w-full px-4 pb-4">
           <button
-            onClick={() => navigate("/")}
+            onClick={goHome}
             className="group flex items-center space-x-3 px-5 py-3 rounded-lg font-medium transition-all duration-300 w-full text-left text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10"
           >
             <span className="text-xl group-hover:scale-110 transition-transform duration-300">🏠</span>

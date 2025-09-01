@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import { useAuth } from "frontend/src/context/AuthContext.jsx";
+import { Link } from "react-router-dom";
+import useNavbar from "../../hooks/useNavbar.js";
 
 /*
 Palette
@@ -11,66 +10,21 @@ Palette
 */
 
 const Navbar = () => {
-  const [activeLink, setActiveLink] = useState("home");
-  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [openProfile, setOpenProfile] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { user, logout } = useAuth() || { user: null, logout: () => { } };
-  const dropdownRef = useRef(null);
-
-  // Derive safe display fields from user object
-  const displayName =
-    user?.name ||
-    user?.fullName ||
-    [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
-    user?.preferred_username ||
-    (user?.email ? user.email.split("@")[0] : "") ||
-    "User";
-
-  const displayEmail =
-    user?.email ||
-    user?.userEmail ||
-    user?.username ||
-    (typeof user?.sub === "string" ? user.sub : "");
-
-  useEffect(() => {
-    const currentPath = location.pathname.replace("/", "") || "home";
-    setActiveLink(currentPath);
-  }, [location]);
-
-  useEffect(() => {
-    const handler = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setOpenProfile(false);
-      }
-    };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, []);
-
-  const handleLinkClick = (linkId) => {
-    setActiveLink(linkId);
-    setMobileMenuOpen(false);
-    navigate(linkId === "home" ? "/" : `/${linkId}`);
-  };
-
-  const goMyDashboard = () => {
-    if (!user) return;
-    if (user.role === "ADMIN") navigate("/dashboard");
-    else if (user.role === "DOCTOR") navigate("/doctor-dashboard");
-    else if (user.role === "PATIENT") navigate("/patient-dashboard");
-    else navigate("/");
-    setOpenProfile(false);
-  };
-
-  const links = [
-    { id: "home", label: "Home", icon: "🏠" },
-    { id: "book", label: "Book Session", icon: "📅" },
-    { id: "therapists", label: "Find Therapists", icon: "👨‍⚕️" },
-    { id: "games", label: "Games", icon: "🎮" },
-    { id: "about", label: "About", icon: "ℹ️" },
-  ];
+  const {
+    activeLink,
+    isMobileMenuOpen,
+    openProfile,
+    setOpenProfile,
+    setMobileMenuOpen,
+    dropdownRef,
+    user,
+    logout,
+    displayName,
+    displayEmail,
+    handleLinkClick,
+    goMyDashboard,
+    links,
+  } = useNavbar();
 
   return (
     <nav
@@ -84,7 +38,7 @@ const Navbar = () => {
       <div className="container mx-auto px-6 py-4 md:py-5 flex justify-between items-center">
         {/* Logo */}
         <div
-          onClick={() => navigate("/")}
+          onClick={() => handleLinkClick("home")}
           className="flex items-center cursor-pointer select-none"
         >
           <img src="/logo.png" alt="Paxify logo" className="w-10 h-10 mr-2 rounded" />
@@ -122,7 +76,7 @@ const Navbar = () => {
 
           {!user && (
             <button
-              onClick={() => navigate("/doctor-register")}
+              onClick={() => handleLinkClick("doctor-register")}
               className="ml-3 px-4 py-2 rounded-full bg-[#E68A6C] text-white hover:bg-[#d97a5f] shadow"
             >
               Join Our Team
@@ -200,7 +154,7 @@ const Navbar = () => {
                       <button
                         onClick={() => {
                           logout();
-                          navigate("/");
+                          handleLinkClick("home");
                         }}
                         className="w-full text-left px-4 py-2 text-[#E68A6C] hover:bg-[#FCEBE6]"
                         role="menuitem"
@@ -261,7 +215,7 @@ const Navbar = () => {
             ))}
             {!user ? (
               <button
-                onClick={() => navigate("/doctor-register")}
+                onClick={() => handleLinkClick("doctor-register")}
                 className="block w-full text-left px-3 py-2 rounded-full text-white bg-[#E68A6C] hover:bg-[#d97a5f]"
               >
                 Join Our Team

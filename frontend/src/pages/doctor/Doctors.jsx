@@ -1,63 +1,19 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../../lib/axios.jsx";
-
-const idOf = (row) => row?.id || row?.userId || row?._id;
+import useDoctors from "../../hooks/useDoctors.js";
 
 export default function Doctors() {
-    const navigate = useNavigate();
-    const [rows, setRows] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [err, setErr] = useState("");
-    const [query, setQuery] = useState("");
-    const [deletingId, setDeletingId] = useState(null);
-
-    const fetchRows = async () => {
-        setLoading(true);
-        setErr("");
-        try {
-            const { data } = await api.get("/api/users/doctors"); // ADMIN
-            const list = Array.isArray(data) ? data : (data?.items || data?.data || data?.results || []);
-            setRows(list);
-        } catch (e) {
-            setErr(e?.response?.data?.message || e.message || "Failed to load doctors");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchRows();
-    }, []);
-
-    const filtered = rows.filter((d) => {
-        if (!query) return true;
-        const q = query.toLowerCase();
-        return [
-            d?.name, d?.email, d?.specialty, d?.address
-        ].some((v) => String(v ?? "").toLowerCase().includes(q));
-    });
-
-    const onDelete = async (row) => {
-        const id = idOf(row);
-        if (!id) return alert("Missing doctor id.");
-        if (!confirm(`Delete doctor "${row?.name || row?.email || id}"?`)) return;
-        try {
-            setDeletingId(id);
-            await api.delete(`/api/users/${id}`); // ADMIN delete
-            setRows((prev) => prev.filter((r) => idOf(r) !== id));
-        } catch (e) {
-            alert(e?.response?.data?.message || e.message || "Failed to delete doctor");
-        } finally {
-            setDeletingId(null);
-        }
-    };
-
-    const onEdit = (row) => {
-        const id = idOf(row);
-        if (!id) return alert("Missing doctor id.");
-        navigate(`/dashboard/doctors/${id}/edit`);
-    };
+    const {
+        rows,
+        loading,
+        err,
+        query,
+        setQuery,
+        filtered,
+        deletingId,
+        fetchRows,
+        onDelete,
+        onEdit,
+        goAddDoctor,
+    } = useDoctors();
 
     return (
         <div className="p-6">
@@ -78,7 +34,7 @@ export default function Doctors() {
                             ⟳ Reload
                         </button>
                         <button
-                            onClick={() => navigate("/dashboard/add-doctor")}
+                            onClick={goAddDoctor}
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             Add New Doctor
@@ -115,7 +71,7 @@ export default function Doctors() {
                                 )}
 
                                 {filtered.map((d) => {
-                                    const id = idOf(d);
+                                    const id = d?.id || d?._id || d?.userId || d?.uuid || d?.doctorId || `${d?.email || d?.name}`;
                                     return (
                                         <tr key={id}>
                                             <td className="px-6 py-4 whitespace-nowrap">{d?.name || "—"}</td>

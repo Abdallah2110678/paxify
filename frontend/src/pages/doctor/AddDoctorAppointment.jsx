@@ -1,27 +1,16 @@
-import { useState } from "react";
+import useAddDoctorAppointment from "../../hooks/useAddDoctorAppointment";
 
 const AddDoctorAppointment = () => {
-  const [form, setForm] = useState({
-    dateTime: "",
-    sessionType: "Online",
-    price: ""
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitting Appointment:", form);
-    // TODO: integrate backend here
-  };
+  const { form, submitting, err, handleChange, handleSubmit } = useAddDoctorAppointment();
 
   return (
     <div className="p-6">
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Add Appointment</h2>
+
+        {err && (
+          <div className="mb-4 p-3 rounded bg-rose-50 border border-rose-200 text-rose-700">{err}</div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -78,9 +67,10 @@ const AddDoctorAppointment = () => {
           <div className="flex justify-end">
             <button
               type="submit"
+              disabled={submitting}
               className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Add Appointment
+              {submitting ? "Adding..." : "Add Appointment"}
             </button>
           </div>
         </form>

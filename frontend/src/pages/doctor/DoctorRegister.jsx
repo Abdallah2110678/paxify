@@ -1,54 +1,7 @@
-import { useState } from "react";
-import api from "../../lib/axios.jsx";
-import { useNavigate } from "react-router-dom";
+import useDoctorRegister from "../../hooks/useDoctorRegister";
 
 const DoctorRegister = () => {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    phoneNumber: "",
-    gender: "MALE",
-    specialty: "",
-    bio: "",
-    consultationFee: "",
-    availability: "",
-  });
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e) => {
-    setProfilePicture(e.target.files[0]);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    try {
-      const formData = new FormData();
-      Object.keys(form).forEach((key) => {
-        if (form[key]) formData.append(key, form[key]);
-      });
-      if (profilePicture) {
-        formData.append("file", profilePicture); // FIXED
-      }
-
-      await api.post("/api/auth/register-doctor", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      alert("Doctor registered successfully!");
-      navigate("/login");
-    } catch (err) {
-      setError(err.response?.data || "Registration failed");
-    }
-  };
+  const { form, error, submitting, setForm, handleChange, handleFileChange, handleSubmit } = useDoctorRegister();
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
@@ -162,9 +115,10 @@ const DoctorRegister = () => {
           {/* Button */}
           <button
             type="submit"
+            disabled={submitting}
             className="bg-blue-600 text-white px-6 py-2 rounded w-full"
           >
-            Create account
+            {submitting ? "Creating..." : "Create account"}
           </button>
         </form>
 

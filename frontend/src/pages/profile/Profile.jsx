@@ -1,5 +1,5 @@
 import { useAuth } from "../../context/AuthContext.jsx";
-import api from "../../lib/axios.jsx";
+import api from "./../../services/api";
 import { useState } from "react";
 
 const Profile = () => {

@@ -1,22 +1,10 @@
 // PatientDashboard.jsx
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import usePatientDashboard from "../../hooks/usePatientDashboard";
 import PatientUpcomingAppointments from "./PatientUpcomingAppointments";
 import PatientDoctorComments from "./PatientDoctorComments";
 
 const PatientDashboard = () => {
-  const [active, setActive] = useState("overview");
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const navigate = useNavigate();
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen);
-  };
-
-  const buttons = [
-    { id: "upcoming", label: "Upcoming Appointments", icon: "📅" },
-    { id: "comments", label: "Doctor's Comments", icon: "💬" },
-  ];
+  const { active, setActive, isSidebarOpen, toggleSidebar, goHome, buttons } = usePatientDashboard();
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -85,8 +73,8 @@ const PatientDashboard = () => {
         {/* Home Button */}
         <div className="w-full px-4 pb-4">
           <button
-            onClick={() => navigate("/")}
-            className="group flex items-center space-x-3 px-5 py-3 rounded-lg font-medium transition-all duration-300 w-full text-left text-green-100 hover:text-white hover:bg-white hover:bg-opacity-10"
+            onClick={goHome}
+            className="group flex items-center space-x-3 px-5 py-3 rounded-lg font-medium transition-colors duration-300 w-full text-left text-green-100 hover:text-white hover:bg-white hover:bg-opacity-10"
           >
             <span className="text-xl group-hover:scale-110 transition-transform duration-300">🏠</span>
             {isSidebarOpen && <span className="text-base">Home</span>}
@@ -102,7 +90,6 @@ const PatientDashboard = () => {
           <div className="text-lg text-gray-700">Welcome to your dashboard!</div>
         )}
         {active === "upcoming" && <PatientUpcomingAppointments />}
-        {active === "past" && <PatientPastAppointments />}
         {active === "comments" && <PatientDoctorComments />}
       </main>
     </div>

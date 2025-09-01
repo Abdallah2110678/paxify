@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import api from "../lib/axios.jsx";
+import api from "../services/api.js";
+import { login as authLogin, signup as authSignup } from "../services/authService.js";
 import { jwtDecode } from "jwt-decode";
 
 const Ctx = createContext(null);
@@ -73,11 +74,7 @@ export const AuthProvider = ({ children }) => {
 
   // Login: fetch fresh user from backend
   const login = async (email, password) => {
-    const { data } = await api.post(
-      "/api/auth/login",
-      { email, password },
-      { headers: { "Content-Type": "application/json" } }
-    );
+    const data = await authLogin(email, password);
 
     setToken(data.token);
     localStorage.setItem("token", data.token);
@@ -106,16 +103,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (payload) => {
-    await api.post(
-      "/api/auth/register",
-      {
-        ...payload,
-        gender: payload?.gender
-          ? String(payload.gender).toUpperCase()
-          : undefined,
-      },
-      { headers: { "Content-Type": "application/json" } }
-    );
+    await authSignup(payload);
   };
 
   const logout = () => {

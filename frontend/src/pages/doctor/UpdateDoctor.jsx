@@ -1,64 +1,7 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import api from "../../lib/axios.jsx";
+import useUpdateDoctor from "../../hooks/useUpdateDoctor";
 
 const UpdateDoctor = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [err, setErr] = useState("");
-
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        specialty: "",
-        address: "",
-    });
-
-    const loadDoctor = async () => {
-        setLoading(true);
-        setErr("");
-        try {
-            const { data } = await api.get(`/api/users/${id}`);
-            setForm({
-                name: data?.name || "",
-                email: data?.email || "",
-                specialty: data?.specialty || "",
-                address: data?.address || "",
-            });
-        } catch (e) {
-            setErr(e?.response?.data?.message || e.message || "Failed to load doctor");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        loadDoctor();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        setSaving(true);
-        setErr("");
-        try {
-            // DoctorUpdateRequest: send only fields we change (nulls allowed/ignored)
-            const payload = {
-                name: form.name || null,
-                email: form.email || null,
-                specialty: form.specialty || null,
-                address: form.address || null,
-            };
-            await api.patch(`/api/users/${id}/doctor`, payload);
-            navigate("/dashboard/doctors");
-        } catch (e) {
-            setErr(e?.response?.data?.message || e.message || "Failed to update doctor");
-            setSaving(false);
-        }
-    };
+    const { form, setForm, handleFileChange, loading, saving, err, onSubmit, goBack, goDoctors } = useUpdateDoctor();
 
     return (
         <div className="p-6">
@@ -66,7 +9,7 @@ const UpdateDoctor = () => {
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-2xl font-bold text-gray-800">Update Doctor</h2>
                     <button
-                        onClick={() => navigate(-1)}
+                        onClick={goBack}
                         className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50"
                     >
                         ← Back
@@ -124,10 +67,21 @@ const UpdateDoctor = () => {
                             />
                         </div>
 
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Leave empty to keep current picture.</p>
+                        </div>
+
                         <div className="flex justify-end gap-2 pt-2">
                             <button
                                 type="button"
-                                onClick={() => navigate("/dashboard/doctors")}
+                                onClick={goDoctors}
                                 className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50"
                                 disabled={saving}
                             >

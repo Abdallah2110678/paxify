@@ -1,62 +1,21 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../../lib/axios.jsx";
+import usePatients from "../../hooks/usePatients";
 
 const idOf = (row) => row?.id || row?._id || row?.userId;
 
 const Patients = () => {
-    const navigate = useNavigate();
-    const [rows, setRows] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [err, setErr] = useState("");
-    const [query, setQuery] = useState("");
-    const [deletingId, setDeletingId] = useState(null);
-
-    const fetchRows = async () => {
-        setLoading(true);
-        setErr("");
-        try {
-            const { data } = await api.get("/api/users/patients"); // ADMIN
-            const list = Array.isArray(data) ? data : (data?.items || data?.data || data?.results || []);
-            setRows(list);
-        } catch (e) {
-            setErr(e?.response?.data?.message || e.message || "Failed to load patients");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchRows();
-    }, []);
-
-    const filtered = rows.filter((p) => {
-        if (!query) return true;
-        const q = query.toLowerCase();
-        return [p?.name, p?.email, p?.phoneNumber, p?.address, p?.gender]
-            .some((v) => String(v ?? "").toLowerCase().includes(q));
-    });
-
-    const onDelete = async (row) => {
-        const id = idOf(row);
-        if (!id) return alert("Missing patient id.");
-        if (!confirm(`Delete patient "${row?.name || row?.email || id}"?`)) return;
-
-        try {
-            setDeletingId(id);
-            await api.delete(`/api/users/${id}`); // ADMIN delete
-            setRows((prev) => prev.filter((r) => idOf(r) !== id));
-        } catch (e) {
-            alert(e?.response?.data?.message || e.message || "Failed to delete patient");
-        } finally {
-            setDeletingId(null);
-        }
-    };
-
-    const onEdit = (row) => {
-        const id = idOf(row);
-        navigate(`/dashboard/patients/${id}/edit`);
-    };
+    const {
+        rows,
+        loading,
+        err,
+        query,
+        setQuery,
+        deletingId,
+        filtered,
+        fetchRows,
+        onDelete,
+        onEdit,
+        goAddPatient,
+    } = usePatients();
 
     return (
         <div className="p-6">
@@ -77,7 +36,7 @@ const Patients = () => {
                             ⟳ Reload
                         </button>
                         <button
-                            onClick={() => navigate("/dashboard/add-patient")}
+                            onClick={goAddPatient}
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             Add New Patient

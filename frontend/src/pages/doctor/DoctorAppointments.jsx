@@ -1,18 +1,7 @@
-import { useState } from "react";
-
-const dummyAppointments = [
-  { id: 1, patient: "Ahmed Ali", type: "Online", time: "2025-08-04 10:00 AM", price: "$50" },
-  { id: 2, patient: "Sara Hamed", type: "In-person", time: "2025-08-05 3:00 PM", price: "$70" },
-  { id: 3, patient: "Ali Youssef", type: "Online", time: "2025-08-06 11:30 AM", price: "$60" },
-];
+import useDoctorAppointments from "../../hooks/useDoctorAppointments";
 
 const DoctorAppointments = () => {
-  const [filter, setFilter] = useState("All");
-
-  const filtered =
-    filter === "All"
-      ? dummyAppointments
-      : dummyAppointments.filter((a) => a.type === filter);
+  const { filter, setFilter, filtered, filters } = useDoctorAppointments();
 
   return (
     <div className="p-6">
@@ -21,11 +10,7 @@ const DoctorAppointments = () => {
           <h2 className="text-2xl font-bold text-gray-800">My Appointments</h2>
 
           <div className="space-x-2">
-            {[
-              { label: "All", value: "All" },
-              { label: "Online", value: "Online" },
-              { label: "Offline", value: "In-person" },
-            ].map(({ label, value }) => (
+            {filters.map(({ label, value }) => (
               <button
                 key={value}
                 onClick={() => setFilter(value)}

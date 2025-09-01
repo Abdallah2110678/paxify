@@ -1,50 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../../lib/axios.jsx";
+import useAddPatient from "../../hooks/useAddPatient";
 
 const AddPatient = () => {
-    const navigate = useNavigate();
-    const [saving, setSaving] = useState(false);
-    const [err, setErr] = useState("");
-
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        password: "",
-        phoneNumber: "",
-        address: "",
-        gender: "", // MALE / FEMALE / OTHER (match your backend enum)
-    });
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        setErr("");
-
-        if (!form.name || !form.email || !form.password || !form.gender) {
-            setErr("Name, Email, Password and Gender are required.");
-            return;
-        }
-
-        try {
-            setSaving(true);
-            await api.post(
-                "/api/users/patients",
-                {
-                    name: form.name,
-                    email: form.email,
-                    password: form.password,
-                    phoneNumber: form.phoneNumber || null,
-                    address: form.address || null,
-                    gender: form.gender, // must be one of your Gender enum values
-                },
-                { headers: { "Content-Type": "application/json" } }
-            );
-            navigate("/dashboard/patients");
-        } catch (e) {
-            setErr(e?.response?.data?.message || e.message || "Failed to add patient");
-            setSaving(false);
-        }
-    };
+    const { form, setForm, saving, err, onSubmit, goBack } = useAddPatient();
 
     return (
         <div className="p-6">
@@ -52,7 +9,7 @@ const AddPatient = () => {
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-2xl font-bold text-gray-800">Add New Patient</h2>
                     <button
-                        onClick={() => navigate(-1)}
+                        onClick={goBack}
                         className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50"
                     >
                         ← Back
