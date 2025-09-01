@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getPatients, deletePatient, getPatientById, updatePatient, createPatient } from "../services/patientService";
+import { useAuth } from "../context/AuthContext.jsx";
 
 // Single entry-point hook for all Patient-related UI logic
 export default function usePatient() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // --- Patient dashboard ---
   const [dashActive, setDashActive] = useState("overview");
@@ -35,8 +37,13 @@ export default function usePatient() {
   }, []);
 
   useEffect(() => {
-    fetchRows();
-  }, [fetchRows]);
+    if (user && user.role === "ADMIN") {
+      fetchRows();
+    } else {
+      setLoading(false);
+      setErr(user ? "You are not authorized to view patients (ADMIN only)." : "Please log in as an admin to view patients.");
+    }
+  }, [fetchRows, user]);
 
   const filtered = useMemo(() => {
     if (!query) return rows;

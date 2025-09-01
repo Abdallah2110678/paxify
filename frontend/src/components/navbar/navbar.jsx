@@ -1,14 +1,5 @@
 import { Link } from "react-router-dom";
-import useNavbar from "../../hooks/navbarHook.js";
-import resolveUrl from "../../utils/resolveUrl";
-
-/*
-Palette
-- Primary turquoise: #4CB5AB
-- Secondary surface (beige): #F4EDE4
-- CTA accents: #E68A6C (coral), #D4A44A (gold)
-- Text: charcoal #2B2B2B, warm gray #6B6B6B
-*/
+import useNavbar from "../../hooks/NavbarHook.js";
 
 const Navbar = () => {
   const {
@@ -25,6 +16,7 @@ const Navbar = () => {
     handleLinkClick,
     goMyDashboard,
     links,
+    resolveUrl,
   } = useNavbar();
 
   return (

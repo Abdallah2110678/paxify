@@ -1,7 +1,13 @@
 import { useState, useMemo } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import api from "../services/api.js";
-import resolveUrl from "../utils/resolveUrl.js";
+
+function resolveUrl(path) {
+  if (!path) return "";
+  if (/^https?:\/\//i.test(path)) return path;
+  const base = (api?.defaults?.baseURL || "").replace(/\/$/, "");
+  return `${base}${path}`;
+}
 
 export default function useProfile() {
   const { user, logout, refreshUser } = useAuth();

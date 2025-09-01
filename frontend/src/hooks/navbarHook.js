@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import api from "../services/api";
 
 export default function useNavbar() {
   const [activeLink, setActiveLink] = useState("home");
@@ -21,6 +22,14 @@ export default function useNavbar() {
 
   const displayEmail =
     user?.email || user?.userEmail || user?.username || (typeof user?.sub === "string" ? user.sub : "");
+
+  // Moved from utils/resolveUrl.js
+  function resolveUrl(path) {
+    if (!path) return "";
+    if (/^https?:\/\//i.test(path)) return path;
+    const base = (api?.defaults?.baseURL || "").replace(/\/$/, "");
+    return `${base}${path}`;
+  }
 
   useEffect(() => {
     const currentPath = location.pathname.replace("/", "") || "home";
@@ -78,6 +87,7 @@ export default function useNavbar() {
     // derived
     displayName,
     displayEmail,
+    resolveUrl,
 
     // handlers
     handleLinkClick,

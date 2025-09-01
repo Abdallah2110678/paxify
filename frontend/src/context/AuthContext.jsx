@@ -60,10 +60,14 @@ export const AuthProvider = ({ children }) => {
         const mapped = mapClaimsToUser(decoded);
 
         if (mapped.id) {
-          api.get(`/api/users/${mapped.id}`).then((res) => {
-            setUser(res.data);
-            localStorage.setItem("user", JSON.stringify(res.data));
-          });
+          api
+            .get(`/api/users/${mapped.id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+            .then((res) => {
+              setUser(res.data);
+              localStorage.setItem("user", JSON.stringify(res.data));
+            });
         }
       } catch (e) {
         console.warn("Failed to decode token on mount:", e);
@@ -84,7 +88,9 @@ export const AuthProvider = ({ children }) => {
       const mapped = mapClaimsToUser(decoded);
 
       if (mapped.id) {
-        const res = await api.get(`/api/users/${mapped.id}`);
+        const res = await api.get(`/api/users/${mapped.id}`, {
+          headers: { Authorization: `Bearer ${data.token}` },
+        });
         setUser(res.data);
         localStorage.setItem("user", JSON.stringify(res.data));
       }
@@ -117,7 +123,9 @@ export const AuthProvider = ({ children }) => {
   const refreshUser = async () => {
     if (!user?.id) return;
     try {
-      const { data } = await api.get(`/api/users/${user.id}`);
+      const { data } = await api.get(`/api/users/${user.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
     } catch (err) {
