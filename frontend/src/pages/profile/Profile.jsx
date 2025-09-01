@@ -1,84 +1,15 @@
-import { useAuth } from "../../context/AuthContext.jsx";
-import api from "./../../services/api";
-import { useState } from "react";
+import useProfile from "../../hooks/useProfile";
 
 const Profile = () => {
-  const { user, logout, refreshUser } = useAuth();
-  const [file, setFile] = useState(null);
-
-  const [form, setForm] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-  });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  // helper: decide endpoint suffix based on role
-  const getRolePath = () => {
-    if (user?.role === "PATIENT") return "patient";
-    if (user?.role === "DOCTOR") return "doctor";
-    return ""; // for ADMIN or fallback
-  };
-
-  // save profile (name, email, etc.)
-  const handleSave = async () => {
-    try {
-      const rolePath = getRolePath();
-      const url = rolePath
-        ? `/api/users/${user.id}/${rolePath}`
-        : `/api/users/${user.id}`;
-
-      await api.patch(url, {
-        name: form.name,
-        email: form.email,
-      });
-
-      await refreshUser();
-      alert("Profile updated successfully!");
-    } catch (err) {
-      console.error("Update failed:", err);
-      alert("Update failed: " + (err.response?.data || err.message));
-    }
-  };
-
-  // upload new profile picture
-  const handlePhotoUpload = async () => {
-    if (!file) return alert("Please choose a file first.");
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      await api.post(`/api/users/${user.id}/profile-picture`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      await refreshUser(); // get updated profilePictureUrl
-      alert("Profile picture updated successfully!");
-    } catch (err) {
-      console.error("Photo upload failed:", err);
-      alert("Photo upload failed: " + (err.response?.data || err.message));
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete your account?"))
-      return;
-    try {
-      const rolePath = getRolePath();
-      const url = rolePath
-        ? `/api/users/${user.id}/${rolePath}`
-        : `/api/users/${user.id}`;
-
-      await api.delete(url);
-      logout();
-      window.location.href = "/";
-    } catch (err) {
-      console.error("Delete failed:", err);
-      alert("Delete failed: " + (err.response?.data || err.message));
-    }
-  };
+  const {
+    user,
+    form,
+    avatarSrc,
+    handleChange,
+    onFileChange,
+    handleSave,
+    handleDelete,
+  } = useProfile();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -94,7 +25,7 @@ const Profile = () => {
                 <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
                   {user?.profilePictureUrl ? (
                     <img
-                      src={`http://localhost:8080${user.profilePictureUrl}`}
+                      src={avatarSrc}
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
@@ -106,7 +37,7 @@ const Profile = () => {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => setFile(e.target.files[0])}
+                    onChange={onFileChange}
                   />
                 </div>
               </div>

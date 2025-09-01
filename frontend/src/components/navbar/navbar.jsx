@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import useNavbar from "../../hooks/useNavbar.js";
+import resolveUrl from "../../utils/resolveUrl";
 
 /*
 Palette
@@ -103,7 +104,7 @@ const Navbar = () => {
           >
             {user?.profilePictureUrl ? (
               <img
-                src={`http://localhost:8080${user.profilePictureUrl}`}
+                src={resolveUrl(user.profilePictureUrl)}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
