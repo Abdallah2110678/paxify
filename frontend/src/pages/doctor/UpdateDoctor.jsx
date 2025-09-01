@@ -1,7 +1,8 @@
-import useUpdateDoctor from "../../hooks/useUpdateDoctor";
+import DoctorHook from "../../hooks/doctorHook";
 
 const UpdateDoctor = () => {
-    const { form, setForm, handleFileChange, loading, saving, err, onSubmit, goBack, goDoctors } = useUpdateDoctor();
+    const { update } = DoctorHook();
+    const { form, setForm, handleFileChange, loading, saving, err, onSubmit, goBack, goDoctors } = update;
 
     return (
         <div className="p-6">

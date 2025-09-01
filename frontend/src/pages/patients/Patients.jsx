@@ -1,8 +1,9 @@
-import usePatients from "../../hooks/usePatients";
+import usePatient from "../../hooks/patientHook";
 
 const idOf = (row) => row?.id || row?._id || row?.userId;
 
 const Patients = () => {
+    const { list } = usePatient();
     const {
         rows,
         loading,
@@ -15,7 +16,7 @@ const Patients = () => {
         onDelete,
         onEdit,
         goAddPatient,
-    } = usePatients();
+    } = list;
 
     return (
         <div className="p-6">

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import useNavbar from "../../hooks/useNavbar.js";
+import useNavbar from "../../hooks/navbarHook.js";
 import resolveUrl from "../../utils/resolveUrl";
 
 /*

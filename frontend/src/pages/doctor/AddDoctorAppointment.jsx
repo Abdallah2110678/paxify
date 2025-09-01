@@ -1,7 +1,8 @@
-import useAddDoctorAppointment from "../../hooks/useAddDoctorAppointment";
+import DoctorHook from "../../hooks/doctorHook";
 
 const AddDoctorAppointment = () => {
-  const { form, submitting, err, handleChange, handleSubmit } = useAddDoctorAppointment();
+  const { addAppointment } = DoctorHook();
+  const { form, submitting, err, handleChange, handleSubmit } = addAppointment;
 
   return (
     <div className="p-6">

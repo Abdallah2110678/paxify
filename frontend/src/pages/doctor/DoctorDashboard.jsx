@@ -1,11 +1,20 @@
 // DoctorDashboard.jsx
-import useDoctorDashboard from "../../hooks/useDoctorDashboard";
+import { useMemo } from "react";
+import DoctorHook from "../../hooks/doctorHook";
 import DoctorAppointments from "./DoctorAppointments";
 import AddDoctorAppointment from "./AddDoctorAppointment";
 import DoctorOverview from "./DoctorOverview";
 
 const DoctorDashboard = () => {
-  const { active, setActive, isSidebarOpen, toggleSidebar, goHome, buttons } = useDoctorDashboard();
+  const { dashboard } = DoctorHook();
+  const { active, setActive, isSidebarOpen, toggleSidebar, goHome } = dashboard;
+
+  const buttons = useMemo(() => (
+    [
+      { id: "appointments", label: "Appointments", icon: "📅" },
+      { id: "add-appointment", label: "Add Appointment", icon: "➕" },
+    ]
+  ), []);
 
   return (
     <div className="flex min-h-screen bg-gray-100">

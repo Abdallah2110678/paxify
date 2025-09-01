@@ -1,6 +1,7 @@
-import useDoctors from "../../hooks/useDoctors.js";
+import DoctorHook from "../../hooks/doctorHook";
 
 export default function Doctors() {
+    const { list } = DoctorHook();
     const {
         rows,
         loading,
@@ -13,7 +14,7 @@ export default function Doctors() {
         onDelete,
         onEdit,
         goAddDoctor,
-    } = useDoctors();
+    } = list;
 
     return (
         <div className="p-6">

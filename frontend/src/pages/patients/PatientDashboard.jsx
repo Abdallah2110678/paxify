@@ -1,10 +1,19 @@
 // PatientDashboard.jsx
-import usePatientDashboard from "../../hooks/usePatientDashboard";
+import { useMemo } from "react";
+import usePatient from "../../hooks/patientHook";
 import PatientUpcomingAppointments from "./PatientUpcomingAppointments";
 import PatientDoctorComments from "./PatientDoctorComments";
 
 const PatientDashboard = () => {
-  const { active, setActive, isSidebarOpen, toggleSidebar, goHome, buttons } = usePatientDashboard();
+  const { dashboard } = usePatient();
+  const { active, setActive, isSidebarOpen, toggleSidebar, goHome } = dashboard;
+
+  const buttons = useMemo(() => (
+    [
+      { id: "upcoming", label: "Upcoming Appointments", icon: "📅" },
+      { id: "comments", label: "Doctor's Comments", icon: "💬" },
+    ]
+  ), []);
 
   return (
     <div className="flex min-h-screen bg-gray-100">

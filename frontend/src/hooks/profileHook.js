@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import api from "../services/api";
-import resolveUrl from "../utils/resolveUrl";
+import api from "../services/api.js";
+import resolveUrl from "../utils/resolveUrl.js";
 
 export default function useProfile() {
   const { user, logout, refreshUser } = useAuth();
@@ -27,7 +27,6 @@ export default function useProfile() {
     const url = rolePath ? `/api/users/${user.id}/${rolePath}` : `/api/users/${user.id}`;
     await api.patch(url, { name: form.name, email: form.email });
     await refreshUser();
-    alert("Profile updated successfully!");
   };
 
   const handlePhotoUpload = async () => {
@@ -39,7 +38,6 @@ export default function useProfile() {
     });
     await refreshUser();
     setBust(Date.now());
-    alert("Profile picture updated successfully!");
   };
 
   const handleDelete = async () => {

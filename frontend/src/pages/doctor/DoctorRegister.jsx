@@ -1,7 +1,8 @@
-import useDoctorRegister from "../../hooks/useDoctorRegister";
+import DoctorHook from "../../hooks/doctorHook";
 
 const DoctorRegister = () => {
-  const { form, error, submitting, setForm, handleChange, handleFileChange, handleSubmit } = useDoctorRegister();
+  const { register } = DoctorHook();
+  const { form, error, submitting, setForm, handleChange, handleFileChange, handleSubmit } = register;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-green-50">

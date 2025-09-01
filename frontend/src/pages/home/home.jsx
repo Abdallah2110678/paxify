@@ -1,4 +1,4 @@
-import useHome from "../../hooks/useHome.js";
+import useHome from "../../hooks/homeHook.js";
 
 // Color tokens (using hex in Tailwind arbitrary values for fast drop-in)
 // Brand

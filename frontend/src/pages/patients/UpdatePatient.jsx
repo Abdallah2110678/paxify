@@ -1,7 +1,8 @@
-import useUpdatePatient from "../../hooks/useUpdatePatient";
+import usePatient from "../../hooks/patientHook";
 
 const UpdatePatient = () => {
-    const { id, form, setForm, loading, saving, err, onSubmit, goBack, goPatients } = useUpdatePatient();
+    const { update } = usePatient();
+    const { id, form, setForm, loading, saving, err, onSubmit, goBack, goPatients } = update;
 
     return (
         <div className="p-6">
