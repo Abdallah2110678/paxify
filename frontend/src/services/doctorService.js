@@ -5,6 +5,12 @@ export async function getDoctors() {
   return Array.isArray(data) ? data : (data?.items || data?.data || data?.results || []);
 }
 
+// Public, unauthenticated list for Find Therapists page
+export async function getPublicDoctors() {
+  const { data } = await api.get("/api/public/doctors");
+  return Array.isArray(data) ? data : (data?.items || data?.data || data?.results || []);
+}
+
 export async function deleteDoctor(id) {
   return api.delete(`/api/users/${id}`);
 }

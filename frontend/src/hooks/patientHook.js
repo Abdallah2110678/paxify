@@ -104,6 +104,11 @@ export default function usePatient() {
   const addOnSubmit = useCallback(async (e) => {
     e.preventDefault();
     setAddErr("");
+    // Only ADMIN can create patients
+    if (!user || user.role !== "ADMIN") {
+      setAddErr("Only admins can create patients. Please log in as an admin.");
+      return;
+    }
     if (!addForm.name || !addForm.email || !addForm.password || !addForm.gender) {
       setAddErr("Name, Email, Password and Gender are required.");
       return;
@@ -120,10 +125,15 @@ export default function usePatient() {
       });
       navigate("/dashboard/patients");
     } catch (e) {
-      setAddErr(e?.response?.data?.message || e.message || "Failed to add patient");
+      const status = e?.response?.status;
+      if (status === 403) {
+        setAddErr("Forbidden: You do not have permission to create patients. Log in as an admin.");
+      } else {
+        setAddErr(e?.response?.data?.message || e.message || "Failed to add patient");
+      }
       setAddSaving(false);
     }
-  }, [addForm, navigate]);
+  }, [addForm, navigate, user]);
 
   const addGoBack = useCallback(() => navigate(-1), [navigate]);
 

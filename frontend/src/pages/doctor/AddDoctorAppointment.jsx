@@ -41,15 +41,15 @@ const AddDoctorAppointment = () => {
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="Online">Online</option>
-                <option value="In-person">In-person</option>
+                <option value="ONLINE">Online</option>
+                <option value="IN_PERSON">In-person</option>
               </select>
             </div>
 
             {/* Price */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price ($)
+                Price (L.E)
               </label>
               <input
                 type="number"
@@ -57,11 +57,43 @@ const AddDoctorAppointment = () => {
                 value={form.price}
                 onChange={handleChange}
                 min="0"
+                step="0.01"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter price"
-                required
               />
             </div>
+
+            {/* Duration */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Duration (minutes)
+              </label>
+              <input
+                type="number"
+                name="durationMinutes"
+                value={form.durationMinutes}
+                onChange={handleChange}
+                min="15"
+                max="240"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="60"
+              />
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Notes (optional)
+            </label>
+            <textarea
+              name="notes"
+              value={form.notes}
+              onChange={handleChange}
+              rows="3"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Additional notes about the appointment..."
+            />
           </div>
 
           {/* Submit Button */}

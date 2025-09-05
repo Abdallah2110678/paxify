@@ -80,7 +80,8 @@ public class UsersController {
                 null, // bio
                 null, // rate
                 null, // consultationFee
-                null, // availability
+                null, // availableFrom
+                null, // availableTo
                 fileUrl // profilePictureUrl
         );
 

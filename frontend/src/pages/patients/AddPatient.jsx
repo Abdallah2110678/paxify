@@ -1,7 +1,9 @@
 import usePatient from "../../hooks/patientHook";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const AddPatient = () => {
     const { addPatient } = usePatient();
+    const { user } = useAuth();
     const { form, setForm, saving, err, onSubmit, goBack } = addPatient;
 
     return (
@@ -16,6 +18,17 @@ const AddPatient = () => {
                         ← Back
                     </button>
                 </div>
+
+                {/* Admin-only gate */}
+                {(!user || user.role !== "ADMIN") && (
+                    <div className="mb-4 p-3 rounded bg-amber-50 border border-amber-200 text-amber-800">
+                        This action is restricted to admins. {user ? (
+                          <>You are logged in as <b>{user.role || "Unknown"}</b>. Please log in as an admin and try again.</>
+                        ) : (
+                          <>You are not logged in. Please log in as an admin and try again.</>
+                        )}
+                    </div>
+                )}
 
                 {err && (
                     <div className="mb-4 p-3 rounded bg-rose-50 border border-rose-200 text-rose-700">
@@ -110,7 +123,7 @@ const AddPatient = () => {
                     <div className="flex justify-end">
                         <button
                             type="submit"
-                            disabled={saving}
+                            disabled={saving || !user || user.role !== "ADMIN"}
                             className={`text-white px-6 py-2 rounded-lg transition-colors ${saving ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
                                 }`}
                         >

@@ -52,9 +52,24 @@ public class AuthController {
 
     @GetMapping("/debug-auth")
     @PreAuthorize("isAuthenticated()")
-    public String debugAuth() {
+    public java.util.Map<String, Object> debugAuth() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return "Authorities: " + auth.getAuthorities();
+        java.util.Map<String, Object> map = new java.util.HashMap<>();
+        if (auth == null) {
+            map.put("authenticated", false);
+            return map;
+        }
+        map.put("authenticated", true);
+        map.put("authorities", auth.getAuthorities().toString());
+        Object principal = auth.getPrincipal();
+        map.put("principalClass", principal == null ? "null" : principal.getClass().getName());
+        if (principal instanceof com.example.backend.models.User u) {
+            map.put("userId", u.getId() == null ? null : u.getId().toString());
+            map.put("email", u.getEmail());
+            map.put("role", u.getRole() == null ? null : u.getRole().name());
+            map.put("isDoctorSubclass", (u instanceof com.example.backend.models.Doctor));
+        }
+        return map;
     }
 
     @PostMapping("/register")
@@ -88,7 +103,7 @@ public class AuthController {
 
     @PostMapping("/register-doctor")
     public ResponseEntity<?> registerDoctor(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam String name,
             @RequestParam String email,
             @RequestParam String password,
@@ -97,18 +112,11 @@ public class AuthController {
             @RequestParam String specialty,
             @RequestParam String bio,
             @RequestParam BigDecimal consultationFee,
-            @RequestParam String availability) throws java.io.IOException {
+            @RequestParam(required = false) String availability) throws java.io.IOException {
 
         if (userRepo.findByEmail(email).isPresent()) {
             return ResponseEntity.badRequest().body("Email already exists");
         }
-
-        // Save file
-        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path uploadPath = Paths.get("uploads/profile-pictures");
-        if (!Files.exists(uploadPath))
-            Files.createDirectories(uploadPath);
-        Files.copy(file.getInputStream(), uploadPath.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
 
         Doctor doctor = new Doctor();
         doctor.setName(name);
@@ -119,9 +127,18 @@ public class AuthController {
         doctor.setSpecialty(specialty);
         doctor.setBio(bio);
         doctor.setConsultationFee(consultationFee);
-        doctor.setAvailability(availability);
-        doctor.setProfilePictureUrl("/uploads/profile-pictures/" + filename);
+        // Availability is now handled through appointments
         doctor.setRole(Role.DOCTOR);
+
+        // Handle optional file upload
+        if (file != null && !file.isEmpty()) {
+            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path uploadPath = Paths.get("uploads/profile-pictures");
+            if (!Files.exists(uploadPath))
+                Files.createDirectories(uploadPath);
+            Files.copy(file.getInputStream(), uploadPath.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+            doctor.setProfilePictureUrl("/uploads/profile-pictures/" + filename);
+        }
 
         userRepo.save(doctor);
 

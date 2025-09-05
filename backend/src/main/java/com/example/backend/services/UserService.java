@@ -71,7 +71,8 @@ public class UserService {
         d.setBio(req.bio());
         d.setRate(req.rate());
         d.setConsultationFee(req.consultationFee());
-        d.setAvailability(req.availability());
+        d.setAvailableFrom(req.availableFrom());
+        d.setAvailableTo(req.availableTo());
         d.setProfilePictureUrl(req.profilePictureUrl());
         Doctor saved = doctorRepo.save(d);
         return toResponse(saved);
@@ -147,8 +148,10 @@ public class UserService {
             doctor.setRate(req.rate());
         if (req.consultationFee() != null)
             doctor.setConsultationFee(req.consultationFee());
-        if (req.availability() != null)
-            doctor.setAvailability(req.availability());
+        if (req.availableFrom() != null)
+            doctor.setAvailableFrom(req.availableFrom());
+        if (req.availableTo() != null)
+            doctor.setAvailableTo(req.availableTo());
         if (req.profilePictureUrl() != null)
             doctor.setProfilePictureUrl(req.profilePictureUrl());
 
@@ -205,7 +208,7 @@ public class UserService {
                     d.getBio(),
                     d.getRate(),
                     d.getConsultationFee(),
-                    d.getAvailability());
+                    d.getAvailableFrom() + " - " + d.getAvailableTo());
         } else if (u instanceof Patient p) {
             return new UserResponse(
                     p.getId(),

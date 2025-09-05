@@ -72,21 +72,11 @@ const DoctorRegister = () => {
               onChange={handleChange}
               className="border p-2 rounded-lg w-full"
             />
-          </div>
-
-          {/* Row 5 */}
-          <div className="grid grid-cols-2 gap-4">
             <input
               name="consultationFee"
               type="number"
               step="0.01"
               placeholder="Consultation Fee"
-              onChange={handleChange}
-              className="border p-2 rounded-lg w-full"
-            />
-            <input
-              name="availability"
-              placeholder="Availability (e.g. Mon-Fri 9-5)"
               onChange={handleChange}
               className="border p-2 rounded-lg w-full"
             />

@@ -28,13 +28,27 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException, java.io.IOException {
         final String authHeader = request.getHeader("Authorization");
+        // removed noisy debug logging
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authHeader.substring(7);
-        String email = jwtService.extractUsername(token);
+        String email = null;
+        try {
+            email = jwtService.extractUsername(token);
+        } catch (io.jsonwebtoken.ExpiredJwtException ex) {
+            // Token expired -> return 401 so client can re-login
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            try { response.getWriter().write("JWT expired"); } catch (Exception ignored) {}
+            return;
+        } catch (Exception ex) {
+            // Any other parsing error -> 401
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            try { response.getWriter().write("Invalid JWT"); } catch (Exception ignored) {}
+            return;
+        }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             User user = userRepo.findByEmail(email).orElse(null);
@@ -47,6 +61,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 );
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
+                // removed noisy debug logging
             }
         }
         filterChain.doFilter(request, response);

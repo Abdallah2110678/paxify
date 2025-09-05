@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
       const url = `${cfg.baseURL || ""}${cfg.url || ""}`;
       const isAuthEndpoint =
         url.includes("/api/auth/register") || url.includes("/api/auth/login");
-
+      
       if (token && !isAuthEndpoint) {
         cfg.headers = cfg.headers || {};
         cfg.headers.Authorization = `Bearer ${token}`;
