@@ -77,14 +77,14 @@ export default function usePatient() {
 
   const onDelete = useCallback(async (row) => {
     const id = idOf(row);
-    if (!id) return alert("Missing patient id.");
-    if (!confirm(`Delete patient "${row?.name || row?.email || id}"?`)) return;
+    if (!id) return;
+
     try {
       setDeletingId(id);
       await deletePatient(id);
       setRows((prev) => prev.filter((r) => idOf(r) !== id));
     } catch (e) {
-      alert(
+      setErr(
         e?.response?.data?.message || e.message || "Failed to delete patient"
       );
     } finally {
@@ -95,7 +95,7 @@ export default function usePatient() {
   const onEdit = useCallback(
     (row) => {
       const id = idOf(row);
-      if (!id) return alert("Missing patient id.");
+      if (!id) return;
       navigate(`/dashboard/patients/${id}/edit`);
     },
     [navigate]
@@ -136,7 +136,6 @@ export default function usePatient() {
     async (e) => {
       e.preventDefault();
       setAddErr("");
-      // Only ADMIN can create patients
       if (!user || user.role !== "ADMIN") {
         setAddErr(
           "Only admins can create patients. Please log in as an admin."
@@ -167,7 +166,7 @@ export default function usePatient() {
         const status = e?.response?.status;
         if (status === 403) {
           setAddErr(
-            "Forbidden: You do not have permission to create patients. Log in as an admin."
+            "Forbidden: You do not have permission to create patients."
           );
         } else {
           setAddErr(
