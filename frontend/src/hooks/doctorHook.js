@@ -1,13 +1,26 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { registerDoctor, getDoctors, deleteDoctor, createDoctor, getDoctorById, updateDoctor } from "../services/doctorService";
-import { createAppointment, getAppointmentsByDoctor, updateAppointment, deleteAppointment as apiDeleteAppointment } from "../services/appointmentService";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  registerDoctor,
+  getDoctors,
+  deleteDoctor,
+  createDoctor,
+  getDoctorById,
+  updateDoctor,
+} from "../services/doctorService";
+import {
+  createAppointment,
+  getAppointmentsByDoctor,
+  updateAppointment,
+  deleteAppointment as apiDeleteAppointment,
+} from "../services/appointmentService";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
 
 // Single entry-point hook for all Doctor-related UI logic
-export default function useDoctor() {
+export default function useDoctor(options = {}) {
+  const { autoFetchList = false } = options;
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -35,31 +48,36 @@ export default function useDoctor() {
     setRegProfilePicture(e.target.files?.[0] || null);
   }, []);
 
-  const regHandleSubmit = useCallback(async (e) => {
-    e?.preventDefault?.();
-    setRegError("");
-    try {
-      setRegSubmitting(true);
-      const formData = new FormData();
-      Object.keys(regForm).forEach((key) => {
-        const val = regForm[key];
-        if (val !== undefined && val !== null && String(val).length > 0) {
-          formData.append(key, val);
+  const regHandleSubmit = useCallback(
+    async (e) => {
+      e?.preventDefault?.();
+      setRegError("");
+      try {
+        setRegSubmitting(true);
+        const formData = new FormData();
+        Object.keys(regForm).forEach((key) => {
+          const val = regForm[key];
+          if (val !== undefined && val !== null && String(val).length > 0) {
+            formData.append(key, val);
+          }
+        });
+
+        // Profile picture is now optional
+        if (regProfilePicture) {
+          formData.append("file", regProfilePicture);
         }
-      });
-      
-      // Profile picture is now optional
-      if (regProfilePicture) {
-        formData.append("file", regProfilePicture);
+        await registerDoctor(formData);
+        navigate("/login");
+      } catch (err) {
+        setRegError(
+          err?.response?.data || err?.message || "Registration failed"
+        );
+      } finally {
+        setRegSubmitting(false);
       }
-      await registerDoctor(formData);
-      navigate("/login");
-    } catch (err) {
-      setRegError(err?.response?.data || err?.message || "Registration failed");
-    } finally {
-      setRegSubmitting(false);
-    }
-  }, [navigate, regForm, regProfilePicture]);
+    },
+    [navigate, regForm, regProfilePicture]
+  );
 
   const register = {
     form: regForm,
@@ -89,7 +107,7 @@ export default function useDoctor() {
   // --- Doctors list (CRUD helpers) ---
   const idOf = (row) => row?.id || row?.userId || row?._id;
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [query, setQuery] = useState("");
   const [deletingId, setDeletingId] = useState(null);
@@ -101,22 +119,30 @@ export default function useDoctor() {
       const list = await getDoctors();
       setRows(list);
     } catch (e) {
-      setErr(e?.response?.data?.message || e.message || "Failed to load doctors");
+      setErr(
+        e?.response?.data?.message || e.message || "Failed to load doctors"
+      );
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Only fetch rows when explicitly needed (not on registration page)
-  // useEffect(() => {
-  //   fetchRows();
-  // }, [fetchRows]);
+  useEffect(() => {
+    if (autoFetchList) {
+      fetchRows();
+    }
+  }, [autoFetchList, fetchRows]);
 
   const filtered = useMemo(() => {
     if (!query) return rows;
     const q = query.toLowerCase();
-    return rows.filter((d) => [d?.name, d?.email, d?.specialty, d?.address]
-      .some((v) => String(v ?? "").toLowerCase().includes(q)));
+    return rows.filter((d) =>
+      [d?.name, d?.email, d?.specialty, d?.address].some((v) =>
+        String(v ?? "")
+          .toLowerCase()
+          .includes(q)
+      )
+    );
   }, [rows, query]);
 
   const onDelete = useCallback(async (row) => {
@@ -128,20 +154,27 @@ export default function useDoctor() {
       await deleteDoctor(id);
       setRows((prev) => prev.filter((r) => idOf(r) !== id));
     } catch (e) {
-      alert(e?.response?.data?.message || e.message || "Failed to delete doctor");
+      alert(
+        e?.response?.data?.message || e.message || "Failed to delete doctor"
+      );
     } finally {
       setDeletingId(null);
     }
   }, []);
 
-  const onEdit = useCallback((row) => {
-    const id = idOf(row);
-    if (!id) return alert("Missing doctor id.");
-    navigate(`/dashboard/doctors/${id}/edit`);
-  }, [navigate]);
+  const onEdit = useCallback(
+    (row) => {
+      const id = idOf(row);
+      if (!id) return alert("Missing doctor id.");
+      navigate(`/dashboard?tab=doctor&editDoctorId=${encodeURIComponent(id)}`);
+    },
+    [navigate]
+  );
 
-  const goAddDoctor = useCallback(() => navigate("/dashboard/add-doctor"), [navigate]);
-
+  const goAddDoctor = useCallback(
+    () => navigate("/dashboard?tab=add-doctor"),
+    [navigate]
+  );
   const list = {
     rows,
     loading,
@@ -174,53 +207,69 @@ export default function useDoctor() {
     setAddForm((prev) => ({ ...prev, [name]: value }));
   }, []);
 
-  const addHandleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    if (!addForm.name || !addForm.email || !addForm.password || !addForm.gender || !addForm.specialty) {
-      toast.error("Please fill all required fields");
-      return;
-    }
-    try {
-      setAddLoading(true);
-      const payload = {
-        name: addForm.name,
-        email: addForm.email,
-        phoneNumber: addForm.phoneNumber || null,
-        address: addForm.address || null,
-        password: addForm.password,
-        role: addForm.role,
-        gender: addForm.gender,
-        specialty: addForm.specialty,
-      };
-      const { data } = await createDoctor(payload);
-      toast.success(`Doctor ${data.name} added successfully!`);
-      setAddForm({
-        name: "",
-        email: "",
-        phoneNumber: "",
-        address: "",
-        password: "",
-        role: "DOCTOR",
-        gender: "",
-        specialty: "",
-      });
-    } catch (error) {
-      console.error(error);
-      toast.error(error?.response?.data?.message || "Failed to create doctor");
-    } finally {
-      setAddLoading(false);
-    }
-  }, [addForm]);
+  const addHandleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      if (
+        !addForm.name ||
+        !addForm.email ||
+        !addForm.password ||
+        !addForm.gender ||
+        !addForm.specialty
+      ) {
+        toast.error("Please fill all required fields");
+        return;
+      }
+      try {
+        setAddLoading(true);
+        const payload = {
+          name: addForm.name,
+          email: addForm.email,
+          phoneNumber: addForm.phoneNumber || null,
+          address: addForm.address || null,
+          password: addForm.password,
+          role: addForm.role,
+          gender: addForm.gender,
+          specialty: addForm.specialty,
+        };
+        const { data } = await createDoctor(payload);
+        toast.success(`Doctor ${data.name} added successfully!`);
+        setAddForm({
+          name: "",
+          email: "",
+          phoneNumber: "",
+          address: "",
+          password: "",
+          role: "DOCTOR",
+          gender: "",
+          specialty: "",
+        });
+      } catch (error) {
+        console.error(error);
+        toast.error(
+          error?.response?.data?.message || "Failed to create doctor"
+        );
+      } finally {
+        setAddLoading(false);
+      }
+    },
+    [addForm]
+  );
 
-  const addDoctor = { form: addForm, loading: addLoading, handleChange: addHandleChange, handleSubmit: addHandleSubmit };
+  const addDoctor = {
+    form: addForm,
+    loading: addLoading,
+    handleChange: addHandleChange,
+    handleSubmit: addHandleSubmit,
+  };
 
   // --- Add Appointment (Doctor flow) ---
-  const [addApptForm, setAddApptForm] = useState({ 
-    dateTime: "", 
-    sessionType: "ONLINE", 
+  const [addApptForm, setAddApptForm] = useState({
+    dateTime: "",
+    sessionType: "ONLINE",
     price: "",
     durationMinutes: 60,
-    notes: ""
+    notes: "",
   });
   const [addApptSubmitting, setAddApptSubmitting] = useState(false);
   const [addApptErr, setAddApptErr] = useState("");
@@ -230,59 +279,73 @@ export default function useDoctor() {
     setAddApptForm((prev) => ({ ...prev, [name]: value }));
   }, []);
 
-  const addApptHandleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    setAddApptErr("");
-    
-    if (!user?.id) {
-      setAddApptErr("You must be logged in as a doctor to create appointments");
-      return;
-    }
+  const addApptHandleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setAddApptErr("");
 
-    try {
-      setAddApptSubmitting(true);
-      
-      // Ensure seconds are present (backend expects yyyy-MM-dd'T'HH:mm:ss)
-      const dateTimeIso = addApptForm.dateTime && addApptForm.dateTime.length === 16
-        ? `${addApptForm.dateTime}:00`
-        : addApptForm.dateTime;
+      if (!user?.id) {
+        setAddApptErr(
+          "You must be logged in as a doctor to create appointments"
+        );
+        return;
+      }
 
-      const maybePrice = (() => {
-        const n = parseFloat(addApptForm.price);
-        return Number.isFinite(n) ? n : undefined; // undefined -> omitted; backend will default to doctor's consultationFee
-      })();
+      try {
+        setAddApptSubmitting(true);
 
-      const appointmentData = {
-        doctorId: user.id,
-        dateTime: dateTimeIso,
-        sessionType: addApptForm.sessionType,
-        durationMinutes: parseInt(addApptForm.durationMinutes) || 60,
-        notes: addApptForm.notes || null,
-        ...(maybePrice !== undefined ? { price: maybePrice } : {}),
-      };
+        // Ensure seconds are present (backend expects yyyy-MM-dd'T'HH:mm:ss)
+        const dateTimeIso =
+          addApptForm.dateTime && addApptForm.dateTime.length === 16
+            ? `${addApptForm.dateTime}:00`
+            : addApptForm.dateTime;
 
-      await createAppointment(appointmentData);
-      toast.success("Appointment created successfully!");
-      
-      // Reset form
-      setAddApptForm({ 
-        dateTime: "", 
-        sessionType: "ONLINE", 
-        price: "",
-        durationMinutes: 60,
-        notes: ""
-      });
-      
-    } catch (e) {
-      const errorMsg = e?.response?.data?.message || e.message || "Failed to add appointment";
-      setAddApptErr(errorMsg);
-      toast.error(errorMsg);
-    } finally {
-      setAddApptSubmitting(false);
-    }
-  }, [addApptForm, user]);
+        const maybePrice = (() => {
+          const n = parseFloat(addApptForm.price);
+          return Number.isFinite(n) ? n : undefined; // undefined -> omitted; backend will default to doctor's consultationFee
+        })();
 
-  const addAppointment = { form: addApptForm, submitting: addApptSubmitting, err: addApptErr, handleChange: addApptHandleChange, handleSubmit: addApptHandleSubmit };
+        const appointmentData = {
+          doctorId: user.id,
+          dateTime: dateTimeIso,
+          sessionType: addApptForm.sessionType,
+          durationMinutes: parseInt(addApptForm.durationMinutes) || 60,
+          notes: addApptForm.notes || null,
+          ...(maybePrice !== undefined ? { price: maybePrice } : {}),
+        };
+
+        await createAppointment(appointmentData);
+        toast.success("Appointment created successfully!");
+
+        // Reset form
+        setAddApptForm({
+          dateTime: "",
+          sessionType: "ONLINE",
+          price: "",
+          durationMinutes: 60,
+          notes: "",
+        });
+      } catch (e) {
+        const errorMsg =
+          e?.response?.data?.message ||
+          e.message ||
+          "Failed to add appointment";
+        setAddApptErr(errorMsg);
+        toast.error(errorMsg);
+      } finally {
+        setAddApptSubmitting(false);
+      }
+    },
+    [addApptForm, user]
+  );
+
+  const addAppointment = {
+    form: addApptForm,
+    submitting: addApptSubmitting,
+    err: addApptErr,
+    handleChange: addApptHandleChange,
+    handleSubmit: addApptHandleSubmit,
+  };
 
   // Prefill add-appointment price with doctor's consultationFee once
   useEffect(() => {
@@ -292,9 +355,9 @@ export default function useDoctor() {
         const data = await getDoctorById(user.id);
         const fee = data?.consultationFee;
         if (fee !== undefined && fee !== null) {
-          setAddApptForm((prev) => (
+          setAddApptForm((prev) =>
             prev.price ? prev : { ...prev, price: String(fee) }
-          ));
+          );
         }
       } catch (_) {
         // ignore; fallback to manual entry
@@ -310,13 +373,14 @@ export default function useDoctor() {
   const [apptErr, setApptErr] = useState("");
   const [apptFilter, setApptFilter] = useState("All");
 
-  const apptFilters = useMemo(() => (
-    [
+  const apptFilters = useMemo(
+    () => [
       { label: "All", value: "All" },
       { label: "Online", value: "ONLINE" },
       { label: "Offline", value: "IN_PERSON" },
-    ]
-  ), []);
+    ],
+    []
+  );
 
   const apptLoad = useCallback(async () => {
     if (!user?.id) return;
@@ -327,17 +391,27 @@ export default function useDoctor() {
       const normalized = (Array.isArray(data) ? data : []).map((a) => ({
         ...a,
         // Backend entity uses 'appointmentDateTime'; frontend expects 'dateTime'
-        dateTime: a?.dateTime || a?.appointmentDateTime || a?.appointment_date_time || null,
+        dateTime:
+          a?.dateTime ||
+          a?.appointmentDateTime ||
+          a?.appointment_date_time ||
+          null,
       }));
       setApptRows(normalized);
     } catch (e) {
       const status = e?.response?.status;
       if (status === 403) {
-        setApptErr("You are not authorized to view doctor appointments. Please log in with a doctor account, or log out and log in again to refresh your token.");
+        setApptErr(
+          "You are not authorized to view doctor appointments. Please log in with a doctor account, or log out and log in again to refresh your token."
+        );
       } else if (status === 401) {
         setApptErr("Your session has expired. Please log in again.");
       } else {
-        setApptErr(e?.response?.data?.message || e.message || "Failed to load appointments");
+        setApptErr(
+          e?.response?.data?.message ||
+            e.message ||
+            "Failed to load appointments"
+        );
       }
     } finally {
       setApptLoading(false);
@@ -400,7 +474,9 @@ export default function useDoctor() {
 
   const apptFiltered = useMemo(() => {
     if (apptFilter === "All") return apptRows;
-    return apptRows.filter((a) => (a?.sessionType || "").toUpperCase() === apptFilter);
+    return apptRows.filter(
+      (a) => (a?.sessionType || "").toUpperCase() === apptFilter
+    );
   }, [apptRows, apptFilter]);
 
   const appointments = {
@@ -460,46 +536,64 @@ export default function useDoctor() {
     setApptEditForm((prev) => ({ ...prev, [name]: value }));
   }, []);
 
-  const apptSubmitEdit = useCallback(async (e) => {
-    e?.preventDefault?.();
-    if (!apptEditingId) return;
-    setApptEditSaving(true);
-    setApptEditErr("");
-    try {
-      // Ensure seconds present if user passed yyyy-MM-ddTHH:mm
-      const dt = apptEditForm.dateTime;
-      const dateTimeIso = dt && typeof dt === "string" && dt.length === 16 ? `${dt}:00` : dt;
-      const params = {
-        dateTime: dateTimeIso || undefined,
-        durationMinutes: apptEditForm.durationMinutes || undefined,
-        sessionType: apptEditForm.sessionType || undefined,
-        price: apptEditForm.price !== "" ? parseFloat(apptEditForm.price) : undefined,
-        notes: apptEditForm.notes || undefined,
-      };
-      await updateAppointment(apptEditingId, params);
-      toast.success("Appointment updated");
-      setApptEditOpen(false);
-      setApptEditingId(null);
-      await apptLoad();
-    } catch (e) {
-      setApptEditErr(e?.response?.data?.message || e.message || "Failed to update appointment");
-    } finally {
-      setApptEditSaving(false);
-    }
-  }, [apptEditingId, apptEditForm, apptLoad]);
+  const apptSubmitEdit = useCallback(
+    async (e) => {
+      e?.preventDefault?.();
+      if (!apptEditingId) return;
+      setApptEditSaving(true);
+      setApptEditErr("");
+      try {
+        // Ensure seconds present if user passed yyyy-MM-ddTHH:mm
+        const dt = apptEditForm.dateTime;
+        const dateTimeIso =
+          dt && typeof dt === "string" && dt.length === 16 ? `${dt}:00` : dt;
+        const params = {
+          dateTime: dateTimeIso || undefined,
+          durationMinutes: apptEditForm.durationMinutes || undefined,
+          sessionType: apptEditForm.sessionType || undefined,
+          price:
+            apptEditForm.price !== ""
+              ? parseFloat(apptEditForm.price)
+              : undefined,
+          notes: apptEditForm.notes || undefined,
+        };
+        await updateAppointment(apptEditingId, params);
+        toast.success("Appointment updated");
+        setApptEditOpen(false);
+        setApptEditingId(null);
+        await apptLoad();
+      } catch (e) {
+        setApptEditErr(
+          e?.response?.data?.message ||
+            e.message ||
+            "Failed to update appointment"
+        );
+      } finally {
+        setApptEditSaving(false);
+      }
+    },
+    [apptEditingId, apptEditForm, apptLoad]
+  );
 
-  const apptDelete = useCallback(async (row) => {
-    const id = row?.id || row?.appointmentId;
-    if (!id) return;
-    if (!confirm("Delete this appointment?")) return;
-    try {
-      await apiDeleteAppointment(id);
-      toast.success("Appointment deleted");
-      await apptLoad();
-    } catch (e) {
-      toast.error(e?.response?.data?.message || e.message || "Failed to delete appointment");
-    }
-  }, [apptLoad]);
+  const apptDelete = useCallback(
+    async (row) => {
+      const id = row?.id || row?.appointmentId;
+      if (!id) return;
+      if (!confirm("Delete this appointment?")) return;
+      try {
+        await apiDeleteAppointment(id);
+        toast.success("Appointment deleted");
+        await apptLoad();
+      } catch (e) {
+        toast.error(
+          e?.response?.data?.message ||
+            e.message ||
+            "Failed to delete appointment"
+        );
+      }
+    },
+    [apptLoad]
+  );
 
   appointments.actions = {
     openEdit: apptOpenEdit,
@@ -516,71 +610,92 @@ export default function useDoctor() {
   };
 
   // --- Update Doctor ---
-  const { id: routeDoctorId } = useParams();
+  // --- Update Doctor ---
+  const { id: routeDoctorParamId } = useParams();
+  const [sp] = useSearchParams();
+  const routeDoctorId = routeDoctorParamId || sp.get("editDoctorId");
   const [updLoading, setUpdLoading] = useState(false);
   const [updSaving, setUpdSaving] = useState(false);
   const [updErr, setUpdErr] = useState("");
-  const [updForm, setUpdForm] = useState({ name: "", email: "", specialty: "", address: "" });
+  const [updForm, setUpdForm] = useState({
+    name: "",
+    email: "",
+    specialty: "",
+    address: "",
+  });
   const [updProfilePicture, setUpdProfilePicture] = useState(null);
 
-  const updLoad = useCallback(async (id = routeDoctorId) => {
-    if (!id) return;
-    setUpdLoading(true);
-    setUpdErr("");
-    try {
-      const data = await getDoctorById(id);
-      setUpdForm({
-        name: data?.name || "",
-        email: data?.email || "",
-        specialty: data?.specialty || "",
-        address: data?.address || "",
-      });
-    } catch (e) {
-      setUpdErr(e?.response?.data?.message || e.message || "Failed to load doctor");
-    } finally {
-      setUpdLoading(false);
-    }
-  }, [routeDoctorId]);
+  const updLoad = useCallback(
+    async (id = routeDoctorId) => {
+      if (!id) return;
+      setUpdLoading(true);
+      setUpdErr("");
+      try {
+        const data = await getDoctorById(id);
+        setUpdForm({
+          name: data?.name || "",
+          email: data?.email || "",
+          specialty: data?.specialty || "",
+          address: data?.address || "",
+        });
+      } catch (e) {
+        setUpdErr(
+          e?.response?.data?.message || e.message || "Failed to load doctor"
+        );
+      } finally {
+        setUpdLoading(false);
+      }
+    },
+    [routeDoctorId]
+  );
 
   const updHandleFileChange = useCallback((e) => {
     const file = e.target.files?.[0] || null;
     setUpdProfilePicture(file);
   }, []);
 
-  const updOnSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    const id = routeDoctorId;
-    if (!id) return;
-    setUpdSaving(true);
-    setUpdErr("");
-    try {
-      if (updProfilePicture) {
-        const fd = new FormData();
-        if (updForm.name) fd.append("name", updForm.name);
-        if (updForm.email) fd.append("email", updForm.email);
-        if (updForm.specialty) fd.append("specialty", updForm.specialty);
-        if (updForm.address) fd.append("address", updForm.address);
-        fd.append("file", updProfilePicture);
-        fd.append("profilePicture", updProfilePicture);
-        await updateDoctor(id, fd);
-      } else {
-        const payload = {
-          name: updForm.name || null,
-          email: updForm.email || null,
-          specialty: updForm.specialty || null,
-          address: updForm.address || null,
-        };
-        await updateDoctor(id, payload);
+  const updOnSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const id = routeDoctorId;
+      if (!id) return;
+      setUpdSaving(true);
+      setUpdErr("");
+      try {
+        if (updProfilePicture) {
+          const fd = new FormData();
+          if (updForm.name) fd.append("name", updForm.name);
+          if (updForm.email) fd.append("email", updForm.email);
+          if (updForm.specialty) fd.append("specialty", updForm.specialty);
+          if (updForm.address) fd.append("address", updForm.address);
+          fd.append("file", updProfilePicture);
+          fd.append("profilePicture", updProfilePicture);
+          await updateDoctor(id, fd);
+        } else {
+          const payload = {
+            name: updForm.name || null,
+            email: updForm.email || null,
+            specialty: updForm.specialty || null,
+            address: updForm.address || null,
+          };
+          await updateDoctor(id, payload);
+        }
+        navigate("/dashboard/doctors");
+      } catch (e) {
+        setUpdErr(
+          e?.response?.data?.message || e.message || "Failed to update doctor"
+        );
+        setUpdSaving(false);
       }
-      navigate("/dashboard/doctors");
-    } catch (e) {
-      setUpdErr(e?.response?.data?.message || e.message || "Failed to update doctor");
-      setUpdSaving(false);
-    }
-  }, [routeDoctorId, updForm, updProfilePicture, navigate]);
+    },
+    [routeDoctorId, updForm, updProfilePicture, navigate]
+  );
 
   const goBack = useCallback(() => navigate(-1), [navigate]);
-  const goDoctors = useCallback(() => navigate("/dashboard/doctors"), [navigate]);
+  const goDoctors = useCallback(
+    () => navigate("/dashboard/doctors"),
+    [navigate]
+  );
 
   const update = {
     id: routeDoctorId,
@@ -597,5 +712,13 @@ export default function useDoctor() {
     goDoctors,
   };
 
-  return { register, dashboard, list, addDoctor, addAppointment, appointments, update };
+  return {
+    register,
+    dashboard,
+    list,
+    addDoctor,
+    addAppointment,
+    appointments,
+    update,
+  };
 }

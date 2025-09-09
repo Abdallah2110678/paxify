@@ -1,7 +1,7 @@
 import DoctorHook from "../../hooks/doctorHook";
 
 export default function Doctors() {
-    const { list } = DoctorHook();
+    const { list } = DoctorHook({ autoFetchList: true });
     const {
         rows,
         loading,
@@ -28,12 +28,6 @@ export default function Doctors() {
                             placeholder="Search name, email, specialty, address…"
                             className="w-72 rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
-                        <button
-                            onClick={fetchRows}
-                            className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50"
-                        >
-                            ⟳ Reload
-                        </button>
                         <button
                             onClick={goAddDoctor}
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -92,8 +86,8 @@ export default function Doctors() {
                                                         onClick={() => onDelete(d)}
                                                         disabled={deletingId === id}
                                                         className={`px-3 py-1 rounded-lg ${deletingId === id
-                                                                ? "bg-rose-300/20 text-rose-400"
-                                                                : "bg-rose-500/15 text-rose-700 hover:bg-rose-500/20"
+                                                            ? "bg-rose-300/20 text-rose-400"
+                                                            : "bg-rose-500/15 text-rose-700 hover:bg-rose-500/20"
                                                             }`}
                                                         title="Delete"
                                                     >

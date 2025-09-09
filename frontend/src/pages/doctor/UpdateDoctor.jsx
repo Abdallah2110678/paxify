@@ -1,22 +1,38 @@
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import DoctorHook from "../../hooks/doctorHook";
 
 const UpdateDoctor = () => {
     const { update } = DoctorHook();
-    const { form, setForm, handleFileChange, loading, saving, err, onSubmit, goBack, goDoctors } = update;
+    const {
+        id,
+        form,
+        setForm,
+        handleFileChange,
+        loading,
+        saving,
+        err,
+        onSubmit,
+        load,
+        goDoctors,
+    } = update;
+
+    const [sp, setSp] = useSearchParams();
+
+    useEffect(() => {
+        load();
+    }, [id, load]);
+
+    const closeEdit = () => {
+        const next = new URLSearchParams(sp);
+        next.delete("editDoctorId");
+        setSp(Object.fromEntries(next), { replace: true });
+        goDoctors();
+    };
 
     return (
         <div className="p-6">
-            <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl">
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800">Update Doctor</h2>
-                    <button
-                        onClick={goBack}
-                        className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50"
-                    >
-                        ← Back
-                    </button>
-                </div>
-
+            <div className="bg-white rounded-lg shadow-lg p-8 w-full">
                 {loading && <div className="p-6 text-center text-slate-500">Loading…</div>}
 
                 {err && !loading && (
@@ -26,7 +42,7 @@ const UpdateDoctor = () => {
                 )}
 
                 {!loading && !err && (
-                    <form onSubmit={onSubmit} className="space-y-5">
+                    <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                             <input
@@ -68,7 +84,7 @@ const UpdateDoctor = () => {
                             />
                         </div>
 
-                        <div>
+                        <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
                             <input
                                 type="file"
@@ -79,10 +95,10 @@ const UpdateDoctor = () => {
                             <p className="text-xs text-gray-500 mt-1">Leave empty to keep current picture.</p>
                         </div>
 
-                        <div className="flex justify-end gap-2 pt-2">
+                        <div className="md:col-span-2 flex justify-end gap-2 pt-2">
                             <button
                                 type="button"
-                                onClick={goDoctors}
+                                onClick={closeEdit}
                                 className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50"
                                 disabled={saving}
                             >

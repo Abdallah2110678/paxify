@@ -1,5 +1,4 @@
-// src/App.jsx
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom";
 import Navbar from "./components/navbar/navbar.jsx";
 import Footer from "./components/footer/footer.jsx";
 import Home from "./pages/home/home.jsx";
@@ -16,23 +15,21 @@ import Register from "./pages/register/Register.jsx";
 import ProtectedRoute from "./auth/ProtectedRoute.jsx";
 import DoctorRegister from "./pages/doctor/DoctorRegister.jsx";
 
-// Doctor admin pages (in src/pages/doctor)
-import Doctors from "./pages/doctor/Doctors.jsx";
-import UpdateDoctor from "./pages/doctor/UpdateDoctor.jsx";
-
-// AddDoctor (per your tree) in src/pages/dashboard
-import AddDoctor from "./pages/dashboard/AddDoctor.jsx";
-
-// Patient admin pages (in src/pages/patients)
-import Pantients from "./pages/patients/Patients.jsx";
-import AddPatient from "./pages/patients/AddPatient.jsx";
-import UpdatePatient from "./pages/patients/UpdatePatient.jsx";
+// Small helpers to redirect dynamic :id routes into the tabbed dashboard
+function RedirectEditDoctor() {
+  const { id } = useParams();
+  return <Navigate to={`/dashboard?tab=doctor&editDoctorId=${encodeURIComponent(id)}`} replace />;
+}
+function RedirectEditPatient() {
+  const { id } = useParams();
+  return <Navigate to={`/dashboard?tab=patient&editPatientId=${encodeURIComponent(id)}`} replace />;
+}
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* ===== Admin-only ===== */}
+        {/* ===== Single Dashboard route (with sidebar/tabs) ===== */}
         <Route
           path="/dashboard"
           element={
@@ -41,37 +38,19 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* Doctors CRUD */}
-        <Route
-          path="/dashboard/doctors"
-          element={
-            <ProtectedRoute roles={["ADMIN"]}>
-              <Doctors />
-            </ProtectedRoute>
-          }
-        />
+
+        {/* ===== Redirect old deep links to tabbed dashboard ===== */}
+        <Route path="/dashboard/doctors" element={<Navigate to="/dashboard?tab=doctor" replace />} />
+        <Route path="/dashboard/add-doctor" element={<Navigate to="/dashboard?tab=add-doctor" replace />} />
+        <Route path="/dashboard/patients" element={<Navigate to="/dashboard?tab=patient" replace />} />
+        <Route path="/dashboard/add-patient" element={<Navigate to="/dashboard?tab=add-patient" replace />} />
+        <Route path="/dashboard/products" element={<Navigate to="/dashboard?tab=product" replace />} />
+        <Route path="/dashboard/add-product" element={<Navigate to="/dashboard?tab=add-product" replace />} />
         <Route
           path="/dashboard/doctors/:id/edit"
           element={
             <ProtectedRoute roles={["ADMIN"]}>
-              <UpdateDoctor />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard/add-doctor"
-          element={
-            <ProtectedRoute roles={["ADMIN"]}>
-              <AddDoctor />
-            </ProtectedRoute>
-          }
-        />
-        {/* Patients CRUD */}
-        <Route
-          path="/dashboard/patients"
-          element={
-            <ProtectedRoute roles={["ADMIN"]}>
-              <Pantients />
+              <RedirectEditDoctor />
             </ProtectedRoute>
           }
         />
@@ -79,15 +58,7 @@ function App() {
           path="/dashboard/patients/:id/edit"
           element={
             <ProtectedRoute roles={["ADMIN"]}>
-              <UpdatePatient />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard/add-patient"
-          element={
-            <ProtectedRoute roles={["ADMIN"]}>
-              <AddPatient />
+              <RedirectEditPatient />
             </ProtectedRoute>
           }
         />

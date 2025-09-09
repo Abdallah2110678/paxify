@@ -31,6 +31,7 @@ export function createPatient(payload) {
   });
 }
 
+
 export function updatePatient(id, payload) {
   return api.patch(`/api/users/${id}/patient`, payload, {
     headers: { ...authHeaders() },
