@@ -23,6 +23,9 @@ public interface UserRepo extends JpaRepository<User, UUID> {
     @Query("select d from Doctor d")
     List<Doctor> findAllDoctors();
 
+    @Query("select u from User u where u.role = 'ADMIN'")
+    List<User> findAllAdmins();
+
     List<User> findByRole(Role role);
 
 }

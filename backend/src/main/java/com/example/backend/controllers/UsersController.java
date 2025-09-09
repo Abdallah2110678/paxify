@@ -37,6 +37,19 @@ public class UsersController {
 
     private final UserService service;
 
+
+    @GetMapping("/admins")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<UserResponse>> listAdmins() {
+        return ResponseEntity.ok(service.listAdmins());
+    }
+
+    @PatchMapping("/{id}/promote")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<UserResponse> promoteToAdmin(@PathVariable UUID id) {
+        return ResponseEntity.ok(service.promoteToAdmin(id));
+    }
+
     /* ======== CREATE ======== */
     // Patients can be created via public register OR admin here
     @PostMapping("/patients")
