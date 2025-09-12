@@ -30,6 +30,7 @@ export default function useDoctor(options = {}) {
     email: "",
     password: "",
     phoneNumber: "",
+    address: "",
     gender: "MALE",
     specialty: "",
     bio: "",
@@ -270,6 +271,7 @@ export default function useDoctor(options = {}) {
     price: "",
     durationMinutes: 60,
     notes: "",
+    address: "",
   });
   const [addApptSubmitting, setAddApptSubmitting] = useState(false);
   const [addApptErr, setAddApptErr] = useState("");
@@ -312,6 +314,8 @@ export default function useDoctor(options = {}) {
           durationMinutes: parseInt(addApptForm.durationMinutes) || 60,
           notes: addApptForm.notes || null,
           ...(maybePrice !== undefined ? { price: maybePrice } : {}),
+          // Send address only if provided (IN_PERSON will default to doctor's address when omitted)
+          ...(addApptForm.address ? { address: addApptForm.address } : {}),
         };
 
         await createAppointment(appointmentData);

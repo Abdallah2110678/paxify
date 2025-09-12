@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import com.example.backend.models.Appointment;
 import com.example.backend.models.AppointmentStatus;
@@ -26,9 +27,9 @@ public class AppointmentService {
     private final PatientRepo patientRepo;
 
     // Create appointment (doctor creates available slots)
-    public Appointment createAppointment(UUID doctorId, LocalDateTime dateTime, 
-                                       Integer durationMinutes, String sessionType, 
-                                       java.math.BigDecimal price, String notes) {
+    public Appointment createAppointment(UUID doctorId, LocalDateTime dateTime,
+                                         Integer durationMinutes, String sessionType,
+                                         java.math.BigDecimal price, String notes) {
         Doctor doctor = doctorRepo.findById(doctorId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
@@ -48,6 +49,41 @@ public class AppointmentService {
         appointment.setStatus(AppointmentStatus.AVAILABLE);
 
         return appointmentRepo.save(appointment);
+    }
+
+    /**
+     * Reschedule all expired AVAILABLE appointments for a doctor to the next week.
+     * This ensures that fixed weekly slots roll forward even if the daily job hasn't run yet.
+     */
+    public void rescheduleExpiredAvailableForDoctor(UUID doctorId) {
+        LocalDateTime now = LocalDateTime.now();
+        var expired = appointmentRepo.findByDoctorIdAndStatusAndAppointmentDateTimeBefore(doctorId, AppointmentStatus.AVAILABLE, now);
+        if (expired == null || expired.isEmpty()) return;
+        for (var a : expired) {
+            // Ensure we roll forward until it is in the future (in case of long downtime)
+            LocalDateTime dt = a.getAppointmentDateTime();
+            while (dt.isBefore(now)) {
+                dt = dt.plusWeeks(1);
+            }
+            a.setAppointmentDateTime(dt);
+        }
+        appointmentRepo.saveAll(expired);
+    }
+
+    // Nightly job: roll all expired AVAILABLE appointments forward to the next week
+    @Scheduled(cron = "0 5 0 * * *")
+    public void rescheduleExpiredAvailableGlobal() {
+        LocalDateTime now = LocalDateTime.now();
+        var expired = appointmentRepo.findByStatusAndAppointmentDateTimeBefore(AppointmentStatus.AVAILABLE, now);
+        if (expired == null || expired.isEmpty()) return;
+        for (var a : expired) {
+            LocalDateTime dt = a.getAppointmentDateTime();
+            while (dt.isBefore(now)) {
+                dt = dt.plusWeeks(1);
+            }
+            a.setAppointmentDateTime(dt);
+        }
+        appointmentRepo.saveAll(expired);
     }
 
     // Book appointment (patient books an available slot)

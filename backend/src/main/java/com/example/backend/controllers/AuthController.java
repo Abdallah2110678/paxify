@@ -107,10 +107,11 @@ public class AuthController {
             @RequestParam String name,
             @RequestParam String email,
             @RequestParam String password,
-            @RequestParam String phoneNumber,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) String address,
             @RequestParam String gender,
-            @RequestParam String specialty,
-            @RequestParam String bio,
+            @RequestParam(required = false) String specialty,
+            @RequestParam(required = false) String bio,
             @RequestParam BigDecimal consultationFee,
             @RequestParam(required = false) String availability) throws java.io.IOException {
 
@@ -122,10 +123,11 @@ public class AuthController {
         doctor.setName(name);
         doctor.setEmail(email.toLowerCase());
         doctor.setPassword(encoder.encode(password));
-        doctor.setPhoneNumber(phoneNumber);
+        if (phoneNumber != null) doctor.setPhoneNumber(phoneNumber);
+        if (address != null) doctor.setAddress(address);
         doctor.setGender(Gender.valueOf(gender.toUpperCase()));
-        doctor.setSpecialty(specialty);
-        doctor.setBio(bio);
+        if (specialty != null) doctor.setSpecialty(specialty);
+        if (bio != null) doctor.setBio(bio);
         doctor.setConsultationFee(consultationFee);
         // Availability is now handled through appointments
         doctor.setRole(Role.DOCTOR);

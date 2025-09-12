@@ -60,8 +60,14 @@ const DoctorRegister = () => {
             type="password"
             placeholder="Password"
             onChange={handleChange}
-            className="border p-2 rounded-lg w-full"
+            className="border p-2 rounded-lg w-full mb-2"
             required
+          />
+          <input
+            name="address"
+            placeholder="Clinic Address"
+            onChange={handleChange}
+            className="border p-2 rounded-lg w-full"
           />
 
           {/* Row 4 */}

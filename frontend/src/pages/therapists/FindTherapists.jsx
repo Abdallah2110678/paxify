@@ -1,4 +1,5 @@
 import useNavbar from "../../hooks/navbarHook";
+import DoctorScheduleContainer from "../../components/therapists/DoctorScheduleContainer";
 
 // Pure presentational component. All data/logic must be provided via props.
 export default function FindTherapists({ therapists = [], loading = false, error = "", onBook }) {
@@ -16,53 +17,96 @@ export default function FindTherapists({ therapists = [], loading = false, error
       )}
 
       {!loading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-6">
           {therapists.map((t) => (
-            <div key={t.id || t.email || t.name} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-              <div className="flex items-center space-x-4 mb-4">
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-                  {t.profilePictureUrl ? (
-                    <img 
-                      src={resolveUrl(t.profilePictureUrl)} 
-                      alt={`${t.name}'s profile`}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                  ) : null}
-                  <div 
-                    className={`w-full h-full flex items-center justify-center text-2xl ${t.profilePictureUrl ? 'hidden' : 'flex'}`}
-                    aria-hidden
-                  >
-                    {t.emoji || (t.gender === "FEMALE" ? "👩‍⚕️" : "👨‍⚕️")}
+            <div
+              key={t.id || t.email || t.name}
+              className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-6 border border-slate-100 w-full max-w-[900px] lg:mr-auto"
+            >
+              <div className="flex flex-col lg:flex-row items-start gap-6">
+                {/* Left: Avatar */}
+                <div className="flex items-start gap-4 w-full lg:w-auto">
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 ring-2 ring-slate-100">
+                    {t.profilePictureUrl ? (
+                      <img
+                        src={resolveUrl(t.profilePictureUrl)}
+                        alt={`${t.name}'s profile`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className={`w-full h-full items-center justify-center text-3xl ${t.profilePictureUrl ? 'hidden' : 'flex'}`}
+                      aria-hidden
+                    >
+                      {t.emoji || (t.gender === 'FEMALE' ? '👩‍⚕️' : '👨‍⚕️')}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800">{t.name}</h3>
-                  <p className="text-blue-600">{t.specialty || "General Counseling"}</p>
-                </div>
-              </div>
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center text-gray-600">
-                  <span className="mr-2">⭐</span>
-                  <span>4.8 (127 reviews)</span>
-                </div>
-                {t.consultationFee && (
-                  <div className="flex items-center text-gray-600">
-                    <span className="mr-2">💰</span>
-                    <span>L.E {t.consultationFee}/session</span>
+
+                {/* Middle: Details */}
+                <div className="flex-1 w-full">
+                  <div className="mb-2">
+                    {t.title && (<div className="text-sm text-sky-700 font-medium">{t.title}</div>)}
+                    {t.name && (
+                      <h3 className="text-2xl font-semibold text-gray-800">{t.name}</h3>
+                    )}
+                    {t.specialty && (
+                      <p className="text-slate-600 -mt-0.5">Specialist of {t.specialty}</p>
+                    )}
                   </div>
-                )}
-                
+
+                  {t.rating != null && (
+                    <div className="flex items-center text-amber-500 mb-2">
+                      <span className="mr-1">{Array.from({ length: 5 }, (_, i) => i < Math.round(t.rating) ? '★' : '☆').join(' ')}</span>
+                      {t.reviewsCount != null && (
+                        <span className="text-slate-500 text-sm ml-2">Overall Rating From {t.reviewsCount} Visitors</span>
+                      )}
+                    </div>
+                  )}
+
+                  <ul className="text-slate-700 space-y-2 text-sm">
+                    {Array.isArray(t.specializations) && t.specializations.length > 0 && (
+                      <li className="flex items-start gap-2">
+                        <span className="text-sky-600 mt-0.5">🦷</span>
+                        <span>
+                          <span className="text-sky-700 font-medium">{t.specialty || 'Specialist'}</span> Specialized in{' '}
+                          <span className="text-sky-600">{t.specializations.join(', ')}</span>
+                        </span>
+                      </li>
+                    )}
+                    {t.address && (
+                      <li className="flex items-start gap-2">
+                        <span className="text-sky-600 mt-0.5">📍</span>
+                        <span>{t.address}</span>
+                      </li>
+                    )}
+                    {t.consultationFee != null && (
+                      <li className="flex items-start gap-2">
+                        <span className="text-sky-600 mt-0.5">💳</span>
+                        <span>Fees : L.E {t.consultationFee}</span>
+                      </li>
+                    )}
+                    {t.waitingTimeMinutes != null && (
+                      <li className="flex items-start gap-2">
+                        <span className="text-emerald-600 mt-0.5">⏱️</span>
+                        <span>Waiting Time : {t.waitingTimeMinutes} Minutes</span>
+                      </li>
+                    )}
+                    {t.callCostLabel && (
+                      <li className="flex items-start gap-2">
+                        <span className="text-sky-600 mt-0.5">📞</span>
+                        <span>{t.callCostLabel}</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+                {/* Right: Schedule (from backend via container) */}
+                <DoctorScheduleContainer doctorId={t.id || t.userId || t.doctorId} onBook={(slot) => onBook?.(t, slot)} />
               </div>
-              <button
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                onClick={() => onBook?.(t)}
-              >
-                Book Appointment
-              </button>
             </div>
           ))}
         </div>

@@ -36,7 +36,7 @@ public class AppointmentController {
         }
         
         Appointment appointment = appointmentService.createAppointment(
-                request.getDoctorId(), request.getDateTime(), request.getDurationMinutes(), 
+                request.getDoctorId(), request.getDateTime(), request.getDurationMinutes(),
                 request.getSessionType(), request.getPrice(), request.getNotes());
         return ResponseEntity.ok(appointment);
     }
@@ -56,7 +56,10 @@ public class AppointmentController {
     @GetMapping("/doctor/{doctorId}")
     @PreAuthorize("hasAnyAuthority('DOCTOR', 'ADMIN')")
     public ResponseEntity<List<Appointment>> getAppointmentsByDoctor(@PathVariable UUID doctorId) {
-        List<Appointment> appointments = appointmentRepo.findByDoctorIdOrderByAppointmentDateTimeAsc(doctorId);
+        // Ensure expired AVAILABLE slots are rolled forward immediately
+        appointmentService.rescheduleExpiredAvailableForDoctor(doctorId);
+        List<Appointment> appointments = appointmentRepo
+            .findByDoctorIdAndAppointmentDateTimeAfterOrderByAppointmentDateTimeAsc(doctorId, LocalDateTime.now());
         return ResponseEntity.ok(appointments);
     }
 
@@ -71,7 +74,11 @@ public class AppointmentController {
     // Get available appointments by doctor (public endpoint for booking)
     @GetMapping("/doctor/{doctorId}/available")
     public ResponseEntity<List<Appointment>> getAvailableAppointmentsByDoctor(@PathVariable UUID doctorId) {
-        List<Appointment> appointments = appointmentRepo.findByDoctorIdAndStatusOrderByAppointmentDateTimeAsc(doctorId, AppointmentStatus.AVAILABLE);
+        // Ensure expired AVAILABLE slots are rolled forward immediately
+        appointmentService.rescheduleExpiredAvailableForDoctor(doctorId);
+        List<Appointment> appointments = appointmentRepo
+            .findByDoctorIdAndStatusAndAppointmentDateTimeAfterOrderByAppointmentDateTimeAsc(
+                doctorId, AppointmentStatus.AVAILABLE, LocalDateTime.now());
         return ResponseEntity.ok(appointments);
     }
 

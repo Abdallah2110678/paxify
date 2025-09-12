@@ -18,11 +18,17 @@ public interface AppointmentRepo extends JpaRepository<Appointment, UUID> {
     // Find appointments by doctor
     List<Appointment> findByDoctorIdOrderByAppointmentDateTimeAsc(UUID doctorId);
 
+    // Find FUTURE appointments by doctor (exclude past)
+    List<Appointment> findByDoctorIdAndAppointmentDateTimeAfterOrderByAppointmentDateTimeAsc(UUID doctorId, LocalDateTime now);
+
     // Find appointments by patient
     List<Appointment> findByPatientIdOrderByAppointmentDateTimeAsc(UUID patientId);
 
     // Find available appointments for a doctor
     List<Appointment> findByDoctorIdAndStatusOrderByAppointmentDateTimeAsc(UUID doctorId, AppointmentStatus status);
+
+    // Find available FUTURE appointments for a doctor
+    List<Appointment> findByDoctorIdAndStatusAndAppointmentDateTimeAfterOrderByAppointmentDateTimeAsc(UUID doctorId, AppointmentStatus status, LocalDateTime now);
 
     // Find appointments by doctor and date range
     @Query("SELECT a FROM Appointment a WHERE a.doctor.id = :doctorId AND a.appointmentDateTime BETWEEN :startDate AND :endDate ORDER BY a.appointmentDateTime ASC")
@@ -35,4 +41,14 @@ public interface AppointmentRepo extends JpaRepository<Appointment, UUID> {
     List<Appointment> findAvailableAppointmentsInRange(@Param("status") AppointmentStatus status,
                                                       @Param("startDate") LocalDateTime startDate,
                                                       @Param("endDate") LocalDateTime endDate);
+
+    // Cleanup helpers
+    void deleteByAppointmentDateTimeBeforeAndStatus(LocalDateTime cutoff, AppointmentStatus status);
+    void deleteByAppointmentDateTimeBefore(LocalDateTime cutoff);
+
+    // Find expired AVAILABLE appointments
+    List<Appointment> findByStatusAndAppointmentDateTimeBefore(AppointmentStatus status, LocalDateTime before);
+
+    // Find expired AVAILABLE appointments for a specific doctor
+    List<Appointment> findByDoctorIdAndStatusAndAppointmentDateTimeBefore(UUID doctorId, AppointmentStatus status, LocalDateTime before);
 }
