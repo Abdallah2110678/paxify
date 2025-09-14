@@ -278,3 +278,22 @@ export default function usePatient() {
 
   return { dashboard, list, addPatient, update };
 }
+
+// Booking patient mini-hook used by the Doctor Description booking modal
+// Keeps all form logic in this patientHook file as requested
+export function useBookingPatientForm(initial = {}) {
+  const [form, setForm] = useState({
+    name: initial.name || "",
+    phone: initial.phone || "",
+    email: initial.email || "",
+  });
+
+  const setName = useCallback((v) => setForm((p) => ({ ...p, name: v })), []);
+  const setPhone = useCallback((v) => setForm((p) => ({ ...p, phone: v })), []);
+  const setEmail = useCallback((v) => setForm((p) => ({ ...p, email: v })), []);
+  const reset = useCallback(() => setForm({ name: "", phone: "", email: "" }), []);
+
+  const canBook = Boolean(form.name && form.phone);
+
+  return { form, setName, setPhone, setEmail, reset, canBook };
+}

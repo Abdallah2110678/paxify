@@ -1,11 +1,11 @@
 import useFindTherapists from "../../hooks/findTherapistsHook";
-import useTherapistFilters from "../../hooks/useTherapistFilters";
+import therapistFiltersHook from "../../hooks/therapistFiltersHook";
 import TherapistFilters from "../../components/therapists/TherapistFilters";
 import FindTherapists from "./FindTherapists";
 
 export default function FindTherapistsContainer() {
   const { therapists, loading, error, onBook } = useFindTherapists();
-  const { gender, address, specialist, price, options, actions, filteredTherapists } = useTherapistFilters(therapists);
+  const { gender, address, specialist, price, options, actions, filteredTherapists } = therapistFiltersHook(therapists);
 
   return (
     <div className="container mx-auto px-4 py-8">

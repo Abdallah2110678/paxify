@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback } from "react";
 
-// Manages filter state and produces a filtered therapist list
-export default function useTherapistFilters(therapists = []) {
+// Renamed from useTherapistFilters.js
+export default function therapistFiltersHook(therapists = []) {
   const [gender, setGender] = useState(""); // '', 'MALE', 'FEMALE'
   const [address, setAddress] = useState("");
   const [specialist, setSpecialist] = useState("");

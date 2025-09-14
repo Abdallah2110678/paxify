@@ -14,6 +14,7 @@ import Login from "./pages/login/Login.jsx";
 import Register from "./pages/register/Register.jsx";
 import ProtectedRoute from "./auth/ProtectedRoute.jsx";
 import DoctorRegister from "./pages/doctor/DoctorRegister.jsx";
+import DoctorDescriptionContainer from "./pages/doctor/DoctorDescriptionContainer.jsx";
 
 // Small helpers to redirect dynamic :id routes into the tabbed dashboard
 function RedirectEditDoctor() {
@@ -92,6 +93,7 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/book" element={<BookSession />} />
                   <Route path="/therapists" element={<FindTherapistsContainer />} />
+                  <Route path="/doctors/:id" element={<DoctorDescriptionContainer />} />
                   <Route path="/games" element={<Games />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/profile" element={<Profile />} />

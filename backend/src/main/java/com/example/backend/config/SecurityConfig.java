@@ -10,6 +10,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.userdetails.UserDetailsService; // ← interface
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,8 +60,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors().and()
                 .exceptionHandling(ex -> ex
-                        .accessDeniedHandler(accessDeniedHandler()))
+                        .accessDeniedHandler(accessDeniedHandler())
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        }))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/api/public/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/appointments/**").permitAll()
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/register-admin",
                                 "/api/auth/register-doctor",
                                 "/api/auth/debug-auth", "/uploads/**", "/api/public/**")

@@ -24,6 +24,21 @@ export async function getDoctorById(id) {
   return data;
 }
 
+// Public, unauthenticated doctor profile with average rating and reviews count
+export async function getPublicDoctorProfile(id) {
+  const { data } = await api.get(`/api/public/doctors/${id}/profile`);
+  return data;
+}
+
+export async function getDoctorReviews(id) {
+  const { data } = await api.get(`/api/public/doctors/${id}/reviews`);
+  return Array.isArray(data) ? data : (data?.items || data?.data || []);
+}
+
+export function submitDoctorReview({ doctorId, rating, comment }) {
+  return api.post(`/api/reviews`, { doctorId, rating, comment });
+}
+
 export function updateDoctor(id, payload) {
   if (typeof FormData !== "undefined" && payload instanceof FormData) {
     return api.patch(`/api/users/${id}/doctor`, payload, {

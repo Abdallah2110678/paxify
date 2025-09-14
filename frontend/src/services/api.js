@@ -10,15 +10,10 @@ api.interceptors.response.use(
   (err) => {
     try {
       const status = err?.response?.status;
-      // If token is expired/invalid, force logout and redirect to login
+      // Do not auto-logout on 401. Leave handling to callers/routes.
+      // This prevents unexpected redirects on public pages during refresh.
       if (status === 401) {
-        try {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-        } catch (_) {}
-        if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
-          window.location.href = "/login";
-        }
+        // no-op
       }
     } catch (_) {}
     return Promise.reject(err);
