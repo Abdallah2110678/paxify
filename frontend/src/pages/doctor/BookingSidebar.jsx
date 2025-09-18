@@ -10,6 +10,8 @@ export default function BookingSidebar({
   onNextClinic,
   days = [], 
   onSelectSlot,
+  selectedSlotId,
+  onBook,
 }) {
   return (
     <aside className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -68,7 +70,7 @@ export default function BookingSidebar({
                         type="button"
                         disabled={it.booked || it.past}
                         onClick={() => onSelectSlot?.(it)}
-                        className={`w-full text-center px-3 py-2 rounded border ${it.booked || it.past ? 'text-slate-400 bg-slate-50' : 'hover:bg-sky-50 text-slate-800'}`}
+                        className={`w-full text-center px-3 py-2 rounded border ${it.booked || it.past ? 'text-slate-400 bg-slate-50' : (selectedSlotId === it.id ? 'bg-sky-600 text-white border-sky-600' : 'hover:bg-sky-50 text-slate-800')}`}
                       >
                         {it.timeLabel}
                       </button>
@@ -78,7 +80,19 @@ export default function BookingSidebar({
                   )}
                 </div>
                 <div className="p-2">
-                  <button type="button" disabled className="w-full bg-rose-600 text-white rounded py-2 opacity-70 cursor-default">BOOK</button>
+                  {(() => {
+                    const hasSelection = Array.isArray(day.items) && day.items.some((it) => it.id === selectedSlotId);
+                    return (
+                      <button
+                        type="button"
+                        disabled={!hasSelection}
+                        onClick={() => hasSelection && onBook?.()}
+                        className={`w-full rounded py-2 ${hasSelection ? 'bg-rose-600 text-white hover:bg-rose-700' : 'bg-slate-300 text-slate-600 cursor-not-allowed'}`}
+                      >
+                        BOOK
+                      </button>
+                    );
+                  })()}
                 </div>
               </div>
             ))}

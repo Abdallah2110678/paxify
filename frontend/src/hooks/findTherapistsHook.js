@@ -3,11 +3,15 @@ import { getPublicDoctors } from "../services/doctorService";
 import { bookAppointment } from "../services/appointmentService";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-hot-toast";
+import { useBookingPatientForm } from "./patientHook";
 
 export default function useFindTherapists() {
   const [therapists, setTherapists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const booking = useBookingPatientForm();
 
   const fetchTherapists = useCallback(async () => {
     setLoading(true);
@@ -26,7 +30,14 @@ export default function useFindTherapists() {
     fetchTherapists();
   }, [fetchTherapists]);
 
-  const onBook = useCallback(async (doctor, slot) => {
+  // Open modal when user clicks BOOK from the schedule card
+  const onBook = useCallback((doctor, slot) => {
+    setSelectedDoctor(doctor || null);
+    setSelectedSlot(slot || null);
+  }, []);
+
+  // Actual booking action invoked from the modal
+  const confirmBook = useCallback(async ({ slot }) => {
     try {
       if (!slot?.id) throw new Error("No appointment slot selected");
       const token = localStorage.getItem("token");
@@ -35,21 +46,37 @@ export default function useFindTherapists() {
       try {
         const decoded = jwtDecode(token);
         patientId = decoded?.id || decoded?.userId || decoded?.sub;
-      } catch (_) {
-        // ignore
-      }
+      } catch (_) {}
       if (!patientId) throw new Error("Cannot determine patient ID from token");
 
-      const bookingPromise = bookAppointment(slot.id, patientId);
-      await toast.promise(bookingPromise, {
+      const p = bookAppointment(slot.id, patientId);
+      await toast.promise(p, {
         loading: "Booking appointment…",
         success: "Appointment booked successfully",
         error: (e) => e?.response?.data?.message || e.message || "Failed to book appointment",
       });
+      booking.reset();
+      setSelectedSlot(null);
+      setSelectedDoctor(null);
     } catch (e) {
       toast.error(e?.message || "Failed to book appointment");
     }
-  }, []);
+  }, [booking]);
 
-  return { therapists, loading, error, fetchTherapists, onBook };
+  const bookingModalProps = {
+    open: Boolean(selectedSlot),
+    selectedSlot,
+    doctor: selectedDoctor ? { name: selectedDoctor.name, address: selectedDoctor.address } : {},
+    feeLabel: selectedDoctor?.consultationFee != null ? `L.E ${selectedDoctor.consultationFee}` : "",
+    address: selectedDoctor?.address,
+    form: booking.form,
+    setName: booking.setName,
+    setPhone: booking.setPhone,
+    setEmail: booking.setEmail,
+    canBook: booking.canBook,
+    onBook: ({ name, phone, email, slot }) => confirmBook({ slot }),
+    onClose: () => { setSelectedSlot(null); setSelectedDoctor(null); },
+  };
+
+  return { therapists, loading, error, fetchTherapists, onBook, bookingModalProps };
 }

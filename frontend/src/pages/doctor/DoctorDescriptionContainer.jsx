@@ -24,6 +24,7 @@ export default function DoctorDescriptionContainer() {
   const [form, setForm] = useState({ rating: 5, comment: "" });
   const schedule = doctorSchedualhook(id);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [selectedSlotId, setSelectedSlotId] = useState(null);
   const booking = useBookingPatientForm();
 
   return (
@@ -98,13 +99,18 @@ export default function DoctorDescriptionContainer() {
               pointsLabel={""}
               address={doctorProps.address}
               days={schedule.days}
-              onSelectSlot={(slot) => setSelectedSlot(slot)}
+              onSelectSlot={(slot) => setSelectedSlotId(slot?.id)}
+              selectedSlotId={selectedSlotId}
+              onBook={() => {
+                const flat = Array.isArray(schedule.days) ? schedule.days.flatMap(d => d.items || []) : [];
+                const slot = flat.find(it => it.id === selectedSlotId);
+                if (slot) setSelectedSlot(slot);
+              }}
             />
           </div>
         </div>
       )}
 
-      {/* Booking second step modal (presentational) */}
       <BookingModal
         open={Boolean(selectedSlot)}
         onClose={() => setSelectedSlot(null)}
@@ -118,8 +124,6 @@ export default function DoctorDescriptionContainer() {
         setEmail={booking.setEmail}
         canBook={booking.canBook}
         onBook={async ({ name, phone, email, slot, doctor }) => {
-          // TODO: integrate with real booking API or navigate to Book page
-          // Example: await api.post(`/api/appointments/${slot.id}/book`, { name, phone, email });
           booking.reset();
           setSelectedSlot(null);
         }}

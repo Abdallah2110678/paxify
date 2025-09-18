@@ -2,9 +2,10 @@ import useFindTherapists from "../../hooks/findTherapistsHook";
 import therapistFiltersHook from "../../hooks/therapistFiltersHook";
 import TherapistFilters from "../../components/therapists/TherapistFilters";
 import FindTherapists from "./FindTherapists";
+import BookingModal from "../doctor/BookingModal";
 
 export default function FindTherapistsContainer() {
-  const { therapists, loading, error, onBook } = useFindTherapists();
+  const { therapists, loading, error, onBook, bookingModalProps } = useFindTherapists();
   const { gender, address, specialist, price, options, actions, filteredTherapists } = therapistFiltersHook(therapists);
 
   return (
@@ -30,6 +31,8 @@ export default function FindTherapistsContainer() {
           onBook={onBook}
         />
       </div>
+
+      <BookingModal {...bookingModalProps} />
     </div>
   );
 }
