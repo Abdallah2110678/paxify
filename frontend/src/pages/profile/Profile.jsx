@@ -5,6 +5,7 @@ const Profile = () => {
     user,
     form,
     avatarSrc,
+    isDoctor,
     handleChange,
     onFileChange,
     handleSave,
@@ -33,13 +34,15 @@ const Profile = () => {
                     <span className="text-4xl">👤</span>
                   )}
                 </div>
-                <div className="flex flex-col space-y-2">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={onFileChange}
-                  />
-                </div>
+                {isDoctor && (
+                  <div className="flex flex-col space-y-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={onFileChange}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

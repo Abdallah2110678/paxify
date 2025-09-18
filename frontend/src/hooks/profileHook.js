@@ -32,6 +32,16 @@ export default function useProfile() {
     const rolePath = getRolePath();
     const url = rolePath ? `/api/users/${user.id}/${rolePath}` : `/api/users/${user.id}`;
     await api.patch(url, { name: form.name, email: form.email });
+
+    if (user?.role === "DOCTOR" && file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      await api.post(`/api/users/${user.id}/profile-picture`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setBust(Date.now());
+    }
+
     await refreshUser();
   };
 
@@ -66,6 +76,7 @@ export default function useProfile() {
     user,
     form,
     avatarSrc,
+    isDoctor: user?.role === "DOCTOR",
 
     // setters
     setForm,
