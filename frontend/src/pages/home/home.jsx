@@ -1,14 +1,4 @@
 import useHome from "../../hooks/homeHook.js";
-
-// Color tokens (using hex in Tailwind arbitrary values for fast drop-in)
-// Brand
-// - Primary (turquoise): #4CB5AB
-// - Secondary surface (warm beige/sand): #F4EDE4
-// - CTA accents: #E68A6C (muted coral), #D4A44A (warm gold)
-// - Text: headlines deep charcoal, body warm gray
-// You can later move these to tailwind.config.js theme.extend.colors
-// and replace the hex with e.g. bg-brand, text-charcoal, etc.
-
 export default function Home() {
     const {
         // state
@@ -374,6 +364,8 @@ export default function Home() {
             </section>
 
             {/* SECTION 6: WHY PAXIFY? */}
+
+            {/* SECTION 6: WHY PAXIFY? */}
             <section className="py-16 md:py-20 bg-[#F4EDE4]">
                 <div className="container mx-auto max-w-7xl px-6">
                     <div className="text-center mb-12">
@@ -383,89 +375,91 @@ export default function Home() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                    {/* 5 cards in one row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 items-stretch">
                         {[
                             {
                                 title: "Therapists who listen",
                                 desc: "We partner only with therapists known for their expertise and their approachable, caring style — so your experience feels smooth, supportive, and truly heard.",
                                 icon: "👂",
-                                gradient: "from-[#4CB5AB]/10 to-[#4CB5AB]/5"
+                                gradient: "from-[#4CB5AB]/10 to-[#4CB5AB]/5",
                             },
                             {
                                 title: "Full confidentiality",
                                 desc: "We use advanced technology to guarantee your privacy and never share your data with any third party.",
                                 icon: "🔒",
-                                gradient: "from-[#E68A6C]/10 to-[#E68A6C]/5"
+                                gradient: "from-[#E68A6C]/10 to-[#E68A6C]/5",
                             },
                             {
                                 title: "Immediate sessions",
                                 desc: "Start your consultation right away — no long waiting lists.",
                                 icon: "⚡",
-                                gradient: "from-[#D4A44A]/10 to-[#D4A44A]/5"
+                                gradient: "from-[#D4A44A]/10 to-[#D4A44A]/5",
                             },
                             {
                                 title: "Fits your budget",
                                 desc: "Choose the price that works for you, and we'll recommend the right therapists accordingly.",
                                 icon: "💰",
-                                gradient: "from-[#4CB5AB]/10 to-[#4CB5AB]/5"
+                                gradient: "from-[#4CB5AB]/10 to-[#4CB5AB]/5",
                             },
                             {
                                 title: "Flexible payment methods",
                                 desc: "Pay safely and easily through multiple payment options.",
                                 icon: "💳",
-                                gradient: "from-[#E68A6C]/10 to-[#E68A6C]/5"
+                                gradient: "from-[#E68A6C]/10 to-[#E68A6C]/5",
                             },
                         ].map((f, i) => (
                             <div
                                 key={i}
-                                className={`group rounded-2xl bg-white border border-[#4CB5AB]/15 p-6 shadow-sm hover:shadow-lg 
-                    transition-all duration-300 hover:-translate-y-1 hover:border-[#4CB5AB]/30 relative overflow-hidden
-                    ${i === 4 ? 'sm:col-span-2 lg:col-span-1' : ''}`}
+                                className={`group relative overflow-hidden rounded-2xl border border-[#4CB5AB]/15 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#4CB5AB]/30 hover:shadow-lg h-full flex flex-col`}
                             >
-                                {/* Gradient background overlay */}
-                                <div className={`absolute inset-0 bg-gradient-to-br ${f.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl`}></div>
+                                {/* gradient overlay */}
+                                <div
+                                    className={`pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br ${f.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+                                />
 
-                                <div className="relative z-10">
-                                    {/* Icon with background */}
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#4CB5AB]/20 to-[#E68A6C]/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                        <span className="text-2xl" role="img" aria-hidden="true">{f.icon}</span>
+                                <div className="relative z-10 flex flex-col grow">
+                                    {/* icon */}
+                                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4CB5AB]/20 to-[#E68A6C]/20 transition-transform duration-300 group-hover:scale-110">
+                                        <span className="text-2xl" role="img" aria-hidden="true">
+                                            {f.icon}
+                                        </span>
                                     </div>
 
-                                    <h3 className="text-xl font-bold text-[#2B2B2B] mb-3 group-hover:text-[#4CB5AB] transition-colors duration-300">
+                                    <h3 className="mb-3 text-xl font-bold text-[#2B2B2B] transition-colors duration-300 group-hover:text-[#4CB5AB]">
                                         {f.title}
                                     </h3>
 
-                                    <p className="text-[#6B6B6B] leading-relaxed">
-                                        {f.desc}
-                                    </p>
+                                    <p className="text-[#6B6B6B] leading-relaxed">{f.desc}</p>
+                                    <div className="mt-auto pt-4" />
                                 </div>
 
-                                {/* Decorative corner element */}
-                                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-[#4CB5AB]/5 to-transparent rounded-bl-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                {/* corner accent */}
+                                <div className="absolute right-0 top-0 h-20 w-20 rounded-bl-3xl bg-gradient-to-br from-[#4CB5AB]/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                             </div>
                         ))}
                     </div>
 
-                    {/* Enhanced CTA Section */}
+                    {/* CTA */}
                     <div className="mt-12 text-center">
-                        <div className="bg-white rounded-2xl p-8 shadow-sm border border-[#4CB5AB]/20 max-w-2xl mx-auto">
-                            <h3 className="text-2xl font-bold text-[#2B2B2B] mb-3">Ready to get started?</h3>
-                            <p className="text-[#6B6B6B] mb-6">Join thousands of families who have found their perfect therapist match.</p>
+                        <div className="mx-auto max-w-2xl rounded-2xl border border-[#4CB5AB]/20 bg-white p-8 shadow-sm">
+                            <h3 className="mb-3 text-2xl font-bold text-[#2B2B2B]">Ready to get started?</h3>
+                            <p className="mb-6 text-[#6B6B6B]">Join thousands of families who have found their perfect therapist match.</p>
 
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            <div className="flex flex-col justify-center gap-4 sm:flex-row">
                                 <button
                                     onClick={handleBrowseTherapists}
-                                    className="group rounded-full px-8 py-4 font-bold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                                    className="group rounded-full bg-[#E68A6C] px-8 py-4 font-bold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-[#d97a5f] hover:shadow-xl"
                                 >
                                     <span className="flex items-center justify-center gap-2">
                                         Browse Therapists
-                                        <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                                        <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                                     </span>
                                 </button>
 
                                 <button
                                     onClick={handleKnowMore}
-                                    className="rounded-full px-8 py-4 font-semibold bg-transparent hover:bg-[#4CB5AB]/10 text-[#4CB5AB] border-2 border-[#4CB5AB] hover:border-[#44A08D] hover:text-[#44A08D] transition-all duration-300"
+                                    className="rounded-full border-2 border-[#4CB5AB] px-8 py-4 font-semibold text-[#4CB5AB] transition-all duration-300 hover:border-[#44A08D] hover:bg-[#4CB5AB]/10 hover:text-[#44A08D]"
                                 >
                                     Learn More
                                 </button>
