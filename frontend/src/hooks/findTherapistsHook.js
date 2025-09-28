@@ -12,6 +12,8 @@ export default function useFindTherapists() {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const booking = useBookingPatientForm();
+  const [pendingBanner, setPendingBanner] = useState("");
+  const [refreshKeys, setRefreshKeys] = useState({}); 
 
   const fetchTherapists = useCallback(async () => {
     setLoading(true);
@@ -34,6 +36,7 @@ export default function useFindTherapists() {
   const onBook = useCallback((doctor, slot) => {
     setSelectedDoctor(doctor || null);
     setSelectedSlot(slot || null);
+    setPendingBanner("");
   }, []);
 
   // Actual booking action invoked from the modal
@@ -49,15 +52,25 @@ export default function useFindTherapists() {
       } catch (_) {}
       if (!patientId) throw new Error("Cannot determine patient ID from token");
 
-      const p = bookAppointment(slot.id, patientId);
+      const method = booking.form.paymentMethod || "CASH";
+      if (method === "VISA") {
+        setPendingBanner("Your booking is pending payment confirmation.");
+      }
+      const p = bookAppointment(slot.id, patientId, method);
       await toast.promise(p, {
         loading: "Booking appointment…",
-        success: "Appointment booked successfully",
+        success: method === "VISA" ? "Appointment pending payment" : "Appointment booked successfully",
         error: (e) => e?.response?.data?.message || e.message || "Failed to book appointment",
       });
+      // bump refresh key for this doctor to trigger schedule refetch
+      const did = selectedDoctor?.id || selectedDoctor?.userId || selectedDoctor?.doctorId;
+      if (did) {
+        setRefreshKeys((prev) => ({ ...prev, [did]: (prev[did] || 0) + 1 }));
+      }
       booking.reset();
       setSelectedSlot(null);
       setSelectedDoctor(null);
+      setPendingBanner("");
     } catch (e) {
       toast.error(e?.message || "Failed to book appointment");
     }
@@ -73,10 +86,13 @@ export default function useFindTherapists() {
     setName: booking.setName,
     setPhone: booking.setPhone,
     setEmail: booking.setEmail,
+    paymentMethod: booking.form.paymentMethod,
+    onPaymentMethodChange: booking.setPaymentMethod,
+    pendingMessage: pendingBanner,
     canBook: booking.canBook,
     onBook: ({ name, phone, email, slot }) => confirmBook({ slot }),
     onClose: () => { setSelectedSlot(null); setSelectedDoctor(null); },
   };
 
-  return { therapists, loading, error, fetchTherapists, onBook, bookingModalProps };
+  return { therapists, loading, error, fetchTherapists, onBook, bookingModalProps, refreshKeys };
 }

@@ -5,6 +5,24 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE,
 });
 
+// Always attach Authorization header from localStorage if available
+api.interceptors.request.use(
+  (cfg) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        cfg.headers = cfg.headers || {};
+        // Do not double-set if already set by another layer
+        if (!cfg.headers.Authorization) {
+          cfg.headers.Authorization = `Bearer ${token}`;
+        }
+      }
+    } catch (_) {}
+    return cfg;
+  },
+  (err) => Promise.reject(err)
+);
+
 api.interceptors.response.use(
   (res) => res,
   (err) => {

@@ -6,16 +6,21 @@ import com.example.backend.models.Appointment;
 import com.example.backend.models.AppointmentStatus;
 import com.example.backend.services.AppointmentService;
 import com.example.backend.repositories.AppointmentRepo;
+import com.example.backend.dto.AppointmentSummary;
+import com.example.backend.models.User;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,7 +53,7 @@ public class AppointmentController {
             @PathVariable UUID appointmentId,
             @RequestBody BookAppointmentRequest request) {
         
-        Appointment appointment = appointmentService.bookAppointment(appointmentId, request.getPatientId());
+        Appointment appointment = appointmentService.bookAppointment(appointmentId, request.getPatientId(), request.getPaymentMethod());
         return ResponseEntity.ok(appointment);
     }
 
@@ -66,9 +71,45 @@ public class AppointmentController {
     // Get appointments by patient
     @GetMapping("/patient/{patientId}")
     @PreAuthorize("hasAnyAuthority('PATIENT', 'ADMIN')")
-    public ResponseEntity<List<Appointment>> getAppointmentsByPatient(@PathVariable UUID patientId) {
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<AppointmentSummary>> getAppointmentsByPatient(@PathVariable UUID patientId) {
+        List<Appointment> appointments = appointmentRepo.findByPatientIdWithDoctorOrderByAppointmentDateTimeAsc(patientId);
+        List<AppointmentSummary> result = appointments.stream().map(a -> {
+            var d = a.getDoctor();
+            return new AppointmentSummary(
+                a.getId(),
+                a.getAppointmentDateTime(),
+                a.getStatus(),
+                d != null ? d.getId() : null,
+                d != null ? d.getName() : null,
+                a.getSessionType(),
+                a.getPrice()
+            );
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    // Get current patient's appointments using JWT principal
+    @GetMapping("/me")
+    @PreAuthorize("hasAuthority('PATIENT')")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<AppointmentSummary>> getMyAppointments(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        UUID patientId = user.getId();
         List<Appointment> appointments = appointmentRepo.findByPatientIdOrderByAppointmentDateTimeAsc(patientId);
-        return ResponseEntity.ok(appointments);
+        List<AppointmentSummary> result = appointments.stream().map(a -> {
+            var d = a.getDoctor();
+            return new AppointmentSummary(
+                a.getId(),
+                a.getAppointmentDateTime(),
+                a.getStatus(),
+                d != null ? d.getId() : null,
+                d != null ? d.getName() : null,
+                a.getSessionType(),
+                a.getPrice()
+            );
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     // Get available appointments by doctor (public endpoint for booking)
@@ -79,6 +120,15 @@ public class AppointmentController {
         List<Appointment> appointments = appointmentRepo
             .findByDoctorIdAndStatusAndAppointmentDateTimeAfterOrderByAppointmentDateTimeAsc(
                 doctorId, AppointmentStatus.AVAILABLE, LocalDateTime.now());
+        return ResponseEntity.ok(appointments);
+    }
+
+    // Public: Get FUTURE appointments by doctor including all statuses (for greying out booked slots)
+    @GetMapping("/doctor/{doctorId}/public/future")
+    public ResponseEntity<List<Appointment>> getDoctorFutureAppointmentsPublic(@PathVariable UUID doctorId) {
+        appointmentService.rescheduleExpiredAvailableForDoctor(doctorId);
+        List<Appointment> appointments = appointmentRepo
+            .findByDoctorIdAndAppointmentDateTimeAfterOrderByAppointmentDateTimeAsc(doctorId, LocalDateTime.now());
         return ResponseEntity.ok(appointments);
     }
 
@@ -96,7 +146,7 @@ public class AppointmentController {
 
     // Update appointment status
     @PatchMapping("/{appointmentId}/status")
-    @PreAuthorize("hasAnyAuthority('DOCTOR', 'PATIENT', 'ADMIN')")
+    @PreAuthorize("hasAuthority('DOCTOR')")
     public ResponseEntity<Appointment> updateAppointmentStatus(
             @PathVariable UUID appointmentId,
             @RequestParam AppointmentStatus status) {
@@ -129,5 +179,26 @@ public class AppointmentController {
     public ResponseEntity<Void> deleteAppointment(@PathVariable UUID appointmentId) {
         appointmentService.deleteAppointment(appointmentId);
         return ResponseEntity.noContent().build();
+    }
+
+    // Patient cancels their own appointment (releases slot)
+    @PostMapping("/{appointmentId}/cancel")
+    @PreAuthorize("hasAuthority('PATIENT')")
+    public ResponseEntity<Appointment> cancelByPatient(
+            @PathVariable UUID appointmentId,
+            @RequestParam UUID patientId) {
+        Appointment appointment = appointmentService.cancelByPatient(appointmentId, patientId);
+        return ResponseEntity.ok(appointment);
+    }
+
+    // Patient cancels their own appointment using JWT principal
+    @PostMapping("/{appointmentId}/cancel/me")
+    @PreAuthorize("hasAuthority('PATIENT')")
+    public ResponseEntity<Appointment> cancelByPatientMe(
+            @PathVariable UUID appointmentId,
+            Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        Appointment appointment = appointmentService.cancelByPatient(appointmentId, user.getId());
+        return ResponseEntity.ok(appointment);
     }
 }

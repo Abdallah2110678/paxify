@@ -12,6 +12,9 @@ export default function BookingModal({
   setName,
   setPhone,
   setEmail,
+  paymentMethod = "CASH",
+  onPaymentMethodChange,
+  pendingMessage = "",
   canBook,
 }) {
   if (!open) return null;
@@ -22,6 +25,11 @@ export default function BookingModal({
       <div className="relative bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden">
         <div className="bg-sky-700 text-white px-5 py-3 font-semibold">Booking Information</div>
         <div className="p-5 space-y-4">
+          {pendingMessage ? (
+            <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded px-3 py-2 text-sm">
+              {pendingMessage}
+            </div>
+          ) : null}
           {/* Fees / address */}
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
@@ -61,6 +69,13 @@ export default function BookingModal({
             <div>
               <label className="block text-sm text-slate-700 mb-1">Email Address (Optional)</label>
               <input className="w-full border rounded px-3 py-2" placeholder="you@example.com" value={form?.email || ""} onChange={(e) => setEmail?.(e.target.value)} />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm text-slate-700 mb-1">Payment Method</label>
+              <div className="flex gap-3">
+                <button type="button" className={`px-4 py-2 rounded border ${paymentMethod === 'CASH' ? 'bg-slate-900 text-white border-slate-900' : ''}`} onClick={() => onPaymentMethodChange?.('CASH')}>Cash</button>
+                <button type="button" className={`px-4 py-2 rounded border ${paymentMethod === 'VISA' ? 'bg-slate-900 text-white border-slate-900' : ''}`} onClick={() => onPaymentMethodChange?.('VISA')}>Visa</button>
+              </div>
             </div>
            
           </form>

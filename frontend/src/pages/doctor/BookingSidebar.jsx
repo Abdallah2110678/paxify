@@ -70,7 +70,7 @@ export default function BookingSidebar({
                         type="button"
                         disabled={it.booked || it.past}
                         onClick={() => onSelectSlot?.(it)}
-                        className={`w-full text-center px-3 py-2 rounded border ${it.booked || it.past ? 'text-slate-400 bg-slate-50' : (selectedSlotId === it.id ? 'bg-sky-600 text-white border-sky-600' : 'hover:bg-sky-50 text-slate-800')}`}
+                        className={`w-full text-center px-3 py-2 rounded border ${it.booked || it.past ? 'text-slate-400 bg-slate-50 line-through cursor-not-allowed' : (selectedSlotId === it.id ? 'bg-sky-600 text-white border-sky-600' : 'hover:bg-sky-50 text-slate-800')}`}
                       >
                         {it.timeLabel}
                       </button>

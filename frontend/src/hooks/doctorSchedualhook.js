@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getAvailableAppointments } from "../services/appointmentService";
+import { getDoctorFutureAppointmentsPublic } from "../services/appointmentService";
 
 // Fetch and prepare schedule data for a doctor without any UI concerns
 export default function doctorSchedualhook(doctorId) {
@@ -12,7 +12,7 @@ export default function doctorSchedualhook(doctorId) {
     setLoading(true);
     setError("");
     try {
-      const data = await getAvailableAppointments(doctorId);
+      const data = await getDoctorFutureAppointmentsPublic(doctorId);
       setSlots(Array.isArray(data) ? data : (data?.items || data?.data || []));
     } catch (e) {
       setError(e?.response?.data?.message || e.message || "Failed to load slots");

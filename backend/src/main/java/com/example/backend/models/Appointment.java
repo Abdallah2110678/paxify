@@ -55,6 +55,10 @@ public class Appointment {
     @Column(name = "status", nullable = false)
     private AppointmentStatus status = AppointmentStatus.AVAILABLE;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method")
+    private PaymentMethod paymentMethod = PaymentMethod.CASH;
+
     @Column(name = "session_type")
     private String sessionType = "ONLINE"; // Allowed: ONLINE, IN_PERSON
 

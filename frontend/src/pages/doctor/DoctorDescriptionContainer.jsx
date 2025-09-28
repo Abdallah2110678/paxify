@@ -4,7 +4,7 @@ import doctorDescriptionHook from "../../hooks/doctorDescriptionHook";
 import doctorSchedualhook from "../../hooks/doctorSchedualhook";
 import BookingSidebar from "./BookingSidebar";
 import BookingModal from "./BookingModal";
-import { useBookingPatientForm } from "../../hooks/patientHook";
+import useBooking from "../../hooks/bookingHook";
 
 export default function DoctorDescriptionContainer() {
   const {
@@ -25,7 +25,7 @@ export default function DoctorDescriptionContainer() {
   const schedule = doctorSchedualhook(id);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [selectedSlotId, setSelectedSlotId] = useState(null);
-  const booking = useBookingPatientForm();
+  const booking = useBooking();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -122,10 +122,18 @@ export default function DoctorDescriptionContainer() {
         setName={booking.setName}
         setPhone={booking.setPhone}
         setEmail={booking.setEmail}
+        paymentMethod={booking.form.paymentMethod}
+        onPaymentMethodChange={booking.setPaymentMethod}
+        pendingMessage={booking.pendingBanner}
         canBook={booking.canBook}
-        onBook={async ({ name, phone, email, slot, doctor }) => {
-          booking.reset();
-          setSelectedSlot(null);
+        onBook={async ({ slot }) => {
+          try {
+            await booking.confirmBook({ slotId: slot.id });
+            // Refresh available slots to mark the chosen time as unavailable like Vezeeta
+            await schedule.refetch?.();
+          } finally {
+            setSelectedSlot(null);
+          }
         }}
       />
     </div>

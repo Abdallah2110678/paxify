@@ -286,14 +286,110 @@ export function useBookingPatientForm(initial = {}) {
     name: initial.name || "",
     phone: initial.phone || "",
     email: initial.email || "",
+    paymentMethod: (initial.paymentMethod || "CASH").toUpperCase(),
   });
 
   const setName = useCallback((v) => setForm((p) => ({ ...p, name: v })), []);
   const setPhone = useCallback((v) => setForm((p) => ({ ...p, phone: v })), []);
   const setEmail = useCallback((v) => setForm((p) => ({ ...p, email: v })), []);
-  const reset = useCallback(() => setForm({ name: "", phone: "", email: "" }), []);
+  const setPaymentMethod = useCallback((v) => setForm((p) => ({ ...p, paymentMethod: String(v || "CASH").toUpperCase() })), []);
+  const reset = useCallback(() => setForm({ name: "", phone: "", email: "", paymentMethod: "CASH" }), []);
 
   const canBook = Boolean(form.name && form.phone);
 
-  return { form, setName, setPhone, setEmail, reset, canBook };
+  return { form, setName, setPhone, setEmail, setPaymentMethod, reset, canBook };
+}
+
+import { getMyAppointments, cancelMyAppointment } from "../services/appointmentService";
+import { toast } from "react-hot-toast";
+
+export function usePatientAppointments() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Ensure a token exists; actual patient ID is derived on the server from JWT
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Please log in to view appointments.");
+      setLoading(false);
+    }
+  }, []);
+
+  const formatters = {
+    toDateTimeLabels(value) {
+      try {
+        let dateObj;
+        if (Array.isArray(value)) {
+          const [year, month, day, hour = 0, minute = 0, second = 0] = value;
+          dateObj = new Date(year, (month || 1) - 1, day || 1, hour, minute, second);
+        } else {
+          dateObj = new Date(value);
+        }
+        if (!Number.isNaN(dateObj.getTime())) {
+          return {
+            dateLabel: dateObj.toLocaleDateString([], { year: "numeric", month: "2-digit", day: "2-digit" }),
+            timeLabel: dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          };
+        }
+      } catch (_) {}
+      return { dateLabel: "-", timeLabel: "-" };
+    },
+    toPriceLabel(value) {
+      if (value == null) return "";
+      const numeric = typeof value === "number" ? value : parseFloat(value);
+      return Number.isFinite(numeric) ? `L.E ${numeric.toFixed(2)}` : String(value);
+    },
+    toSessionTypeLabel(value) {
+      const normalized = String(value || "").toUpperCase();
+      if (normalized === "ONLINE") return "Online";
+      if (normalized === "IN_PERSON") return "In person";
+      return value || "-";
+    },
+  };
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await getMyAppointments();
+      const list = Array.isArray(data) ? data : [];
+      const mapped = list.map((row) => {
+        const { dateLabel, timeLabel } = formatters.toDateTimeLabels(
+          row.dateTime || row.appointmentDateTime || row.date_time
+        );
+        return {
+          id: row.id,
+          doctorId: row.doctorId,
+          doctorName: row.doctorName,
+          dateLabel,
+          timeLabel,
+          sessionTypeLabel: formatters.toSessionTypeLabel(row.sessionType),
+          priceLabel: formatters.toPriceLabel(row.price),
+          raw: row,
+        };
+      });
+      setItems(mapped);
+    } catch (e) {
+      setError(e?.response?.data?.message || e.message || "Failed to load appointments");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const onCancel = useCallback(async (appointmentId) => {
+    if (!appointmentId) return;
+    const promise = cancelMyAppointment(appointmentId);
+    await toast.promise(promise, {
+      loading: "Cancelling…",
+      success: "Appointment cancelled",
+      error: (e) => e?.response?.data?.message || e.message || "Failed to cancel",
+    });
+    setItems((prev) => prev.filter((it) => it.id !== appointmentId));
+  }, []);
+
+  return { loading, error, items, onCancel, refresh: load };
 }

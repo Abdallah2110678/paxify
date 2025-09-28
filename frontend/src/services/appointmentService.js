@@ -1,5 +1,16 @@
 import api from './api';
 
+// Helper: attach Authorization header from localStorage when available
+const withAuth = (config = {}) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers = { ...(config.headers || {}), Authorization: `Bearer ${token}` };
+    }
+  } catch (_) {}
+  return config;
+};
+
 // Create appointment (doctor creates available slots)
 export const createAppointment = async (appointmentData) => {
   const response = await api.post('/api/appointments', appointmentData);
@@ -7,22 +18,34 @@ export const createAppointment = async (appointmentData) => {
 };
 
 // Book appointment (patient books an available slot)
-export const bookAppointment = async (appointmentId, patientId) => {
-  const response = await api.post(`/api/appointments/${appointmentId}/book`, {
-    patientId
-  });
+export const bookAppointment = async (appointmentId, patientId, paymentMethod = 'CASH', paymentReference = null) => {
+  const response = await api.post(
+    `/api/appointments/${appointmentId}/book`,
+    {
+      patientId,
+      paymentMethod,
+      paymentReference,
+    },
+    withAuth()
+  );
   return response.data;
 };
 
 // Get appointments by doctor
 export const getAppointmentsByDoctor = async (doctorId) => {
-  const response = await api.get(`/api/appointments/doctor/${doctorId}`);
+  const response = await api.get(`/api/appointments/doctor/${doctorId}`, withAuth());
   return response.data;
 };
 
 // Get appointments by patient
 export const getAppointmentsByPatient = async (patientId) => {
-  const response = await api.get(`/api/appointments/patient/${patientId}`);
+  const response = await api.get(`/api/appointments/patient/${patientId}`, withAuth());
+  return response.data;
+};
+
+// Get current patient's appointments using JWT principal
+export const getMyAppointments = async () => {
+  const response = await api.get(`/api/appointments/me`, withAuth());
   return response.data;
 };
 
@@ -32,9 +55,35 @@ export const getAvailableAppointments = async (doctorId) => {
   return response.data;
 };
 
+// Public: Get FUTURE appointments for a doctor including all statuses
+export const getDoctorFutureAppointmentsPublic = async (doctorId) => {
+  const response = await api.get(`/api/appointments/doctor/${doctorId}/public/future`);
+  return response.data;
+};
+
 // Delete appointment
 export const deleteAppointment = async (appointmentId) => {
   const response = await api.delete(`/api/appointments/${appointmentId}`);
+  return response.data;
+};
+
+// Patient cancels their own appointment (releases slot)
+export const cancelAppointmentByPatient = async (appointmentId, patientId) => {
+  const response = await api.post(
+    `/api/appointments/${appointmentId}/cancel`,
+    null,
+    { params: { patientId }, ...withAuth() }
+  );
+  return response.data;
+};
+
+// Cancel current patient's appointment via JWT principal
+export const cancelMyAppointment = async (appointmentId) => {
+  const response = await api.post(
+    `/api/appointments/${appointmentId}/cancel/me`,
+    null,
+    withAuth()
+  );
   return response.data;
 };
 

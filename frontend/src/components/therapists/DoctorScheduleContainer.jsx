@@ -1,9 +1,9 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import doctorSchedualhook from "../../hooks/doctorSchedualhook";
 import DoctorSchedule from "./DoctorSchedule";
 
 // Container that connects the schedule hook with the pure UI component
-export default function DoctorScheduleContainer({ doctorId, onBook }) {
+export default function DoctorScheduleContainer({ doctorId, onBook, refreshKey = 0 }) {
   const { loading, error, days, refetch } = doctorSchedualhook(doctorId);
   const [selectedId, setSelectedId] = useState(null);
 
@@ -13,6 +13,13 @@ export default function DoctorScheduleContainer({ doctorId, onBook }) {
     const chosen = allItems.find((i) => i.id === selected && !i.booked);
     if (chosen) onBook?.(chosen);
   };
+
+  // When parent says the doctor's schedule changed, refetch without page reload
+  useEffect(() => {
+    refetch?.();
+    // reset selection because the availability changed
+    setSelectedId(null);
+  }, [refreshKey]);
 
   return (
     <DoctorSchedule

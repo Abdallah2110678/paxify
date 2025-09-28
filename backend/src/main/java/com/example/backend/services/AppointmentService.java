@@ -11,6 +11,7 @@ import com.example.backend.models.Appointment;
 import com.example.backend.models.AppointmentStatus;
 import com.example.backend.models.Doctor;
 import com.example.backend.models.Patient;
+import com.example.backend.models.PaymentMethod;
 import com.example.backend.repositories.AppointmentRepo;
 import com.example.backend.repositories.DoctorRepo;
 import com.example.backend.repositories.PatientRepo;
@@ -51,10 +52,19 @@ public class AppointmentService {
         return appointmentRepo.save(appointment);
     }
 
-    /**
-     * Reschedule all expired AVAILABLE appointments for a doctor to the next week.
-     * This ensures that fixed weekly slots roll forward even if the daily job hasn't run yet.
-     */
+    // Patient cancels and deletes the appointment row entirely
+    public void cancelByPatientAndDelete(UUID appointmentId, UUID patientId) {
+        Appointment appointment = appointmentRepo.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        if (appointment.getPatient() == null || appointment.getPatient().getId() == null
+                || !appointment.getPatient().getId().equals(patientId)) {
+            throw new RuntimeException("You can only cancel your own appointment");
+        }
+
+        appointmentRepo.delete(appointment);
+    }
+
     public void rescheduleExpiredAvailableForDoctor(UUID doctorId) {
         LocalDateTime now = LocalDateTime.now();
         var expired = appointmentRepo.findByDoctorIdAndStatusAndAppointmentDateTimeBefore(doctorId, AppointmentStatus.AVAILABLE, now);
@@ -66,6 +76,10 @@ public class AppointmentService {
                 dt = dt.plusWeeks(1);
             }
             a.setAppointmentDateTime(dt);
+            // Safety: ensure next week's slot belongs to no patient
+            a.setPatient(null);
+            a.setPaymentMethod(null);
+            a.setStatus(AppointmentStatus.AVAILABLE);
         }
         appointmentRepo.saveAll(expired);
     }
@@ -82,12 +96,16 @@ public class AppointmentService {
                 dt = dt.plusWeeks(1);
             }
             a.setAppointmentDateTime(dt);
+            // Safety: ensure rolled slots are clean
+            a.setPatient(null);
+            a.setPaymentMethod(null);
+            a.setStatus(AppointmentStatus.AVAILABLE);
         }
         appointmentRepo.saveAll(expired);
     }
 
     // Book appointment (patient books an available slot)
-    public Appointment bookAppointment(UUID appointmentId, UUID patientId) {
+    public Appointment bookAppointment(UUID appointmentId, UUID patientId, PaymentMethod paymentMethod) {
         Appointment appointment = appointmentRepo.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
@@ -99,7 +117,14 @@ public class AppointmentService {
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
 
         appointment.setPatient(patient);
-        appointment.setStatus(AppointmentStatus.BOOKED);
+        // default method
+        PaymentMethod pm = paymentMethod == null ? PaymentMethod.CASH : paymentMethod;
+        appointment.setPaymentMethod(pm);
+        if (pm == PaymentMethod.VISA) {
+            appointment.setStatus(AppointmentStatus.PENDING_PAYMENT);
+        } else {
+            appointment.setStatus(AppointmentStatus.BOOKED);
+        }
         // removed updatedAt tracking
 
         return appointmentRepo.save(appointment);
@@ -112,6 +137,24 @@ public class AppointmentService {
 
         appointment.setStatus(status);
         // removed updatedAt tracking
+
+        return appointmentRepo.save(appointment);
+    }
+
+    // Patient cancels their own appointment: release the slot
+    public Appointment cancelByPatient(UUID appointmentId, UUID patientId) {
+        Appointment appointment = appointmentRepo.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        if (appointment.getPatient() == null || appointment.getPatient().getId() == null
+                || !appointment.getPatient().getId().equals(patientId)) {
+            throw new RuntimeException("You can only cancel your own appointment");
+        }
+
+        // Release slot for booking again
+        appointment.setPatient(null);
+        appointment.setStatus(AppointmentStatus.AVAILABLE);
+        appointment.setPaymentMethod(null);
 
         return appointmentRepo.save(appointment);
     }

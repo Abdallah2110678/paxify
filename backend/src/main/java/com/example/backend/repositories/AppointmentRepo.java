@@ -24,6 +24,10 @@ public interface AppointmentRepo extends JpaRepository<Appointment, UUID> {
     // Find appointments by patient
     List<Appointment> findByPatientIdOrderByAppointmentDateTimeAsc(UUID patientId);
 
+    // Eagerly fetch doctor for patient appointments (to avoid LazyInitializationException in controllers)
+    @Query("SELECT a FROM Appointment a JOIN FETCH a.doctor WHERE a.patient.id = :patientId ORDER BY a.appointmentDateTime ASC")
+    List<Appointment> findByPatientIdWithDoctorOrderByAppointmentDateTimeAsc(@Param("patientId") UUID patientId);
+
     // Find available appointments for a doctor
     List<Appointment> findByDoctorIdAndStatusOrderByAppointmentDateTimeAsc(UUID doctorId, AppointmentStatus status);
 
