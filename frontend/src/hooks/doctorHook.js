@@ -25,6 +25,7 @@ export default function useDoctor(options = {}) {
   const { user } = useAuth();
 
   // --- Register doctor ---
+  // --- Register doctor ---
   const [regForm, setRegForm] = useState({
     name: "",
     email: "",
@@ -35,11 +36,12 @@ export default function useDoctor(options = {}) {
     specialty: "",
     bio: "",
     consultationFee: "",
-    availability: "",
+    // availability: "", // remove, backend doesn't accept it
   });
   const [regProfilePicture, setRegProfilePicture] = useState(null);
   const [regError, setRegError] = useState("");
   const [regSubmitting, setRegSubmitting] = useState(false);
+  const [regSuccess, setRegSuccess] = useState("");
 
   const regHandleChange = useCallback((e) => {
     setRegForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -53,22 +55,21 @@ export default function useDoctor(options = {}) {
     async (e) => {
       e?.preventDefault?.();
       setRegError("");
+      setRegSuccess("");
       try {
         setRegSubmitting(true);
         const formData = new FormData();
-        Object.keys(regForm).forEach((key) => {
-          const val = regForm[key];
-          if (val !== undefined && val !== null && String(val).length > 0) {
-            formData.append(key, val);
+        Object.entries(regForm).forEach(([k, v]) => {
+          if (v !== undefined && v !== null && String(v).length > 0) {
+            formData.append(k, v);
           }
         });
+        if (regProfilePicture) formData.append("file", regProfilePicture);
 
-        // Profile picture is now optional
-        if (regProfilePicture) {
-          formData.append("file", regProfilePicture);
-        }
-        await registerDoctor(formData);
-        navigate("/login");
+        const msg = await registerDoctor(formData);
+        setRegSuccess(typeof msg === "string" ? msg : "Application submitted.");
+        // Give user a moment to read it, then go to login
+        setTimeout(() => navigate("/login"), 1000);
       } catch (err) {
         setRegError(
           err?.response?.data || err?.message || "Registration failed"
@@ -84,6 +85,7 @@ export default function useDoctor(options = {}) {
     form: regForm,
     profilePicture: regProfilePicture,
     error: regError,
+    success: regSuccess,
     submitting: regSubmitting,
     setForm: setRegForm,
     handleChange: regHandleChange,

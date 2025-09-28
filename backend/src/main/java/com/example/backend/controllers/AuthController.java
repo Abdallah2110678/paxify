@@ -1,11 +1,6 @@
 package com.example.backend.controllers;
 
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -112,40 +107,54 @@ public class AuthController {
             @RequestParam String gender,
             @RequestParam(required = false) String specialty,
             @RequestParam(required = false) String bio,
-            @RequestParam BigDecimal consultationFee,
-            @RequestParam(required = false) String availability) throws java.io.IOException {
+            @RequestParam BigDecimal consultationFee) throws java.io.IOException {
 
-        if (userRepo.findByEmail(email).isPresent()) {
+        final String lowerEmail = email.toLowerCase();
+
+        if (userRepo.findByEmail(lowerEmail).isPresent()) {
             return ResponseEntity.badRequest().body("Email already exists");
         }
 
         Doctor doctor = new Doctor();
         doctor.setName(name);
-        doctor.setEmail(email.toLowerCase());
+        doctor.setEmail(lowerEmail);
         doctor.setPassword(encoder.encode(password));
-        if (phoneNumber != null) doctor.setPhoneNumber(phoneNumber);
-        if (address != null) doctor.setAddress(address);
+        if (phoneNumber != null)
+            doctor.setPhoneNumber(phoneNumber);
+        if (address != null)
+            doctor.setAddress(address);
         doctor.setGender(Gender.valueOf(gender.toUpperCase()));
-        if (specialty != null) doctor.setSpecialty(specialty);
-        if (bio != null) doctor.setBio(bio);
+        if (specialty != null)
+            doctor.setSpecialty(specialty);
+        if (bio != null)
+            doctor.setBio(bio);
         doctor.setConsultationFee(consultationFee);
-        // Availability is now handled through appointments
         doctor.setRole(Role.DOCTOR);
 
-        // Handle optional file upload
+        // Approval gate (Doctor inline enum!)
+        doctor.setApprovalStatus(Doctor.ApprovalStatus.PENDING);
+        doctor.setReviewedAt(null);
+        doctor.setReviewedByAdminId(null);
+        doctor.setRejectionReason(null);
+
+        // Optional profile picture upload
         if (file != null && !file.isEmpty()) {
-            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path uploadPath = Paths.get("uploads/profile-pictures");
-            if (!Files.exists(uploadPath))
-                Files.createDirectories(uploadPath);
-            Files.copy(file.getInputStream(), uploadPath.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+            String filename = java.util.UUID.randomUUID() + "_" + file.getOriginalFilename();
+            java.nio.file.Path uploadPath = java.nio.file.Paths.get("uploads/profile-pictures");
+            if (!java.nio.file.Files.exists(uploadPath)) {
+                java.nio.file.Files.createDirectories(uploadPath);
+            }
+            java.nio.file.Files.copy(
+                    file.getInputStream(),
+                    uploadPath.resolve(filename),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
             doctor.setProfilePictureUrl("/uploads/profile-pictures/" + filename);
         }
 
         userRepo.save(doctor);
 
-        String token = jwt.generateToken(doctor);
-        return ResponseEntity.ok(new AuthResponse(token));
+        // No JWT — must wait for admin approval
+        return ResponseEntity.ok("Application submitted. An admin will review it soon.");
     }
 
     @PostMapping("/register-admin")

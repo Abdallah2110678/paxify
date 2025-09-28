@@ -11,6 +11,7 @@ import AddPatient from "../patients/AddPatient";
 import Products from "../products/Products";
 import AddProduct from "../products/AddProduct";
 import DashboardOverview from "./DashboardOverview";
+import AdminDoctors from "./AdminDoctors";
 
 const Dashboard = () => {
     const [active, setActive] = useState("overview");
@@ -30,6 +31,7 @@ const Dashboard = () => {
                 "add-doctor",
                 "patient",
                 "add-patient",
+                "Applications",
                 "product",
                 "add-product",
             ]),
@@ -61,6 +63,7 @@ const Dashboard = () => {
             { id: "add-doctor", label: "Add Doctor", icon: "➕" },
             { id: "patient", label: "Patient", icon: "👤" },
             { id: "add-patient", label: "Add Patient", icon: "➕" },
+            { id: "Applications", label: "Applications", icon: "🩺" },
             { id: "product", label: "Products", icon: "💊" },
             { id: "add-product", label: "Add Product", icon: "➕" },
         ],
@@ -197,7 +200,7 @@ const Dashboard = () => {
                     ))}
 
                 {active === "add-patient" && <AddPatient />}
-
+                {active === "Applications" && <AdminDoctors />}
                 {active === "product" && <Products />}
                 {active === "add-product" && <AddProduct />}
             </main>

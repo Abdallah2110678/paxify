@@ -2,7 +2,8 @@ import { useState, useMemo } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import api from "../services/api.js";
 
-function resolveUrl(path) {
+// ⬇⬇⬇ just exported so AdminDoctorDetails can reuse it
+export function resolveUrl(path) {
   if (!path) return "";
   if (/^https?:\/\//i.test(path)) return path;
   const base = (api?.defaults?.baseURL || "").replace(/\/$/, "");
@@ -19,7 +20,8 @@ export default function useProfile() {
     email: user?.email || "",
   });
 
-  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) =>
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   const onFileChange = (e) => setFile(e.target.files?.[0] || null);
 
   const getRolePath = () => {
@@ -30,7 +32,9 @@ export default function useProfile() {
 
   const handleSave = async () => {
     const rolePath = getRolePath();
-    const url = rolePath ? `/api/users/${user.id}/${rolePath}` : `/api/users/${user.id}`;
+    const url = rolePath
+      ? `/api/users/${user.id}/${rolePath}`
+      : `/api/users/${user.id}`;
     await api.patch(url, { name: form.name, email: form.email });
 
     if (user?.role === "DOCTOR" && file) {
@@ -57,9 +61,12 @@ export default function useProfile() {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete your account?")) return;
+    if (!window.confirm("Are you sure you want to delete your account?"))
+      return;
     const rolePath = getRolePath();
-    const url = rolePath ? `/api/users/${user.id}/${rolePath}` : `/api/users/${user.id}`;
+    const url = rolePath
+      ? `/api/users/${user.id}/${rolePath}`
+      : `/api/users/${user.id}`;
     await api.delete(url);
     logout();
     window.location.href = "/";
