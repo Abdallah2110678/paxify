@@ -92,7 +92,7 @@ function App() {
               <div className="pt-20 pb-16 min-h-screen bg-gray-50">
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/book" element={<BookSession />} />
+                  <Route path="/Our Products" element={<BookSession />} />
                   <Route path="/therapists" element={<FindTherapistsContainer />} />
                   <Route path="/doctors/:id" element={<DoctorDescriptionContainer />} />
                   <Route path="/games" element={<Games />} />

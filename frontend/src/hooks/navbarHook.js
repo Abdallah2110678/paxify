@@ -63,8 +63,8 @@ export default function useNavbar() {
 
   const links = [
     { id: "home", label: "Home", icon: "🏠" },
-    { id: "book", label: "Book Session", icon: "📅" },
     { id: "therapists", label: "Find Therapists", icon: "👨‍⚕️" },
+    { id: "Our Products", label: "Our Products", icon: "🛒" },
     { id: "games", label: "Games", icon: "🎮" },
     { id: "about", label: "About", icon: "ℹ️" },
   ];
