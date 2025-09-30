@@ -3,7 +3,7 @@ import Navbar from "./components/navbar/navbar.jsx";
 import Footer from "./components/footer/footer.jsx";
 import Home from "./pages/home/home.jsx";
 import Dashboard from "./pages/dashboard/dashboard.jsx";
-import BookSession from "./pages/book/BookSession.jsx";
+import OurProducts from "./pages/products/OurProducts.jsx";
 import FindTherapistsContainer from "./pages/therapists/FindTherapistsContainer.jsx";
 import Games from "./pages/games/Games.jsx";
 import About from "./pages/about/About.jsx";
@@ -92,7 +92,7 @@ function App() {
               <div className="pt-20 pb-16 min-h-screen bg-gray-50">
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/Our Products" element={<BookSession />} />
+                  <Route path="/Our Products" element={<OurProducts />} />
                   <Route path="/therapists" element={<FindTherapistsContainer />} />
                   <Route path="/doctors/:id" element={<DoctorDescriptionContainer />} />
                   <Route path="/games" element={<Games />} />
