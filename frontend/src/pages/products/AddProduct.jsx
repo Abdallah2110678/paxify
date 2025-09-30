@@ -1,131 +1,167 @@
+import { useState } from "react";
+import { createProduct, uploadProductImage } from "./../../services/productService.js";
+
 const AddProduct = () => {
+    const [form, setForm] = useState({
+        name: "",
+        category: "",
+        price: "",
+        stock: "",
+        description: "",
+        image: null,
+    });
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleFileChange = (e) => {
+        setForm({ ...form, image: e.target.files[0] });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+
+        try {
+            // 1. Create product (without image)
+            const payload = {
+                name: form.name,
+                category: form.category,
+                price: parseFloat(form.price),
+                stock: parseInt(form.stock, 10),
+                description: form.description,
+                imageUrl: null, // will be updated later
+            };
+
+            const createdProduct = await createProduct(payload);
+
+            // 2. Upload image if provided
+            if (form.image) {
+                await uploadProductImage(createdProduct.id, form.image);
+            }
+
+            alert("✅ Product added successfully!");
+
+            // reset form
+            setForm({
+                name: "",
+                category: "",
+                price: "",
+                stock: "",
+                description: "",
+                image: null,
+            });
+        } catch (err) {
+            setError("❌ Failed to add product: " + (err.response?.data?.message || err.message));
+        } finally {
+            setLoading(false);
+        }
+    };
     return (
         <div className="p-6">
             <div className="bg-white rounded-lg shadow-lg p-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Add New Product</h2>
-                <form className="space-y-6">
+
+                <form className="space-y-6" onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Basic Information */}
+                        {/* Product Name */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Product Name
-                            </label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
                             <input
                                 type="text"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Enter product name"
+                                name="name"
+                                value={form.name}
+                                onChange={handleChange}
+                                className="w-full px-3 py-2 border rounded-md"
+                                required
                             />
                         </div>
 
-                        {/* Category and SKU */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Category
-                            </label>
-                            <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Select category</option>
-                                <option value="medications">Medications</option>
-                                <option value="supplies">Medical Supplies</option>
-                                <option value="equipment">Equipment</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                SKU
-                            </label>
+                        {/* Category */}
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                             <input
                                 type="text"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Enter SKU"
+                                name="category"
+                                value={form.category}
+                                onChange={handleChange}
+                                className="w-full px-3 py-2 border rounded-md"
+                                required
                             />
                         </div>
 
-                        {/* Price and Stock */}
+                        {/* Price */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Price
-                            </label>
-                            <div className="relative">
-                                <span className="absolute left-3 top-2">$</span>
-                                <input
-                                    type="number"
-                                    className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="0.00"
-                                    step="0.01"
-                                    min="0"
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Stock Quantity
-                            </label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
                             <input
                                 type="number"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Enter quantity"
+                                name="price"
+                                value={form.price}
+                                onChange={handleChange}
+                                step="0.01"
                                 min="0"
+                                className="w-full px-3 py-2 border rounded-md"
+                                required
+                            />
+                        </div>
+
+                        {/* Stock */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Stock</label>
+                            <input
+                                type="number"
+                                name="stock"
+                                value={form.stock}
+                                onChange={handleChange}
+                                min="0"
+                                className="w-full px-3 py-2 border rounded-md"
+                                required
                             />
                         </div>
 
                         {/* Image Upload */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Product Image
-                            </label>
-                            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                <div className="space-y-1 text-center">
-                                    <svg
-                                        className="mx-auto h-12 w-12 text-gray-400"
-                                        stroke="currentColor"
-                                        fill="none"
-                                        viewBox="0 0 48 48"
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                            strokeWidth={2}
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
-                                    <div className="flex text-sm text-gray-600">
-                                        <label
-                                            htmlFor="file-upload"
-                                            className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
-                                        >
-                                            <span>Upload a file</span>
-                                            <input id="file-upload" name="file-upload" type="file" className="sr-only" />
-                                        </label>
-                                        <p className="pl-1">or drag and drop</p>
-                                    </div>
-                                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                                </div>
-                            </div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
+                            <input type="file" accept="image/*" onChange={handleFileChange} />
+                            {form.image && (
+                                <img
+                                    src={URL.createObjectURL(form.image)}
+                                    alt="Preview"
+                                    className="mt-3 h-24 rounded"
+                                />
+                            )}
                         </div>
 
                         {/* Description */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Description
-                            </label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                             <textarea
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                name="description"
+                                value={form.description}
+                                onChange={handleChange}
                                 rows="4"
-                                placeholder="Enter product description"
-                            ></textarea>
+                                className="w-full px-3 py-2 border rounded-md"
+                            />
                         </div>
                     </div>
 
-                    {/* Submit Button */}
+                    {/* Submit */}
                     <div className="flex justify-end">
                         <button
                             type="submit"
-                            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                            disabled={loading}
+                            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
                         >
-                            Add Product
+                            {loading ? "Adding..." : "Add Product"}
                         </button>
                     </div>
+
+                    {error && <p className="text-red-500 mt-2">{error}</p>}
                 </form>
             </div>
         </div>

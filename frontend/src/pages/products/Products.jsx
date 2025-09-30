@@ -1,14 +1,55 @@
+import { useEffect, useState } from "react";
+import { getProducts, deleteProduct } from "./../../services/productService.js";
+
 const Products = () => {
+    const [products, setProducts] = useState([]);
+    const [search, setSearch] = useState("");
+    const [categoryFilter, setCategoryFilter] = useState("");
+
+    useEffect(() => {
+        loadProducts();
+    }, []);
+
+    const loadProducts = async () => {
+        try {
+            const data = await getProducts();
+            setProducts(data);
+        } catch (err) {
+            console.error("Error fetching products:", err);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this product?")) return;
+        try {
+            await deleteProduct(id);
+            setProducts(products.filter((p) => p.id !== id));
+        } catch (err) {
+            console.error("Delete failed:", err);
+        }
+    };
+
+    // filter logic
+    const filteredProducts = products.filter((p) => {
+        const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+        const matchesCategory = categoryFilter ? p.category === categoryFilter : true;
+        return matchesSearch && matchesCategory;
+    });
+
     return (
         <div className="p-6">
             <div className="bg-white rounded-lg shadow-lg p-6">
+                {/* Header */}
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-gray-800">Products</h2>
                     <div className="flex gap-4">
+                        {/* Search */}
                         <div className="relative">
                             <input
                                 type="text"
                                 placeholder="Search products..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             <svg
@@ -25,7 +66,13 @@ const Products = () => {
                                 />
                             </svg>
                         </div>
-                        <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                        {/* Category Filter */}
+                        <select
+                            value={categoryFilter}
+                            onChange={(e) => setCategoryFilter(e.target.value)}
+                            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
                             <option value="">All Categories</option>
                             <option value="medications">Medications</option>
                             <option value="supplies">Medical Supplies</option>
@@ -34,67 +81,97 @@ const Products = () => {
                     </div>
                 </div>
 
+                {/* Products Table */}
                 <div className="overflow-x-auto">
                     <table className="min-w-full bg-white">
                         <thead className="bg-gray-100">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Product
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Category
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Stock
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Price
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                            {/* Sample Product Row */}
-                            <tr>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        <img
-                                            className="h-10 w-10 rounded-lg object-cover mr-3"
-                                            src="/placeholder.jpg"
-                                            alt="Product"
-                                        />
-                                        <div>
-                                            <div className="text-sm font-medium text-gray-900">Product Name</div>
-                                            <div className="text-sm text-gray-500">SKU: PRD001</div>
+                            {filteredProducts.map((p) => (
+                                <tr key={p.id}>
+                                    {/* Product name + image */}
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center">
+                                            <img
+                                                className="h-10 w-10 rounded-lg object-cover mr-3"
+                                                src={p.imageUrl || "/placeholder.jpg"}
+                                                alt={p.name}
+                                            />
+                                            <div>
+                                                <div className="text-sm font-medium text-gray-900">
+                                                    {p.name}
+                                                </div>
+                                                <div className="text-sm text-gray-500">
+                                                    {p.description?.substring(0, 40)}...
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">Medications</td>
-                                <td className="px-6 py-4 whitespace-nowrap">150</td>
-                                <td className="px-6 py-4 whitespace-nowrap">$29.99</td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                        In Stock
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
-                                    <button className="text-indigo-600 hover:text-indigo-900 transition-colors" title="Edit">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                    <button className="text-red-600 hover:text-red-900 transition-colors" title="Delete">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </td>
-                            </tr>
+                                    </td>
+
+                                    {/* Category */}
+                                    <td className="px-6 py-4 whitespace-nowrap">{p.category}</td>
+
+                                    {/* Stock */}
+                                    <td className="px-6 py-4 whitespace-nowrap">{p.stock}</td>
+
+                                    {/* Price */}
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        ${Number(p.price).toFixed(2)}
+                                    </td>
+
+                                    {/* Actions */}
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
+                                        <button
+                                            className="text-indigo-600 hover:text-indigo-900 transition-colors"
+                                            title="Edit"
+                                            // TODO: hook this up to edit page
+                                            onClick={() => alert("Edit not implemented yet")}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className="text-red-600 hover:text-red-900 transition-colors"
+                                            title="Delete"
+                                            onClick={() => handleDelete(p.id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+
+                            {filteredProducts.length === 0 && (
+                                <tr>
+                                    <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                                        No products found
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
 
-                {/* Pagination */}
+                {/* Pagination (placeholder for now) */}
                 <div className="flex items-center justify-between mt-6">
                     <div className="text-sm text-gray-500">
-                        Showing 1 to 10 of 50 entries
-                    </div>
-                    <div className="flex gap-2">
-                        <button className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">Previous</button>
-                        <button className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">Next</button>
+                        Showing {filteredProducts.length} of {products.length} products
                     </div>
                 </div>
             </div>
