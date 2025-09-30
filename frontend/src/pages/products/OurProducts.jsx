@@ -1,64 +1,37 @@
-import { useEffect, useState } from "react";
-import { getProducts } from "./../../services/productService.js";
+import useProducts from "./../../hooks/productsHook";
 
 const OurProducts = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { products, loading } = useProducts();
 
-    useEffect(() => {
-        loadProducts();
-    }, []);
-
-    const loadProducts = async () => {
-        try {
-            const data = await getProducts();
-            setProducts(data);
-        } catch (err) {
-            console.error("Failed to fetch products:", err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    if (loading) {
-        return <div className="p-6 text-center">Loading products...</div>;
-    }
+    if (loading) return <div className="p-6 text-center">Loading...</div>;
 
     return (
         <div className="py-12 bg-gray-50 min-h-screen">
             <div className="container mx-auto max-w-7xl px-6">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-10">
-                    Our Products
-                </h2>
 
                 {products.length === 0 ? (
                     <p className="text-center text-gray-500">No products available</p>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {products.map((p) => (
-                            <div
-                                key={p.id}
-                                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-                            >
+                            <div key={p.id} className="bg-white shadow rounded-lg overflow-hidden">
                                 <img
-                                    src={p.imageUrl ? p.imageUrl : "/placeholder.jpg"}
+                                    src={p.imageUrl || "/placeholder.jpg"}
                                     alt={p.name}
                                     className="w-full h-56 object-cover"
                                 />
                                 <div className="p-5">
-                                    <h3 className="text-xl font-semibold text-gray-800">
-                                        {p.name}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm mb-3">{p.category}</p>
-                                    <p className="text-gray-600 text-sm mb-4">
-                                        {p.description?.substring(0, 80)}...
+                                    <h3 className="text-lg font-semibold">{p.name}</h3>
+                                    <p className="text-sm text-gray-500">{p.category}</p>
+                                    <p className="text-gray-600 text-sm mb-3">
+                                        {p.description?.substring(0, 60)}...
                                     </p>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-lg font-bold text-blue-600">
+                                        <span className="text-blue-600 font-bold">
                                             ${Number(p.price).toFixed(2)}
                                         </span>
                                         <span
-                                            className={`px-3 py-1 text-xs rounded-full ${p.stock > 0
+                                            className={`px-2 py-1 text-xs rounded-full ${p.stock > 0
                                                     ? "bg-green-100 text-green-700"
                                                     : "bg-red-100 text-red-700"
                                                 }`}
