@@ -53,7 +53,7 @@ public class Doctor extends User {
     }
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "approval_status", nullable = false, length = 10)
+    @Column(name = "approval_status", nullable = true, length = 10)
     private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
 
     @Column(name = "reviewed_at")
@@ -72,6 +72,7 @@ public class Doctor extends User {
 
     @Override
     public boolean isEnabled() {
-        return this.approvalStatus == ApprovalStatus.APPROVED;
+        // Treat null as enabled to avoid blocking existing rows before admin review
+        return this.approvalStatus == null || this.approvalStatus == ApprovalStatus.APPROVED;
     }
 }
