@@ -96,8 +96,14 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/Our Products" element={<OurProducts />} />
-                  <Route path="/products/:id" element={<ProductDetails />} />
-                  <Route path="/therapists" element={<FindTherapistsContainer />} />
+                  <Route
+                    path="/therapists"
+                    element={
+                      <ProtectedRoute>
+                        <FindTherapistsContainer />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route path="/doctors/:id" element={<DoctorDescriptionContainer />} />
                   <Route path="/games" element={<Games />} />
                   <Route path="/about" element={<About />} />

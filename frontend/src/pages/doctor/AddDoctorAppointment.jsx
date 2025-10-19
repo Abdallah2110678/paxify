@@ -46,6 +46,22 @@ const AddDoctorAppointment = () => {
               </select>
             </div>
 
+            {/* Recurrence */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Recurrence
+              </label>
+              <select
+                name="recurrenceType"
+                value={form.recurrenceType}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="WEEKLY">Weekly </option>
+                <option value="ONE_TIME">This week only </option>
+              </select>
+            </div>
+
             {/* Price */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

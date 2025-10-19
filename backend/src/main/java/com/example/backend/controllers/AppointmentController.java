@@ -42,7 +42,7 @@ public class AppointmentController {
         
         Appointment appointment = appointmentService.createAppointment(
                 request.getDoctorId(), request.getDateTime(), request.getDurationMinutes(),
-                request.getSessionType(), request.getPrice(), request.getNotes());
+                request.getSessionType(), request.getPrice(), request.getNotes(), request.getRecurrenceType());
         return ResponseEntity.ok(appointment);
     }
 

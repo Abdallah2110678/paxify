@@ -15,13 +15,16 @@ export default function Home() {
         faqs,
 
         // refs
-        rowRef,
+rowRef,
+therapistsRowRef,
 
-        // handlers
-        handleBrowseTherapists,
-        handleKnowMore,
-        handleBooking,
-        handleWatchSessions,
+// handlers
+handleBrowseTherapists,
+handleKnowMore,
+handleBooking,
+handleWatchSessions,
+therapistsPrev,
+therapistsNext,
     } = useHome();
 
     return (
@@ -316,50 +319,90 @@ export default function Home() {
                         </h3>
                     </header>
 
-                    <ul className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {therapists.map((t, i) => (
-                            <li
-                                key={i}
-                                className="rounded-2xl border border-[#4CB5AB]/15 shadow-sm p-6 hover:shadow-md transition"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <img
-                                        src={t.avatar}
-                                        alt={t.name}
-                                        className="w-16 h-16 rounded-full object-cover bg-[#F4EDE4]"
-                                        onError={(e) => {
-                                            e.currentTarget.src =
-                                                "data:image/svg+xml;utf8,\n<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='100%' height='100%' fill='%23F4EDE4'/><text x='50%' y='54%' text-anchor='middle' font-size='14' fill='%234CB5AB'>👩‍⚕️</text></svg>";
-                                        }}
-                                    />
-                                    <div>
-                                        <p className="font-semibold text-[#2B2B2B]">{t.name}</p>
-                                        <p className="text-sm text-[#6B6B6B]">{t.availability}</p>
-                                    </div>
-                                </div>
-                                <dl className="mt-4 text-sm">
-                                    <div className="flex gap-2 mt-1">
-                                        <dt className="font-medium text-[#2B2B2B]">Areas of expertise:</dt>
-                                        <dd className="text-[#6B6B6B]">{t.specialty.join(", ")}</dd>
-                                    </div>
-                                    <div className="flex gap-2 mt-1">
-                                        <dt className="font-medium text-[#2B2B2B]">Therapy style:</dt>
-                                        <dd className="text-[#6B6B6B]">{t.style}</dd>
-                                    </div>
-                                    <div className="flex gap-2 mt-1">
-                                        <dt className="font-medium text-[#2B2B2B]">Rating:</dt>
-                                        <dd className="text-[#6B6B6B]">{t.rating} ⭐</dd>
-                                    </div>
-                                </dl>
-                                <button
-                                    onClick={handleBrowseTherapists}
-                                    className="mt-4 w-full rounded-full px-5 py-3 font-semibold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow"
-                                >
-                                    Browse Therapists
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+                    <div className="mt-10 relative">
+  {/* Left arrow */}
+  <button
+    onClick={therapistsPrev}
+    aria-label="Previous therapists"
+    className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow ring-1 ring-[#4CB5AB]/30 hover:bg-[#F4EDE4] w-10 h-10 rounded-full items-center justify-center text-[#2B2B2B]"
+  >
+    ‹
+  </button>
+
+  {/* Viewport wrapper hides scrollbar visually */}
+  <div className="relative overflow-hidden">
+    <ul
+      ref={therapistsRowRef}
+      className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-px-6 pb-6 -mb-6 pr-2 pl-12 md:pl-14 md:pr-14 hide-scrollbar"
+      onMouseEnter={() => (therapistsRowRef.current.__paused = true)}
+      onMouseLeave={() => (therapistsRowRef.current.__paused = false)}
+    >
+      {therapists.map((t, i) => (
+        <li
+          key={i}
+          data-therapist-card="1"
+          className="snap-start rounded-2xl border border-[#4CB5AB]/15 shadow-sm p-6 hover:shadow-md transition bg-white"
+          style={{ minWidth: 'calc((100% - 48px) / 3)', maxWidth: 'calc((100% - 48px) / 3)' }}
+        >
+          <div className="flex items-center gap-4">
+            <img
+              src={t.avatar}
+              alt={t.name}
+              className="w-16 h-16 rounded-full object-cover bg-[#F4EDE4]"
+              onError={(e) => {
+                e.currentTarget.src =
+                  "data:image/svg+xml;utf8,\n<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='100%' height='100%' fill='%23F4EDE4'/><text x='50%' y='54%' text-anchor='middle' font-size='14' fill='%234CB5AB'>👩‍⚕️</text></svg>";
+              }}
+            />
+            <div>
+              <p className="font-semibold text-[#2B2B2B]">{t.name}</p>
+              {t.availability && (
+                <p className="text-sm text-[#6B6B6B]">{t.availability}</p>
+              )}
+            </div>
+          </div>
+
+          <dl className="mt-4 text-sm">
+            {t.specialty?.length > 0 && (
+              <div className="flex gap-2 mt-1">
+                <dt className="font-medium text-[#2B2B2B]">Areas of expertise:</dt>
+                <dd className="text-[#6B6B6B]">{t.specialty.join(", ")}</dd>
+              </div>
+            )}
+            {t.style && (
+              <div className="flex gap-2 mt-1">
+                <dt className="font-medium text-[#2B2B2B]">Therapy style:</dt>
+                <dd className="text-[#6B6B6B]">{t.style}</dd>
+              </div>
+            )}
+            {t.rating !== undefined && (
+              <div className="flex gap-2 mt-1">
+                <dt className="font-medium text-[#2B2B2B]">Rating:</dt>
+                <dd className="text-[#6B6B6B]">{t.rating} ⭐</dd>
+              </div>
+            )}
+          </dl>
+
+          <button
+            onClick={handleBrowseTherapists}
+            className="mt-4 w-full rounded-full px-5 py-3 font-semibold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow"
+          >
+            Browse Therapists
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  {/* Right arrow */}
+  <button
+    onClick={therapistsNext}
+    aria-label="Next therapists"
+    className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow ring-1 ring-[#4CB5AB]/30 hover:bg-[#F4EDE4] w-10 h-10 rounded-full items-center justify-center text-[#2B2B2B]"
+  >
+    ›
+  </button>
+</div>
                 </div>
             </section>
 

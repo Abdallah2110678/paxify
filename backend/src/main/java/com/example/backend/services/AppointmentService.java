@@ -12,6 +12,7 @@ import com.example.backend.models.AppointmentStatus;
 import com.example.backend.models.Doctor;
 import com.example.backend.models.Patient;
 import com.example.backend.models.PaymentMethod;
+import com.example.backend.models.RecurrenceType;
 import com.example.backend.repositories.AppointmentRepo;
 import com.example.backend.repositories.DoctorRepo;
 import com.example.backend.repositories.PatientRepo;
@@ -30,7 +31,8 @@ public class AppointmentService {
     // Create appointment (doctor creates available slots)
     public Appointment createAppointment(UUID doctorId, LocalDateTime dateTime,
                                          Integer durationMinutes, String sessionType,
-                                         java.math.BigDecimal price, String notes) {
+                                         java.math.BigDecimal price, String notes,
+                                         RecurrenceType recurrenceType) {
         Doctor doctor = doctorRepo.findById(doctorId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
@@ -48,6 +50,7 @@ public class AppointmentService {
         appointment.setPrice(price != null ? price : doctor.getConsultationFee());
         appointment.setNotes(notes);
         appointment.setStatus(AppointmentStatus.AVAILABLE);
+        appointment.setRecurrenceType(recurrenceType != null ? recurrenceType : RecurrenceType.WEEKLY);
 
         return appointmentRepo.save(appointment);
     }
@@ -69,19 +72,30 @@ public class AppointmentService {
         LocalDateTime now = LocalDateTime.now();
         var expired = appointmentRepo.findByDoctorIdAndStatusAndAppointmentDateTimeBefore(doctorId, AppointmentStatus.AVAILABLE, now);
         if (expired == null || expired.isEmpty()) return;
-        for (var a : expired) {
-            // Ensure we roll forward until it is in the future (in case of long downtime)
-            LocalDateTime dt = a.getAppointmentDateTime();
-            while (dt.isBefore(now)) {
-                dt = dt.plusWeeks(1);
+        // Separate WEEKLY vs ONE_TIME
+        expired.removeIf(a -> {
+            if (a.getRecurrenceType() == RecurrenceType.ONE_TIME) {
+                // delete ONE_TIME past slots
+                appointmentRepo.delete(a);
+                return true; // removed from list to avoid further processing
             }
-            a.setAppointmentDateTime(dt);
-            // Safety: ensure next week's slot belongs to no patient
-            a.setPatient(null);
-            a.setPaymentMethod(null);
-            a.setStatus(AppointmentStatus.AVAILABLE);
+            return false;
+        });
+        for (var a : expired) {
+            if (a.getRecurrenceType() == RecurrenceType.WEEKLY) {
+                LocalDateTime dt = a.getAppointmentDateTime();
+                while (dt.isBefore(now)) {
+                    dt = dt.plusWeeks(1);
+                }
+                a.setAppointmentDateTime(dt);
+                a.setPatient(null);
+                a.setPaymentMethod(null);
+                a.setStatus(AppointmentStatus.AVAILABLE);
+            }
         }
-        appointmentRepo.saveAll(expired);
+        if (!expired.isEmpty()) {
+            appointmentRepo.saveAll(expired);
+        }
     }
 
     // Nightly job: roll all expired AVAILABLE appointments forward to the next week
@@ -90,18 +104,28 @@ public class AppointmentService {
         LocalDateTime now = LocalDateTime.now();
         var expired = appointmentRepo.findByStatusAndAppointmentDateTimeBefore(AppointmentStatus.AVAILABLE, now);
         if (expired == null || expired.isEmpty()) return;
-        for (var a : expired) {
-            LocalDateTime dt = a.getAppointmentDateTime();
-            while (dt.isBefore(now)) {
-                dt = dt.plusWeeks(1);
+        expired.removeIf(a -> {
+            if (a.getRecurrenceType() == RecurrenceType.ONE_TIME) {
+                appointmentRepo.delete(a);
+                return true;
             }
-            a.setAppointmentDateTime(dt);
-            // Safety: ensure rolled slots are clean
-            a.setPatient(null);
-            a.setPaymentMethod(null);
-            a.setStatus(AppointmentStatus.AVAILABLE);
+            return false;
+        });
+        for (var a : expired) {
+            if (a.getRecurrenceType() == RecurrenceType.WEEKLY) {
+                LocalDateTime dt = a.getAppointmentDateTime();
+                while (dt.isBefore(now)) {
+                    dt = dt.plusWeeks(1);
+                }
+                a.setAppointmentDateTime(dt);
+                a.setPatient(null);
+                a.setPaymentMethod(null);
+                a.setStatus(AppointmentStatus.AVAILABLE);
+            }
         }
-        appointmentRepo.saveAll(expired);
+        if (!expired.isEmpty()) {
+            appointmentRepo.saveAll(expired);
+        }
     }
 
     // Book appointment (patient books an available slot)

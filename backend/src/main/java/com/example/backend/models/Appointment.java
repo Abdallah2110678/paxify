@@ -68,4 +68,8 @@ public class Appointment {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "recurrence_type", nullable = true)
+    private RecurrenceType recurrenceType = RecurrenceType.WEEKLY; // WEEKLY keeps repeating; ONE_TIME expires
+
 }
