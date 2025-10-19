@@ -1,3 +1,4 @@
+// src/hooks/navbarHook.js
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -7,6 +8,7 @@ export default function useNavbar() {
   const [activeLink, setActiveLink] = useState("home");
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth() || { user: null, logout: () => {} };
@@ -23,7 +25,6 @@ export default function useNavbar() {
   const displayEmail =
     user?.email || user?.userEmail || user?.username || (typeof user?.sub === "string" ? user.sub : "");
 
-  // Moved from utils/resolveUrl.js
   function resolveUrl(path) {
     if (!path) return "";
     if (/^https?:\/\//i.test(path)) return path;
@@ -31,11 +32,14 @@ export default function useNavbar() {
     return `${base}${path}`;
   }
 
+  // Mark active link from the first path segment
   useEffect(() => {
-    const currentPath = location.pathname.replace("/", "") || "home";
-    setActiveLink(currentPath);
+    const seg = location.pathname.split("/")[1] || "home";
+    setActiveLink(seg);
+    setOpenProfile(false); // close dropdown on route change
   }, [location]);
 
+  // Close profile when clicking outside
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -61,12 +65,14 @@ export default function useNavbar() {
     setOpenProfile(false);
   };
 
+  // Use slug ids that match your Routes
   const links = [
     { id: "home", label: "Home", icon: "🏠" },
     { id: "therapists", label: "Find Therapists", icon: "👨‍⚕️" },
-    { id: "Our Products", label: "Our Products", icon: "🛒" },
+    { id: "Our products", label: "Our Products", icon: "🛒" }, // 👈 slug matches /ourproducts
     { id: "games", label: "Games", icon: "🎮" },
     { id: "about", label: "About", icon: "ℹ️" },
+    // { id: "cart", label: "Cart", icon: "🧺" }, // uncomment if you have /cart
   ];
 
   return {
