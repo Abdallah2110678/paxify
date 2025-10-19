@@ -1,48 +1,45 @@
+// src/services/cartService.js
 import api from "./api";
 
-// 🛒 Create a cart for a user
-export function createCart(userId) {
-  return api.post(`/api/carts?userId=${userId}`, null, {
-    headers: { ...authHeaders() },
-  });
+function authHeaders() {
+  const t = localStorage.getItem("token");
+  return t ? { Authorization: `Bearer ${t}` } : {};
 }
 
-// 🛒 Get cart by ID
-export async function getCart(cartId) {
-  const { data } = await api.get(`/api/carts/${cartId}`, {
-    headers: { ...authHeaders() },
+export async function addToCart(productId, quantity = 1) {
+  const { data } = await api.post(
+    `/api/carts/add/${productId}?quantity=${quantity}`,
+    null,
+    { headers: authHeaders() }
+  );
+  return data;
+}
+
+export async function getCartByUser() {
+  const { data } = await api.get(`/api/carts/by-user`, {
+    headers: authHeaders(),
   });
   return data;
 }
 
-// 🛒 Add product to cart
-export function addProductToCart(cartId, productId, quantity) {
-  return api.post(
-    `/api/carts/${cartId}/add/${productId}?quantity=${quantity}`,
-    null,
-    { headers: { ...authHeaders() } }
-  );
-}
-
-// 🛒 Update product quantity in cart
-export function updateCartItem(cartId, itemId, quantity) {
-  return api.put(
+export async function updateCartItem(cartId, itemId, quantity) {
+  const { data } = await api.put(
     `/api/carts/${cartId}/update/${itemId}?quantity=${quantity}`,
     null,
-    { headers: { ...authHeaders() } }
+    { headers: authHeaders() }
   );
+  return data;
 }
 
-// 🛒 Remove item from cart
-export function removeCartItem(cartId, itemId) {
-  return api.delete(`/api/carts/${cartId}/remove/${itemId}`, {
-    headers: { ...authHeaders() },
+export async function removeCartItem(cartId, itemId) {
+  const { data } = await api.delete(`/api/carts/${cartId}/remove/${itemId}`, {
+    headers: authHeaders(),
   });
+  return data;
 }
 
-// 🛒 Clear the cart
-export function clearCart(cartId) {
-  return api.delete(`/api/carts/${cartId}/clear`, {
-    headers: { ...authHeaders() },
+export async function clearCart(cartId) {
+  await api.delete(`/api/carts/${cartId}/clear`, {
+    headers: authHeaders(),
   });
 }

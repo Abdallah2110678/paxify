@@ -3,9 +3,9 @@ package com.example.backend.services;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import com.example.backend.models.Appointment;
 import com.example.backend.models.AppointmentStatus;

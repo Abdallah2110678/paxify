@@ -1,4 +1,12 @@
+// src/main/java/com/example/backend/services/JwtAuthFilter.java
 package com.example.backend.services;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,13 +17,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.example.backend.models.User;
 import com.example.backend.repositories.UserRepo;
 
-import io.jsonwebtoken.io.IOException;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -24,29 +25,28 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserRepo userRepo;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
+    protected void doFilterInternal(
+            HttpServletRequest request,
             HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException, java.io.IOException {
+            FilterChain filterChain) throws ServletException, java.io.IOException { // <-- only java.io.IOException
+
         final String authHeader = request.getHeader("Authorization");
-        // removed noisy debug logging
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authHeader.substring(7);
-        String email = null;
+        String email;
         try {
             email = jwtService.extractUsername(token);
         } catch (io.jsonwebtoken.ExpiredJwtException ex) {
-            // Token expired -> return 401 so client can re-login
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            try { response.getWriter().write("JWT expired"); } catch (Exception ignored) {}
+            response.getWriter().write("JWT expired");
             return;
         } catch (Exception ex) {
-            // Any other parsing error -> 401
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            try { response.getWriter().write("Invalid JWT"); } catch (Exception ignored) {}
+            response.getWriter().write("Invalid JWT");
             return;
         }
 
@@ -54,14 +54,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             User user = userRepo.findByEmail(email).orElse(null);
 
             if (user != null && jwtService.isTokenValid(token, user)) {
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                var auth = new UsernamePasswordAuthenticationToken(
                         user,
                         null,
-                        user.getAuthorities() // <--- this includes ADMIN/DOCTOR/PATIENT
-                );
+                        user.getAuthorities());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
-                // removed noisy debug logging
             }
         }
         filterChain.doFilter(request, response);

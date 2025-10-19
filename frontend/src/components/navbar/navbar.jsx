@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useNavbar from "../../hooks/NavbarHook.js";
 
 const Navbar = () => {
@@ -19,13 +19,11 @@ const Navbar = () => {
     resolveUrl,
   } = useNavbar();
 
+  const navigate = useNavigate();
+
   return (
     <nav
-      className="
-    fixed -top-[1px] left-0 right-0 z-50
-    bg-[#4CB5AB]
-    border-b border-white/20 -mb-[1px] transform-gpu shadow-lg
-  "
+      className="fixed -top-[1px] left-0 right-0 z-50 bg-[#4CB5AB] border-b border-white/20 shadow-lg"
       aria-label="Primary"
     >
       <div className="container mx-auto px-6 py-4 md:py-5 flex justify-between items-center">
@@ -44,13 +42,15 @@ const Navbar = () => {
             <button
               key={link.id}
               onClick={() => handleLinkClick(link.id)}
-              className={`px-3 py-2 rounded-full transition-colors border
+              className={`px-3 py-2 rounded-full transition-colors border 
                 ${activeLink === link.id
                   ? "bg-white text-[#4CB5AB] border-white shadow-md"
                   : "text-white hover:text-white bg-transparent border-transparent hover:bg-white/20"
                 }`}
             >
-              <span className="mr-1" aria-hidden>{link.icon}</span>
+              <span className="mr-1" aria-hidden>
+                {link.icon}
+              </span>
               {link.label}
             </button>
           ))}
@@ -59,8 +59,8 @@ const Navbar = () => {
             <button
               onClick={goMyDashboard}
               className={`px-3 py-2 rounded-full transition-colors border ${activeLink.includes("dashboard")
-                ? "bg-white text-[#4CB5AB] border-white shadow-md"
-                : "text-white hover:text-white bg-transparent border-transparent hover:bg-white/20"
+                  ? "bg-white text-[#4CB5AB] border-white shadow-md"
+                  : "text-white hover:text-white bg-transparent border-transparent hover:bg-white/20"
                 }`}
             >
               📊 Dashboard
@@ -79,14 +79,16 @@ const Navbar = () => {
 
         {/* Right controls */}
         <div className="relative flex items-center gap-3" ref={dropdownRef}>
+          {/* 🛒 Cart button */}
           <button
-            className="relative p-2 text-white hover:text-[#F4EDE4] transition-colors"
-            aria-label="Notifications"
+            onClick={() => navigate("/cart")}
+            className="relative w-10 h-10 bg-white/25 hover:bg-white/35 rounded-full text-white flex items-center justify-center transition-colors"
+            title="Cart"
           >
-            <span className="text-xl" aria-hidden>🔔</span>
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#D4A44A] rounded-full ring-2 ring-white" />
+            🛒
           </button>
 
+          {/* Profile */}
           <button
             onClick={() => setOpenProfile((v) => !v)}
             className="w-10 h-10 bg-white/25 hover:bg-white/35 rounded-full text-white transition-colors overflow-hidden"
@@ -108,7 +110,6 @@ const Navbar = () => {
           {/* Profile dropdown */}
           {openProfile && (
             <div className="absolute right-0 top-full mt-3 w-72 z-[60]">
-              {/* caret */}
               <span className="absolute right-6 -top-2 h-4 w-4 rotate-45 bg-white shadow ring-1 ring-black/5" />
               <div className="bg-white rounded-xl shadow-2xl ring-1 ring-black/5 overflow-hidden max-h-[70vh]">
                 {/* Header */}
@@ -180,7 +181,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile menu trigger */}
+      {/* Mobile menu */}
       <div className="md:hidden container mx-auto px-6 pb-4">
         <button
           className="text-white hover:text-[#F4EDE4]"
@@ -192,20 +193,34 @@ const Navbar = () => {
           ☰
         </button>
         {isMobileMenuOpen && (
-          <div id="mobile-menu" className="mt-3 bg-white/95 backdrop-blur rounded-xl p-2 ring-1 ring-white/30 shadow-lg">
+          <div
+            id="mobile-menu"
+            className="mt-3 bg-white/95 backdrop-blur rounded-xl p-2 ring-1 ring-white/30 shadow-lg"
+          >
             {links.map((link) => (
               <button
                 key={link.id}
                 onClick={() => handleLinkClick(link.id)}
                 className={`block w-full text-left px-3 py-2 rounded-full mb-1 ${activeLink === link.id
-                  ? "bg-[#4CB5AB] text-white"
-                  : "text-[#2B2B2B] hover:bg-[#F4EDE4]"
+                    ? "bg-[#4CB5AB] text-white"
+                    : "text-[#2B2B2B] hover:bg-[#F4EDE4]"
                   }`}
               >
-                <span className="mr-1" aria-hidden>{link.icon}</span>
+                <span className="mr-1" aria-hidden>
+                  {link.icon}
+                </span>
                 {link.label}
               </button>
             ))}
+
+            {/* Cart link in mobile menu */}
+            <button
+              onClick={() => navigate("/cart")}
+              className="block w-full text-left px-3 py-2 rounded-full text-white bg-[#4CB5AB] hover:bg-[#43a79e]"
+            >
+              🛒 Cart
+            </button>
+
             {!user ? (
               <button
                 onClick={() => handleLinkClick("doctor-register")}

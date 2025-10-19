@@ -59,7 +59,7 @@ const Dashboard = () => {
     const buttons = useMemo(
         () => [
             { id: "admin", label: "Admin", icon: "🛡️" },
-            { id: "doctor", label: "Doctor", icon: "🩺" },
+            { id: "doctor", label: "Doctors", icon: "🩺" },
             { id: "add-doctor", label: "Add Doctor", icon: "➕" },
             { id: "patient", label: "Patient", icon: "👤" },
             { id: "add-patient", label: "Add Patient", icon: "➕" },

@@ -3,6 +3,7 @@ package com.example.backend.services;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.backend.models.Cart;
 import com.example.backend.models.CartItem;
@@ -14,7 +15,9 @@ import com.example.backend.repositories.ProductRepository;
 import com.example.backend.repositories.UserRepo;
 
 @Service
+@Transactional
 public class CartService {
+
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
@@ -31,7 +34,7 @@ public class CartService {
     }
 
     public Cart getCart(Long cartId) {
-        return cartRepository.findById(cartId)
+        return cartRepository.findByIdWithItems(cartId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
     }
 
@@ -39,35 +42,57 @@ public class CartService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Cart cart = Cart.builder()
-                .user(user)
-                .build();
-
-        return cartRepository.save(cart);
+        return cartRepository.findByUserWithItems(user).orElseGet(() -> {
+            Cart cart = Cart.builder()
+                    .user(user)
+                    .items(new java.util.ArrayList<>())
+                    .build();
+            return cartRepository.save(cart);
+        });
     }
 
-    public Cart addProduct(Long cartId, Long productId, int quantity) {
-        Cart cart = getCart(cartId);
+    public Cart addProduct(UUID userId, Long productId, int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be > 0");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Get or create user's cart (with items fetched)
+        Cart cart = cartRepository.findByUserWithItems(user).orElseGet(() -> {
+            Cart newCart = Cart.builder()
+                    .user(user)
+                    .items(new java.util.ArrayList<>())
+                    .build();
+            return cartRepository.save(newCart);
+        });
+
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        for (CartItem item : cart.getItems()) {
-            if (item.getProduct().getId().equals(productId)) {
-                item.setQuantity(item.getQuantity() + quantity);
-                cartItemRepository.save(item);
-                return cartRepository.save(cart);
-            }
+        // Update existing item if present
+        CartItem existing = cart.getItems().stream()
+                .filter(it -> it.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElse(null);
+
+        if (existing != null) {
+            existing.setQuantity(existing.getQuantity() + quantity);
+            cartItemRepository.save(existing);
+        } else {
+            CartItem newItem = CartItem.builder()
+                    .cart(cart)
+                    .product(product)
+                    .quantity(quantity)
+                    .build();
+            cart.getItems().add(newItem);
+            cartItemRepository.save(newItem);
         }
 
-        CartItem item = CartItem.builder()
-                .cart(cart)
-                .product(product)
-                .quantity(quantity)
-                .build();
-        cart.getItems().add(item);
-        cartItemRepository.save(item);
-
-        return cartRepository.save(cart);
+        cartRepository.save(cart);
+        // Return a fully initialized cart for JSON
+        return cartRepository.findByIdWithItems(cart.getId()).orElse(cart);
     }
 
     public Cart updateQuantity(Long cartId, Long itemId, int quantity) {
@@ -82,7 +107,8 @@ public class CartService {
             item.setQuantity(quantity);
             cartItemRepository.save(item);
         }
-        return cartRepository.save(cart);
+        cartRepository.save(cart);
+        return cartRepository.findByIdWithItems(cart.getId()).orElse(cart);
     }
 
     public Cart removeItem(Long cartId, Long itemId) {
@@ -92,12 +118,26 @@ public class CartService {
 
         cart.getItems().remove(item);
         cartItemRepository.delete(item);
-        return cartRepository.save(cart);
+        cartRepository.save(cart);
+        return cartRepository.findByIdWithItems(cart.getId()).orElse(cart);
     }
 
     public void clearCart(Long cartId) {
         Cart cart = getCart(cartId);
         cart.getItems().clear();
         cartRepository.save(cart);
+    }
+
+    public Cart getOrCreateCartByUser(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        return cartRepository.findByUserWithItems(user).orElseGet(() -> {
+            Cart cart = Cart.builder()
+                    .user(user)
+                    .items(new java.util.ArrayList<>())
+                    .build();
+            return cartRepository.save(cart);
+        });
     }
 }

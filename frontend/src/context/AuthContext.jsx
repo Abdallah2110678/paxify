@@ -21,8 +21,8 @@ function mapClaimsToUser(claims = {}) {
     typeof roleRaw === "string"
       ? roleRaw.toUpperCase()
       : roleRaw && roleRaw.name
-      ? String(roleRaw.name).toUpperCase()
-      : null;
+        ? String(roleRaw.name).toUpperCase()
+        : null;
 
   return { id, role };
 }
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
       const url = `${cfg.baseURL || ""}${cfg.url || ""}`;
       const isAuthEndpoint =
         url.includes("/api/auth/register") || url.includes("/api/auth/login");
-      
+
       if (token && !isAuthEndpoint) {
         cfg.headers = cfg.headers || {};
         cfg.headers.Authorization = `Bearer ${token}`;
@@ -67,14 +67,16 @@ export const AuthProvider = ({ children }) => {
             .then((res) => {
               setUser(res.data);
               localStorage.setItem("user", JSON.stringify(res.data));
+
+              // ✅ Save userId for cart usage
+              localStorage.setItem("userId", res.data.id);
             });
         }
       } catch (e) {
         console.warn("Failed to decode token on mount:", e);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [token, user]);
 
   // Login: fetch fresh user from backend
   const login = async (email, password) => {
@@ -91,12 +93,17 @@ export const AuthProvider = ({ children }) => {
         const res = await api.get(`/api/users/${mapped.id}`, {
           headers: { Authorization: `Bearer ${data.token}` },
         });
+
         setUser(res.data);
         localStorage.setItem("user", JSON.stringify(res.data));
+
+        // ✅ Make sure the correct key is used
+        const uid = res.data.id || res.data.userId || mapped.id;
+        localStorage.setItem("userId", uid);
       }
+
     } catch (e) {
       console.error("Failed to fetch user after login:", e);
-      // fallback: at least set email so UI doesn't break
       const fallbackUser = {
         id: null,
         role: null,
@@ -117,6 +124,8 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("userId"); // clear cart userId on logout
+    localStorage.removeItem("cartId"); // optional: clear cart as well
   };
 
   // Refresh user (after profile update)
@@ -128,6 +137,9 @@ export const AuthProvider = ({ children }) => {
       });
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
+
+      // ✅ refresh userId too
+      localStorage.setItem("userId", data.id);
     } catch (err) {
       console.error("Failed to refresh user:", err);
     }
