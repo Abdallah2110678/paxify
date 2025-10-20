@@ -1,5 +1,5 @@
 {
-  "appName": "باكسيفاي",
+  "appName": "Paxify",
   "language": {
     "switchToAr": "العربية",
     "switchToEn": "English"
@@ -18,7 +18,7 @@
     "toggleMenu": "فتح/إغلاق القائمة"
   },
   "nav": {
-    "logoAlt": "شعار باكسيفاي",
+    "logoAlt": "شعار Paxify",
     "home": "الرئيسية",
     "findTherapists": "ابحث عن معالجين",
     "products": "منتجاتنا",

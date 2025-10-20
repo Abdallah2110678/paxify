@@ -112,7 +112,7 @@ export default function Home() {
                 >
                     <div className="absolute inset-0 bg-black/40"></div>
 
-                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl border border-white/20 relative z-10 w/full max-w-sm sm:max-w-md">
+                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl border border-white/20 relative z-10 w-full max-w-sm sm:max-w-md">
                         <h3 className="text-lg sm:text-xl font-semibold text-[#2B2B2B] mb-1">
                             {t("home.quickActions.title")}
                         </h3>
