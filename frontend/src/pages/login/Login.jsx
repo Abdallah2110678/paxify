@@ -19,7 +19,7 @@ export default function Login() {
       await login(form.email, form.password);
       navigate("/");
     } catch (error) {
-      setErr(error?.response?.data?.message || "Invalid email or password");
+      setErr(error?.response?.data?.message || t("auth.errors.loginFailed"));
     }
   };
 
@@ -64,6 +64,7 @@ export default function Login() {
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="absolute right-3 top-9 text-gray-500 hover:text-gray-700 focus:outline-none"
+              aria-label={showPassword ? t("actions.hide") : t("actions.show")}
             >
               {showPassword ? (
                 <AiOutlineEyeInvisible size={20} />
@@ -77,7 +78,7 @@ export default function Login() {
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-colors"
           >
-            Login
+            {t("actions.login")}
           </button>
         </form>
 

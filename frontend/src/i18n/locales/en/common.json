@@ -88,6 +88,8 @@
       "online": "Online Appointments",
       "offline": "In-person Appointments",
       "total": "Total Appointments",
+      "upcoming": "Upcoming Appointments",
+      "anonPatient": "Patient",
       "noAppointments": "No upcoming appointments"
     }
   },

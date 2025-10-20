@@ -2,10 +2,12 @@ import { useAuth } from "frontend/src/context/AuthContext.jsx";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import useI18n from "../../hooks/useI18n";
 
 export default function Register() {
   const { signup } = useAuth();
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const [form, setForm] = useState({
     name: "",
@@ -23,9 +25,9 @@ export default function Register() {
     e.preventDefault();
     setErr("");
 
-    if (!form.gender) return setErr("Please select your gender.");
+    if (!form.gender) return setErr(t("auth.errors.selectGender"));
     if (form.password !== form.confirmPassword)
-      return setErr("Passwords do not match.");
+      return setErr(t("auth.errors.passwordsDontMatch"));
 
     const payload = {
       name: form.name.trim(),
@@ -42,7 +44,7 @@ export default function Register() {
     } catch (e) {
       const message =
         e?.response?.data?.message ||
-        "Could not create account. Try a different email.";
+        t("auth.errors.registerFailed");
       setErr(message);
     }
   };
@@ -51,10 +53,10 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          Create your account
+          {t("auth.signUpHeadline")}
         </h1>
         <p className="text-gray-500 mb-6">
-          Sign up as a patient to start booking sessions
+          {t("auth.signUpSub")}
         </p>
         {err && <div className="mb-4 text-red-600 text-sm">{err}</div>}
 
@@ -64,7 +66,7 @@ export default function Register() {
         >
           <div className="md:col-span-2">
             <label className="block text-sm text-gray-700 mb-1">
-              Full name
+              {t("auth.fullName")}
             </label>
             <input
               className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
@@ -75,38 +77,41 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-700 mb-1">Email</label>
+            <label className="block text-sm text-gray-700 mb-1">{t("auth.email")}</label>
             <input
               type="email"
               className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
+              placeholder={t("form.emailPlaceholder")}
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm text-gray-700 mb-1">Phone</label>
+            <label className="block text-sm text-gray-700 mb-1">{t("auth.phone")}</label>
             <input
               className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              placeholder={t("form.phonePlaceholder")}
             />
           </div>
 
           {/* Password */}
           <div className="relative">
-            <label className="block text-sm text-gray-700 mb-1">Password</label>
+            <label className="block text-sm text-gray-700 mb-1">{t("auth.password")}</label>
             <input
               type={showPassword ? "text" : "password"}
               className="w-full border rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-500 outline-none"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
+              placeholder={t("auth.passwordPlaceholder")}
               required
             />
             <button
               type="button"
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={showPassword ? t("actions.hide") : t("actions.show")}
               onClick={() => setShowPassword((v) => !v)}
               className="absolute right-3 top-9 text-gray-500 hover:text-gray-700 focus:outline-none"
             >
@@ -118,10 +123,10 @@ export default function Register() {
             </button>
           </div>
 
-          {/* Confirm Password */}
+          {/* {t("auth.confirmPassword")} */}
           <div className="relative">
             <label className="block text-sm text-gray-700 mb-1">
-              Confirm Password
+              {t("auth.confirmPassword")}
             </label>
             <input
               type={showConfirm ? "text" : "password"}
@@ -130,11 +135,12 @@ export default function Register() {
               onChange={(e) =>
                 setForm({ ...form, confirmPassword: e.target.value })
               }
+              placeholder={t("auth.passwordPlaceholder")}
               required
             />
             <button
               type="button"
-              aria-label={showConfirm ? "Hide password" : "Show password"}
+              aria-label={showConfirm ? t("actions.hide") : t("actions.show")}
               onClick={() => setShowConfirm((v) => !v)}
               className="absolute right-3 top-9 text-gray-500 hover:text-gray-700 focus:outline-none"
             >
@@ -147,17 +153,17 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-700 mb-1">Gender</label>
+            <label className="block text-sm text-gray-700 mb-1">{t("auth.gender")}</label>
             <select
               className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
               value={form.gender}
               onChange={(e) => setForm({ ...form, gender: e.target.value })}
               required
             >
-              <option value="">Select...</option>
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-              <option value="OTHER">Other</option>
+              <option value="">{t("auth.selectPlaceholder")}</option>
+              <option value="MALE">{t("auth.genderMale")}</option>
+              <option value="FEMALE">{t("auth.genderFemale")}</option>
+              <option value="OTHER">{t("auth.genderOther")}</option>
             </select>
           </div>
 
@@ -165,14 +171,14 @@ export default function Register() {
             type="submit"
             className="md:col-span-2 mt-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-colors"
           >
-            Create account
+            {t("actions.createAccount")}
           </button>
         </form>
 
         <p className="text-sm text-gray-600 mt-6 text-center">
-          Already have an account?{" "}
+          {t("auth.alreadyHaveAccount")}{" "}
           <Link to="/login" className="text-blue-600 hover:underline">
-            Login
+            {t("actions.login")}
           </Link>
         </p>
       </div>
