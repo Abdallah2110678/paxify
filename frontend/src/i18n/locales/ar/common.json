@@ -1,0 +1,46 @@
+{
+  "appName": "باكسيفاي",
+  "actions": {
+    "login": "تسجيل الدخول",
+    "createAccount": "إنشاء حساب",
+    "show": "إظهار",
+    "hide": "إخفاء"
+  },
+  "auth": {
+    "welcomeBack": "مرحبًا بعودتك",
+    "loginToContinue": "سجّل الدخول لمتابعة رحلتك مع {{app}}",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "newToApp": "جديد على {{app}}؟",
+    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "fullName": "الاسم الكامل",
+    "phone": "الهاتف",
+    "gender": "النوع",
+    "genderMale": "ذكر",
+    "genderFemale": "أنثى",
+    "genderOther": "آخر",
+    "signUpHeadline": "أنشئ حسابك",
+    "signUpSub": "سجّل كمريض لبدء حجز الجلسات",
+    "errors": {
+      "selectGender": "يرجى اختيار النوع.",
+      "passwordsDontMatch": "كلمتا المرور غير متطابقتين.",
+      "loginFailed": "بريد إلكتروني أو كلمة مرور غير صحيحة",
+      "registerFailed": "تعذّر إنشاء الحساب. جرّب بريدًا آخر."
+    }
+  },
+  "dashboard": {
+    "totalIncome": "إجمالي الدخل",
+    "totalDoctors": "إجمالي الأطباء",
+    "pendingDoctors": "أطباء قيد المراجعة",
+    "totalPatients": "إجمالي المرضى",
+    "totalProducts": "إجمالي المنتجات",
+    "lowInStock": "{{count}} منخفضة المخزون",
+    "monthlyIncome": "الدخل الشهري",
+    "patientStats": "إحصاءات المرضى",
+    "recentActivity": "النشاط الأخير",
+    "regular": "منتظم",
+    "new": "جديد",
+    "emergency": "طارئ"
+  }
+}

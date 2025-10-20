@@ -1,15 +1,37 @@
-const upcomingAppointments = [
-  { id: 1, patient: "Ahmed Ali", type: "Online", time: "2025-08-04 10:00 AM" },
-  { id: 2, patient: "Sara Hamed", type: "In-person", time: "2025-08-05 3:00 PM" },
-  { id: 3, patient: "Ali Youssef", type: "Online", time: "2025-08-06 11:30 AM" },
-];
+import { useEffect, useState } from 'react';
+import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 const DoctorOverview = () => {
-  const onlineCount = upcomingAppointments.filter(a => a.type === "Online").length;
-  const offlineCount = upcomingAppointments.filter(a => a.type === "In-person").length;
+  const { user } = useAuth();
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        if (!user?.id) return;
+        const res = await api.get(`/api/appointments/doctor/${user.id}`);
+        if (!isMounted) return;
+        setAppointments(res.data || []);
+      } catch (e) {
+        setError('Failed to load appointments');
+      } finally {
+        setLoading(false);
+      }
+    })();
+    return () => { isMounted = false; };
+  }, [user?.id]);
+
+  const onlineCount = appointments.filter(a => String(a.sessionType).toUpperCase() === 'ONLINE').length;
+  const offlineCount = appointments.filter(a => String(a.sessionType).toUpperCase() === 'IN_PERSON').length;
 
   return (
     <div className="p-6">
+      {loading && <div className="p-2">Loading…</div>}
+      {error && <div className="p-2 text-red-600">{error}</div>}
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {/* Online Appointments Card */}
@@ -43,7 +65,7 @@ const DoctorOverview = () => {
           <div className="flex justify-between items-center">
             <div>
               <p className="text-white text-sm opacity-80">Total Appointments</p>
-              <h3 className="text-white text-2xl font-bold">{upcomingAppointments.length}</h3>
+              <h3 className="text-white text-2xl font-bold">{appointments.length}</h3>
             </div>
             <div className="bg-purple-400 bg-opacity-30 p-3 rounded-full">
               <span className="text-3xl">📅</span>
@@ -56,17 +78,20 @@ const DoctorOverview = () => {
       <div className="mt-6 bg-white rounded-lg shadow-lg p-6">
         <h3 className="text-xl font-bold text-gray-800 mb-4">Upcoming Appointments</h3>
         <div className="space-y-4">
-          {upcomingAppointments.map((appt) => (
+          {appointments.map((appt) => (
             <div key={appt.id} className="flex items-center p-4 bg-gray-50 rounded-lg">
               <div className="bg-blue-100 p-3 rounded-full mr-4">
                 <span className="text-xl">🧑‍⚕️</span>
               </div>
               <div>
-                <p className="text-gray-800 font-medium">{appt.patient}</p>
-                <p className="text-gray-500 text-sm">{appt.type} - {appt.time}</p>
+                <p className="text-gray-800 font-medium">{appt.patient?.name || 'Patient'}</p>
+                <p className="text-gray-500 text-sm">{appt.sessionType} - {new Date(appt.appointmentDateTime).toLocaleString()}</p>
               </div>
             </div>
           ))}
+          {!loading && appointments.length === 0 && (
+            <div className="text-gray-500">No upcoming appointments</div>
+          )}
         </div>
       </div>
     </div>
@@ -74,3 +99,4 @@ const DoctorOverview = () => {
 };
 
 export default DoctorOverview;
+

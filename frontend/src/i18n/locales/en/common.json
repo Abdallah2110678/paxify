@@ -1,0 +1,46 @@
+{
+  "appName": "Paxify",
+  "actions": {
+    "login": "Login",
+    "createAccount": "Create account",
+    "show": "Show",
+    "hide": "Hide"
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "loginToContinue": "Login to continue your {{app}} journey",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "newToApp": "New to {{app}}?",
+    "alreadyHaveAccount": "Already have an account?",
+    "fullName": "Full name",
+    "phone": "Phone",
+    "gender": "Gender",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderOther": "Other",
+    "signUpHeadline": "Create your account",
+    "signUpSub": "Sign up as a patient to start booking sessions",
+    "errors": {
+      "selectGender": "Please select your gender.",
+      "passwordsDontMatch": "Passwords do not match.",
+      "loginFailed": "Invalid email or password",
+      "registerFailed": "Could not create account. Try a different email."
+    }
+  },
+  "dashboard": {
+    "totalIncome": "Total Income",
+    "totalDoctors": "Total Doctors",
+    "pendingDoctors": "Pending Doctors",
+    "totalPatients": "Total Patients",
+    "totalProducts": "Total Products",
+    "lowInStock": "{{count}} low in stock",
+    "monthlyIncome": "Monthly Income",
+    "patientStats": "Patient Statistics",
+    "recentActivity": "Recent Activity",
+    "regular": "Regular",
+    "new": "New",
+    "emergency": "Emergency"
+  }
+}
