@@ -1,18 +1,48 @@
 {
   "appName": "Paxify",
+  "language": {
+    "switchToAr": "Arabic",
+    "switchToEn": "English"
+  },
   "actions": {
     "login": "Login",
     "createAccount": "Create account",
     "show": "Show",
-    "hide": "Hide"
+    "hide": "Hide",
+    "browseTherapists": "Browse Therapists",
+    "knowMore": "Know more",
+    "book": "Book",
+    "shop": "Shop",
+    "loadMore": "Load more",
+    "back": "Back",
+    "toggleMenu": "Toggle menu"
+  },
+  "nav": {
+    "logoAlt": "Paxify logo",
+    "home": "Home",
+    "findTherapists": "Find Therapists",
+    "products": "Our Products",
+    "games": "Games",
+    "about": "About",
+    "joinTeam": "Join Our Team",
+    "dashboard": "Dashboard",
+    "cart": "Cart",
+    "profile": "Profile",
+    "welcome": "Welcome",
+    "myDashboard": "My Dashboard",
+    "signOut": "Sign out",
+    "login": "Login",
+    "signUp": "Sign up",
+    "cartTitle": "Cart"
   },
   "auth": {
     "welcomeBack": "Welcome back",
-    "loginToContinue": "Login to continue your {{app}} journey",
+    "loginToContinue": "Login to continue your Paxify journey",
     "email": "Email",
     "password": "Password",
     "confirmPassword": "Confirm Password",
-    "newToApp": "New to {{app}}?",
+    "passwordPlaceholder": "********",
+    "newToApp": "New to Paxify?",
     "alreadyHaveAccount": "Already have an account?",
     "fullName": "Full name",
     "phone": "Phone",
@@ -20,6 +50,7 @@
     "genderMale": "Male",
     "genderFemale": "Female",
     "genderOther": "Other",
+    "selectPlaceholder": "Select...",
     "signUpHeadline": "Create your account",
     "signUpSub": "Sign up as a patient to start booking sessions",
     "errors": {
@@ -29,7 +60,14 @@
       "registerFailed": "Could not create account. Try a different email."
     }
   },
+  "form": {
+    "phonePlaceholder": "+1 (555) 123-4567",
+    "emailPlaceholder": "you@example.com"
+  },
   "dashboard": {
+    "loading": "Loading dashboard...",
+    "loadError": "Failed to load dashboard",
+    "emptyActivity": "No recent activity",
     "totalIncome": "Total Income",
     "totalDoctors": "Total Doctors",
     "pendingDoctors": "Pending Doctors",
@@ -42,5 +80,173 @@
     "regular": "Regular",
     "new": "New",
     "emergency": "Emergency"
+  },
+  "doctor": {
+    "overview": {
+      "loading": "Loading...",
+      "loadError": "Failed to load appointments",
+      "online": "Online Appointments",
+      "offline": "In-person Appointments",
+      "total": "Total Appointments",
+      "noAppointments": "No upcoming appointments"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Your peace of mind starts here with the",
+      "highlight": "right therapist",
+      "subtitle": "Book your session online or in-person, with full confidentiality and a price that works for you.",
+      "secure": "Secure and private",
+      "licensed": "Licensed therapists",
+      "bilingual": "Arabic and English support"
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "bookClinic": "Book in-clinic",
+      "bookOnline": "Book online",
+      "shopTools": "Shop therapeutic tools"
+    },
+    "testimonials": {
+      "headline": "\"The doctor just wants to give me a prescription and send me away.\"",
+      "subheadline": "With us it is different - hear what our clients have to say",
+      "list": [
+        {
+          "quote": "Within a week we found a therapist who really understood our son. The reminders kept us on track.",
+          "name": "Mona A.",
+          "role": "Parent of 10-year-old"
+        },
+        {
+          "quote": "Booking online made it easy during exam season. Huge relief for our family routines.",
+          "name": "Karim S.",
+          "role": "Parent of teen"
+        },
+        {
+          "quote": "I loved the verified profiles and reviews. We felt safe choosing the right therapist.",
+          "name": "Nour H.",
+          "role": "Parent"
+        },
+        {
+          "quote": "The app made everything simple - booking, invoices, even reminders. Zero confusion.",
+          "name": "Dalia R.",
+          "role": "Parent of 7-year-old"
+        }
+      ]
+    },
+    "steps": [
+      {
+        "title": "Create your account",
+        "desc": "Enter your email and password to get started."
+      },
+      {
+        "title": "Choose the right therapist",
+        "desc": "Select based on specialty, years of experience, and the budget that suits you."
+      },
+      {
+        "title": "Book your session",
+        "desc": "Pick the time and date that work best for you, and pay easily through multiple payment options."
+      }
+    ],
+    "support": {
+      "title": "How we support you on your journey to recovery...",
+      "cards": [
+        {
+          "title": "Sessions with licensed specialists",
+          "desc": "Book a session with a qualified therapist in less than five minutes - private, secure, and affordable."
+        },
+        {
+          "title": "Store",
+          "desc": "We have created a store with carefully selected products to support you step by step."
+        },
+        {
+          "title": "Therapeutic games",
+          "desc": "We offer therapeutic games designed by professionals to help you face challenges in a lighter way."
+        },
+        {
+          "title": "Smart reminders",
+          "desc": "We send you reminders and notifications so you never miss a session."
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "How it works?"
+    },
+    "therapists": {
+      "title": "You do not have to face your problems alone.",
+      "subtitle": "We work with therapists across all specialties, experienced in helping children, teens, and adults.",
+      "areas": "Areas of expertise:",
+      "style": "Therapy style:",
+      "rating": "Rating:"
+    },
+    "why": {
+      "title": "Why Paxify?",
+      "subtitle": "We have built a platform that puts your needs first, making therapy accessible, affordable, and genuinely supportive.",
+      "cards": [
+        {
+          "title": "Therapists who listen",
+          "desc": "We partner only with therapists known for their expertise and approachable style so your experience stays smooth and supportive."
+        },
+        {
+          "title": "Full confidentiality",
+          "desc": "We use advanced technology to guarantee your privacy and never share your data with third parties."
+        },
+        {
+          "title": "Immediate sessions",
+          "desc": "Start your consultation right away without long waiting lists."
+        },
+        {
+          "title": "Fits your budget",
+          "desc": "Choose the price that works for you and we will recommend the right therapists."
+        },
+        {
+          "title": "Flexible payment methods",
+          "desc": "Pay safely and easily through multiple payment options."
+        }
+      ]
+    },
+    "faq": {
+      "title": "FAQ",
+      "list": [
+        {
+          "question": "Is my child's information secure?",
+          "answer": "Yes. We use strict security practices and never disclose your child's data without consent."
+        },
+        {
+          "question": "Can I choose between online and in-clinic sessions?",
+          "answer": "Absolutely. You can filter therapists by format and pick what works best for your family."
+        },
+        {
+          "question": "Do therapists have verified credentials?",
+          "answer": "Every therapist on Paxify is licensed and vetted. Profiles include expertise, styles, and reviews."
+        },
+        {
+          "question": "How do reminders and updates work?",
+          "answer": "We send appointment reminders, changes, and invoices to your inbox to keep everything clear."
+        }
+      ]
+    }
+  },
+  "footer": {
+    "quickLinks": "Quick Links",
+    "support": "Support",
+    "contact": "Contact",
+    "about": "About Us",
+    "services": "Our Services",
+    "findTherapists": "Find Therapists",
+    "bookSession": "Book Session",
+    "helpCenter": "Help Center",
+    "contactUs": "Contact Us",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies",
+    "rights": "(c) 2024 Paxify - Health Management System. All rights reserved.",
+    "phone": "+1 (555) 123-4567",
+    "email": "support@paxify.com",
+    "address": "123 Health St, Medical City",
+    "backToTop": "Back to top"
+  },
+  "generic": {
+    "error": "Something went wrong"
   }
 }

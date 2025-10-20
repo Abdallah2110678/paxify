@@ -1,8 +1,17 @@
 // src/hooks/navbarHook.js
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import api from "../services/api";
+import useI18n from "./useI18n";
+
+const ICONS = {
+  home: "\u2302",
+  therapists: "\u2695",
+  products: "\u{1F6D2}",
+  games: "\u{1F3AE}",
+  about: "\u2139"
+};
 
 export default function useNavbar() {
   const [activeLink, setActiveLink] = useState("home");
@@ -13,6 +22,7 @@ export default function useNavbar() {
   const location = useLocation();
   const { user, logout } = useAuth() || { user: null, logout: () => {} };
   const dropdownRef = useRef(null);
+  const { t, i18n } = useI18n();
 
   const displayName =
     user?.name ||
@@ -20,7 +30,7 @@ export default function useNavbar() {
     [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
     user?.preferred_username ||
     (user?.email ? user.email.split("@")[0] : "") ||
-    "User";
+    t("nav.welcome");
 
   const displayEmail =
     user?.email || user?.userEmail || user?.username || (typeof user?.sub === "string" ? user.sub : "");
@@ -66,14 +76,16 @@ export default function useNavbar() {
   };
 
   // Use slug ids that match your Routes
-  const links = [
-    { id: "home", label: "Home", icon: "🏠" },
-    { id: "therapists", label: "Find Therapists", icon: "👨‍⚕️" },
-    { id: "Our products", label: "Our Products", icon: "🛒" }, // 👈 slug matches /ourproducts
-    { id: "games", label: "Games", icon: "🎮" },
-    { id: "about", label: "About", icon: "ℹ️" },
-    // { id: "cart", label: "Cart", icon: "🧺" }, // uncomment if you have /cart
-  ];
+  const links = useMemo(
+    () => [
+      { id: "home", label: t("nav.home"), icon: ICONS.home },
+      { id: "therapists", label: t("nav.findTherapists"), icon: ICONS.therapists },
+      { id: "Our Products", label: t("nav.products"), icon: ICONS.products },
+      { id: "games", label: t("nav.games"), icon: ICONS.games },
+      { id: "about", label: t("nav.about"), icon: ICONS.about }
+    ],
+    [t, i18n.language]
+  );
 
   return {
     // state
@@ -98,6 +110,7 @@ export default function useNavbar() {
     // handlers
     handleLinkClick,
     goMyDashboard,
-    links,
+    links
   };
 }
+

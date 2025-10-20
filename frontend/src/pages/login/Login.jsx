@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "frontend/src/context/AuthContext.jsx";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import useI18n from "../../hooks/useI18n";
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [form, setForm] = useState({ email: "", password: "" });
   const [err, setErr] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -24,9 +26,9 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome back</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">{t("auth.welcomeBack")}</h1>
         <p className="text-gray-500 mb-6">
-          Login to continue your Paxify journey
+          {t("auth.loginToContinue", { app: t("appName") })}
         </p>
 
         {err && <div className="mb-4 text-red-600 text-sm">{err}</div>}
@@ -34,26 +36,26 @@ export default function Login() {
         <form onSubmit={submit} className="space-y-4">
           {/* Email */}
           <div>
-            <label className="block text-sm text-gray-700 mb-1">Email</label>
+            <label className="block text-sm text-gray-700 mb-1">{t("auth.email")}</label>
             <input
               type="email"
               className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="you@example.com"
+              placeholder={t("form.emailPlaceholder")}
               required
             />
           </div>
 
           {/* Password */}
           <div className="relative">
-            <label className="block text-sm text-gray-700 mb-1">Password</label>
+            <label className="block text-sm text-gray-700 mb-1">{t("auth.password")}</label>
             <input
               type={showPassword ? "text" : "password"}
               className="w-full border rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-500 outline-none"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              placeholder="••••••••"
+              placeholder={t("auth.passwordPlaceholder")}
               required
             />
 
@@ -80,9 +82,9 @@ export default function Login() {
         </form>
 
         <p className="text-sm text-gray-600 mt-6 text-center">
-          New to Paxify?{" "}
+          {t("auth.newToApp", { app: t("appName") })}{" "}
           <Link to="/register" className="text-blue-600 hover:underline">
-            Create an account
+            {t("actions.createAccount")}
           </Link>
         </p>
       </div>
