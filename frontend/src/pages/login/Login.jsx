@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "frontend/src/context/AuthContext.jsx";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [err, setErr] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -30,6 +32,7 @@ export default function Login() {
         {err && <div className="mb-4 text-red-600 text-sm">{err}</div>}
 
         <form onSubmit={submit} className="space-y-4">
+          {/* Email */}
           <div>
             <label className="block text-sm text-gray-700 mb-1">Email</label>
             <input
@@ -42,16 +45,30 @@ export default function Login() {
             />
           </div>
 
-          <div>
+          {/* Password */}
+          <div className="relative">
             <label className="block text-sm text-gray-700 mb-1">Password</label>
             <input
-              type="password"
-              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              type={showPassword ? "text" : "password"}
+              className="w-full border rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-500 outline-none"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               placeholder="••••••••"
               required
             />
+
+            {/* Show/Hide password icon */}
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-9 text-gray-500 hover:text-gray-700 focus:outline-none"
+            >
+              {showPassword ? (
+                <AiOutlineEyeInvisible size={20} />
+              ) : (
+                <AiOutlineEye size={20} />
+              )}
+            </button>
           </div>
 
           <button
