@@ -14,6 +14,8 @@ public interface DoctorRepo extends JpaRepository<Doctor, UUID> {
 
     List<Doctor> findByApprovalStatus(ApprovalStatus status);
 
+    long countByApprovalStatus(Doctor.ApprovalStatus status);
+
     @Query(value = "SELECT * FROM doctor WHERE approval_status = :status", nativeQuery = true)
     List<Doctor> findByApprovalStatus(@Param("status") String status);
 

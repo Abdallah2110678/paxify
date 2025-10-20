@@ -22,6 +22,8 @@ import com.example.backend.models.Doctor;
 import com.example.backend.models.User;
 import com.example.backend.repositories.DoctorRepo;
 import com.example.backend.repositories.UserRepo;
+import com.example.backend.dto.AdminDashboardResponse;
+import com.example.backend.services.AdminDashboardService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +35,13 @@ public class AdminController {
 
     private final UserRepo userRepo;
     private final DoctorRepo doctorRepo;
+    private final AdminDashboardService adminDashboardService;
+
+    // GET /api/admin/dashboard
+    @GetMapping("/dashboard")
+    public ResponseEntity<AdminDashboardResponse> getDashboard() {
+        return ResponseEntity.ok(adminDashboardService.getDashboard());
+    }
 
     // GET /api/admin/doctors?status=PENDING|APPROVED|REJECTED
     @GetMapping("/doctors")
