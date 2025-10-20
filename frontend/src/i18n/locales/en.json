@@ -94,6 +94,14 @@
     }
   },
   "home": {
+     "cta": {
+      "title": "Ready to get started?",
+      "subtitle": "Join thousands of families who have found their perfect therapist match."
+    },
+    "ctaStrong": {
+      "title": "Help Is One Click Away",
+      "subtitle": "Book your session today and take the first step toward the peace of mind you’ve been searching for."
+    },
     "hero": {
       "title": "Your peace of mind starts here with the",
       "highlight": "right therapist",
