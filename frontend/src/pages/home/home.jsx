@@ -278,22 +278,36 @@ export default function Home() {
                     <h2 className="text-3xl md:text-4xl font-bold text-center text-[#2B2B2B]">{t("home.howItWorks.title")}</h2>
 
                     <div className="mt-12 relative">
-                        <div className="absolute left-4 md:left-1/2 -translate-x-1/2 md:translate-x-0 top-0 bottom-0 w-1 bg-[#4CB5AB]/30 rounded"></div>
+                        <div
+                            className={`absolute ${
+                                isRTL ? "right-4 md:right-1/2 translate-x-1/2" : "left-4 md:left-1/2 -translate-x-1/2"
+                            } md:translate-x-0 top-0 bottom-0 w-1 bg-[#4CB5AB]/30 rounded`}
+                        ></div>
 
                         <ol className="space-y-10">
-                            {steps.map((s, idx) => (
-                                <li key={idx} className="relative">
-                                    <div className={`relative md:w-[46%] ${idx % 2 === 0 ? "md:ml-auto md:pl-8" : "md:pr-8"}`}>
-                                        <span
-                                            className={`absolute -left-5 md:left-auto md:${idx % 2 === 0 ? "-left-5" : "-right-5"} top-3 w-6 h-6 rounded-full bg-[#4CB5AB] border-4 border-white shadow`}
-                                        />
-                                        <div className="bg-[#F4EDE4] rounded-2xl p-6 shadow-sm border border-[#4CB5AB]/10">
-                                            <h3 className="text-xl font-semibold text-[#2B2B2B]">{s.title}</h3>
-                                            <p className="mt-2 text-[#6B6B6B]">{s.desc}</p>
+                            {steps.map((s, idx) => {
+                                const isEven = idx % 2 === 0;
+                                const containerClasses = isRTL
+                                    ? `relative md:w-[46%] ${isEven ? "md:mr-auto md:pr-8" : "md:pl-8"}`
+                                    : `relative md:w-[46%] ${isEven ? "md:ml-auto md:pl-8" : "md:pr-8"}`;
+                                const dotBase =
+                                    "absolute top-3 w-6 h-6 rounded-full bg-[#4CB5AB] border-4 border-white shadow";
+                                const dotClasses = isRTL
+                                    ? `${dotBase} -right-5 md:right-auto md:${isEven ? "-right-5" : "-left-5"}`
+                                    : `${dotBase} -left-5 md:left-auto md:${isEven ? "-left-5" : "-right-5"}`;
+
+                                return (
+                                    <li key={idx} className="relative">
+                                        <div className={containerClasses}>
+                                            <span className={dotClasses} />
+                                            <div className="bg-[#F4EDE4] rounded-2xl p-6 shadow-sm border border-[#4CB5AB]/10">
+                                                <h3 className="text-xl font-semibold text-[#2B2B2B]">{s.title}</h3>
+                                                <p className="mt-2 text-[#6B6B6B]">{s.desc}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </li>
-                            ))}
+                                    </li>
+                                );
+                            })}
                         </ol>
                     </div>
 

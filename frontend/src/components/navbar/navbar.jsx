@@ -7,8 +7,9 @@ const CART_ICON = "\u{1F6D2}";
 const PROFILE_ICON = "\u{1F464}";
 
 const Navbar = () => {
-  const { t } = useI18n();
+  const { t, i18n } = useI18n();
   const navigate = useNavigate();
+  const isRTL = i18n.language?.startsWith("ar");
 
   const {
     activeLink,
@@ -48,23 +49,37 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center space-x-2">
-          {links.map((link) => (
-            <button
-              key={link.id}
-              onClick={() => handleLinkClick(link.id)}
-              className={`px-3 py-2 rounded-full transition-colors border ${
-                activeLink === link.id
-                  ? "bg-white text-[#4CB5AB] border-white shadow-md"
-                  : "text-white hover:text-white bg-transparent border-transparent hover:bg-white/20"
-              }`}
-            >
-              <span className="mr-1" aria-hidden>
-                {link.icon}
-              </span>
-              {link.label}
-            </button>
-          ))}
+        <div className={`hidden md:flex items-center ${isRTL ? "space-x-reverse space-x-2" : "space-x-2"}`}>
+          {links.map((link) => {
+            const content = isRTL ? (
+              <>
+                {link.label}
+                <span className="ml-1" aria-hidden>
+                  {link.icon}
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="mr-1" aria-hidden>
+                  {link.icon}
+                </span>
+                {link.label}
+              </>
+            );
+            return (
+              <button
+                key={link.id}
+                onClick={() => handleLinkClick(link.id)}
+                className={`px-3 py-2 rounded-full transition-colors border ${
+                  activeLink === link.id
+                    ? "bg-white text-[#4CB5AB] border-white shadow-md"
+                    : "text-white hover:text-white bg-transparent border-transparent hover:bg-white/20"
+                }`}
+              >
+                {content}
+              </button>
+            );
+          })}
 
           {user && (
             <button
@@ -82,7 +97,7 @@ const Navbar = () => {
           {!user && (
             <button
               onClick={() => handleLinkClick("doctor-register")}
-              className="ml-3 px-4 py-2 rounded-full bg-[#E68A6C] text-white hover:bg-[#d97a5f] shadow"
+              className={`${isRTL ? "mr-3" : "ml-3"} px-4 py-2 rounded-full bg-[#E68A6C] text-white hover:bg-[#d97a5f] shadow`}
             >
               {t("nav.joinTeam")}
             </button>
@@ -90,8 +105,8 @@ const Navbar = () => {
         </div>
 
         {/* Right controls */}
-        <div className="relative flex items-center gap-3" ref={dropdownRef}>
-          <LanguageSwitcher className="hidden md:inline-flex" />
+        <div className={`relative flex items-center ${isRTL ? "gap-3 flex-row-reverse" : "gap-3"}`} ref={dropdownRef}>
+          <LanguageSwitcher className={`hidden md:inline-flex ${isRTL ? "order-3" : ""}`} />
 
           {/* Cart button */}
           <button
@@ -122,10 +137,10 @@ const Navbar = () => {
           </button>
 
           {openProfile && (
-            <div className="absolute right-0 top-full mt-3 w-72 z-[60]">
-              <span className="absolute right-6 -top-2 h-4 w-4 rotate-45 bg-white shadow ring-1 ring-black/5" />
+            <div className={`absolute ${isRTL ? "left-0" : "right-0"} top-full mt-3 w-72 z-[60]`} dir={isRTL ? "rtl" : "ltr"}>
+              <span className={`absolute ${isRTL ? "left-6" : "right-6"} -top-2 h-4 w-4 rotate-45 bg-white shadow ring-1 ring-black/5`} />
               <div className="bg-white rounded-xl shadow-2xl ring-1 ring-black/5 overflow-hidden max-h-[70vh]">
-                <div className="px-4 py-3 border-b border-[#F4EDE4] bg-[#F9F6F1]">
+                <div className={`px-4 py-3 border-b border-[#F4EDE4] bg-[#F9F6F1] ${isRTL ? "text-right" : "text-left"}`}>
                   {user ? (
                     <>
                       <p className="text-sm font-semibold text-[#2B2B2B]">{displayName}</p>
@@ -138,19 +153,19 @@ const Navbar = () => {
                   )}
                 </div>
 
-                <div className="py-1 text-[#2B2B2B]">
+                <div className={`py-1 text-[#2B2B2B] ${isRTL ? "text-right" : "text-left"}`}>
                   {user ? (
                     <>
                       <button
                         onClick={goMyDashboard}
-                        className="w-full text-left px-4 py-2 hover:bg-[#F4EDE4]"
+                        className={`w-full px-4 py-2 hover:bg-[#F4EDE4] ${isRTL ? "text-right" : "text-left"}`}
                         role="menuitem"
                       >
                         {t("nav.myDashboard")}
                       </button>
                       <Link
                         to="/profile"
-                        className="block px-4 py-2 hover:bg-[#F4EDE4]"
+                        className={`block px-4 py-2 hover:bg-[#F4EDE4] ${isRTL ? "text-right" : "text-left"}`}
                         role="menuitem"
                       >
                         {t("nav.profile")}
@@ -158,7 +173,7 @@ const Navbar = () => {
                       <div className="h-px bg-[#F4EDE4] my-1" />
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 text-[#E68A6C] hover:bg-[#FCEBE6]"
+                        className={`w-full px-4 py-2 text-[#E68A6C] hover:bg-[#FCEBE6] ${isRTL ? "text-right" : "text-left"}`}
                         role="menuitem"
                       >
                         {t("nav.signOut")}
@@ -168,14 +183,14 @@ const Navbar = () => {
                     <>
                       <Link
                         to="/login"
-                        className="block px-4 py-2 hover:bg-[#F4EDE4]"
+                        className={`block px-4 py-2 hover:bg-[#F4EDE4] ${isRTL ? "text-right" : "text-left"}`}
                         role="menuitem"
                       >
                         {t("nav.login")}
                       </Link>
                       <Link
                         to="/register"
-                        className="block px-4 py-2 hover:bg-[#F4EDE4]"
+                        className={`block px-4 py-2 hover:bg-[#F4EDE4] ${isRTL ? "text-right" : "text-left"}`}
                         role="menuitem"
                       >
                         {t("nav.signUp")}

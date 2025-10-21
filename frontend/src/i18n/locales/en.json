@@ -254,7 +254,14 @@
     "phone": "+1 (555) 123-4567",
     "email": "support@paxify.com",
     "address": "123 Health St, Medical City",
-    "backToTop": "Back to top"
+    "backToTop": "Back to top",
+    "tagline": "Your trusted partner in comprehensive healthcare management and wellness solutions.",
+    "social": {
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn"
+    }
   },
   "generic": {
     "error": "Something went wrong"

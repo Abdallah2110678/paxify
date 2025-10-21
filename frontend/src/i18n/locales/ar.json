@@ -254,7 +254,14 @@
     "phone": "+1 (555) 123-4567",
     "email": "support@paxify.com",
     "address": "123 شارع الصحة، مدينة الطب",
-    "backToTop": "العودة للأعلى"
+    "backToTop": "العودة للأعلى",
+    "tagline": "شريكك الموثوق لإدارة الرعاية الصحية الشاملة وحلول العافية.",
+    "social": {
+      "facebook": "فيسبوك",
+      "twitter": "تويتر",
+      "instagram": "إنستغرام",
+      "linkedin": "لينكدإن"
+    }
   },
   "generic": {
     "error": "حدث خطأ ما"

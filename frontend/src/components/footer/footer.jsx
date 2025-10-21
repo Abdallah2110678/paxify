@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
+import useI18n from "../../hooks/useI18n";
 
 const Footer = () => {
+    const { t, i18n } = useI18n();
+    const isRTL = i18n.language?.startsWith("ar");
+
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
@@ -17,57 +20,131 @@ const Footer = () => {
                                 <span className="text-xl font-bold tracking-wide">Paxify</span>
                             </div>
                             <p className="text-[#F4EDE4]/90 text-sm">
-                                Your trusted partner in comprehensive healthcare management and wellness solutions.
+                                {t("footer.tagline", {
+                                    defaultValue:
+                                        "Your trusted partner in comprehensive healthcare management and wellness solutions.",
+                                })}
                             </p>
-                            <div className="flex space-x-4 text-xl">
-                                <a className="text-[#F4EDE4] hover:text-white transition-colors" href="#" aria-label="Facebook">📘</a>
-                                <a className="text-[#F4EDE4] hover:text-white transition-colors" href="#" aria-label="Twitter">🐦</a>
-                                <a className="text-[#F4EDE4] hover:text-white transition-colors" href="#" aria-label="Instagram">📷</a>
-                                <a className="text-[#F4EDE4] hover:text-white transition-colors" href="#" aria-label="LinkedIn">💼</a>
+                            <div className={`flex ${isRTL ? "space-x-reverse space-x-4" : "space-x-4"} text-xl`}>
+                                <a
+                                    className="text-[#F4EDE4] hover:text-white transition-colors"
+                                    href="#"
+                                    aria-label={t("footer.social.facebook", { defaultValue: "Facebook" })}
+                                >
+                                    📘
+                                </a>
+                                <a
+                                    className="text-[#F4EDE4] hover:text-white transition-colors"
+                                    href="#"
+                                    aria-label={t("footer.social.twitter", { defaultValue: "Twitter" })}
+                                >
+                                    🐦
+                                </a>
+                                <a
+                                    className="text-[#F4EDE4] hover:text-white transition-colors"
+                                    href="#"
+                                    aria-label={t("footer.social.instagram", { defaultValue: "Instagram" })}
+                                >
+                                    📷
+                                </a>
+                                <a
+                                    className="text-[#F4EDE4] hover:text-white transition-colors"
+                                    href="#"
+                                    aria-label={t("footer.social.linkedin", { defaultValue: "LinkedIn" })}
+                                >
+                                    💼
+                                </a>
                             </div>
                         </div>
 
                         {/* Quick Links */}
                         <div>
-                            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+                            <h3 className="text-lg font-semibold mb-4">{t("footer.quickLinks")}</h3>
                             <ul className="space-y-2 text-sm">
-                                <li><a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">About Us</a></li>
-                                <li><a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">Our Services</a></li>
-                                <li><a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">Find Therapists</a></li>
-                                <li><a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">Book Session</a></li>
+                                <li>
+                                    <a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">
+                                        {t("footer.about")}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">
+                                        {t("footer.services")}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">
+                                        {t("footer.findTherapists")}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">
+                                        {t("footer.bookSession")}
+                                    </a>
+                                </li>
                             </ul>
                         </div>
 
                         {/* Support */}
                         <div>
-                            <h3 className="text-lg font-semibold mb-4">Support</h3>
+                            <h3 className="text-lg font-semibold mb-4">{t("footer.support")}</h3>
                             <ul className="space-y-2 text-sm">
-                                <li><a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">Help Center</a></li>
-                                <li><a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">Contact Us</a></li>
-                                <li><a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">Privacy Policy</a></li>
-                                <li><a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">Terms of Service</a></li>
+                                <li>
+                                    <a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">
+                                        {t("footer.helpCenter")}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">
+                                        {t("footer.contactUs")}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">
+                                        {t("footer.privacyPolicy")}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="text-[#F4EDE4] hover:text-white transition-colors">
+                                        {t("footer.termsOfService")}
+                                    </a>
+                                </li>
                             </ul>
                         </div>
 
                         {/* Contact Info */}
                         <div>
-                            <h3 className="text-lg font-semibold mb-4">Contact</h3>
+                            <h3 className="text-lg font-semibold mb-4">{t("footer.contact")}</h3>
                             <div className="space-y-2 text-sm text-[#F4EDE4]">
-                                <p className="flex items-center space-x-2"><span>📞</span><span>+1 (555) 123-4567</span></p>
-                                <p className="flex items-center space-x-2"><span>📧</span><span>support@paxify.com</span></p>
-                                <p className="flex items-center space-x-2"><span>📍</span><span>123 Health St, Medical City</span></p>
+                                <p className={`flex items-center ${isRTL ? "space-x-reverse" : ""} space-x-2`}>
+                                    <span>📞</span>
+                                    <span>{t("footer.phone")}</span>
+                                </p>
+                                <p className={`flex items-center ${isRTL ? "space-x-reverse" : ""} space-x-2`}>
+                                    <span>📧</span>
+                                    <span>{t("footer.email")}</span>
+                                </p>
+                                <p className={`flex items-center ${isRTL ? "space-x-reverse" : ""} space-x-2`}>
+                                    <span>📍</span>
+                                    <span>{t("footer.address")}</span>
+                                </p>
                             </div>
                         </div>
                     </div>
 
                     <div className="border-t border-white/30 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
                         <p className="text-[#F4EDE4] text-sm">
-                            © 2024 Paxify - Health Management System. All rights reserved.
+                            {t("footer.rights")}
                         </p>
-                        <div className="flex space-x-6 mt-4 md:mt-0">
-                            <a href="#" className="text-[#F4EDE4] hover:text-white text-sm transition-colors">Privacy</a>
-                            <a href="#" className="text-[#F4EDE4] hover:text-white text-sm transition-colors">Terms</a>
-                            <a href="#" className="text-[#F4EDE4] hover:text-white text-sm transition-colors">Cookies</a>
+                        <div className={`flex ${isRTL ? "space-x-reverse" : ""} space-x-6 mt-4 md:mt-0`}>
+                            <a href="#" className="text-[#F4EDE4] hover:text-white text-sm transition-colors">
+                                {t("footer.privacy")}
+                            </a>
+                            <a href="#" className="text-[#F4EDE4] hover:text-white text-sm transition-colors">
+                                {t("footer.terms")}
+                            </a>
+                            <a href="#" className="text-[#F4EDE4] hover:text-white text-sm transition-colors">
+                                {t("footer.cookies")}
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -77,7 +154,7 @@ const Footer = () => {
             <button
                 onClick={scrollToTop}
                 className="fixed bottom-20 right-6 z-50 group bg-[#E68A6C] text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-                title="Back to top"
+                title={t("footer.backToTop")}
             >
                 <div className="w-6 h-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
