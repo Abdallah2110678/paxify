@@ -350,8 +350,7 @@ export default function Home() {
                                     <li
                                         key={i}
                                         data-therapist-card="1"
-                                        className="snap-start rounded-2xl border border-[#4CB5AB]/15 shadow-sm p-6 hover:shadow-md transition bg-white"
-                                        style={{ minWidth: "calc((100% - 48px) / 3)", maxWidth: "calc((100% - 48px) / 3)" }}
+                                        className="snap-start flex-none w-[88%] sm:w-[70%] md:w-[48%] lg:w-[32%] xl:w-[28%] rounded-2xl border border-[#4CB5AB]/15 shadow-sm p-6 hover:shadow-md transition bg-white"
                                     >
                                         <div className="flex items-center gap-4">
                                             <img
