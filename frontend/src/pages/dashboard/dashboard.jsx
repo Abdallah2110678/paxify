@@ -15,6 +15,7 @@ import AdminGames from "./AdminGames";
 import AddGame from "./AddGame";
 import DashboardOverview from "./DashboardOverview";
 import AdminDoctors from "./AdminDoctors";
+import AdminDoctorDetails from "./AdminDoctorDetails";
 
 const Dashboard = () => {
     const [active, setActive] = useState("overview");
@@ -82,11 +83,19 @@ const Dashboard = () => {
     // edit params (if present, show edit pages inside the tab)
     const editDoctorId = searchParams.get("editDoctorId");
     const editPatientId = searchParams.get("editPatientId");
+    const view = searchParams.get("view");
+    const doctorDetailsId = searchParams.get("id");
 
     // helper to clear edit mode
     const clearEditParam = (key) => {
         const next = new URLSearchParams(searchParams);
         next.delete(key);
+        setSearchParams(Object.fromEntries(next), { replace: true });
+    };
+    const clearDoctorDetails = () => {
+        const next = new URLSearchParams(searchParams);
+        next.delete("view");
+        next.delete("id");
         setSearchParams(Object.fromEntries(next), { replace: true });
     };
 
@@ -210,7 +219,19 @@ const Dashboard = () => {
                     ))}
 
                 {active === "add-patient" && <AddPatient />}
-                {active === "Applications" && <AdminDoctors />}
+                {active === "Applications" && (
+                    view === "doctorDetails" ? (
+                        <div className="p-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-2xl font-bold">Doctor Application</h2>
+                                <button onClick={clearDoctorDetails} className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50">? Back to Applications</button>
+                            </div>
+                            <AdminDoctorDetails doctorId={doctorDetailsId} showBackLink={false} />
+                        </div>
+                    ) : (
+                        <AdminDoctors />
+                    )
+                )}
                 {active === "product" && <Products />}
                 {active === "add-product" && <AddProduct />}
                 {active === "games" && <AdminGames />}

@@ -25,6 +25,15 @@ function RedirectEditDoctor() {
   const { id } = useParams();
   return <Navigate to={`/dashboard?tab=doctor&editDoctorId=${encodeURIComponent(id)}`} replace />;
 }
+function RedirectViewAdminDoctor() {
+  const { id } = useParams();
+  return (
+    <Navigate
+      to={`/dashboard?tab=Applications&view=doctorDetails&id=${encodeURIComponent(id)}`}
+      replace
+    />
+  );
+}
 function RedirectEditPatient() {
   const { id } = useParams();
   return <Navigate to={`/dashboard?tab=patient&editPatientId=${encodeURIComponent(id)}`} replace />;
@@ -49,7 +58,7 @@ function App() {
         <Route path="/dashboard/add-doctor" element={<Navigate to="/dashboard?tab=add-doctor" replace />} />
         <Route path="/dashboard/patients" element={<Navigate to="/dashboard?tab=patient" replace />} />
         <Route path="/dashboard/add-patient" element={<Navigate to="/dashboard?tab=add-patient" replace />} />
-        <Route path="/dashboard/doctors/:id" element={<AdminDoctorDetails />} />
+        <Route path="/dashboard/doctors/:id" element={<RedirectViewAdminDoctor />} />
         <Route path="/dashboard/products" element={<Navigate to="/dashboard?tab=product" replace />} />
         <Route path="/dashboard/add-product" element={<Navigate to="/dashboard?tab=add-product" replace />} />
         <Route

@@ -124,7 +124,7 @@ export default function AdminDoctors() {
                                         <tr key={r.id} className="border-b">
                                             <td className="py-2 pr-4">
                                                 <div className="font-medium">
-                                                    <Link to={`/dashboard/doctors/${r.id}`} className="text-blue-600 hover:underline">
+                                                    <Link to={`/dashboard?tab=Applications&view=doctorDetails&id=${r.id}`} className="text-blue-600 hover:underline">
                                                         {r.name}
                                                     </Link>
                                                 </div>
@@ -213,3 +213,5 @@ export default function AdminDoctors() {
         </div>
     );
 }
+
+
