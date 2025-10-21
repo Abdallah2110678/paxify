@@ -224,7 +224,7 @@ const Dashboard = () => {
                         <div className="p-6">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-2xl font-bold">Doctor Application</h2>
-                                <button onClick={clearDoctorDetails} className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50">? Back to Applications</button>
+                                <button onClick={clearDoctorDetails} className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50">&lt; Back to Applications</button>
                             </div>
                             <AdminDoctorDetails doctorId={doctorDetailsId} showBackLink={false} />
                         </div>

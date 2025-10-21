@@ -16,7 +16,6 @@ import Register from "./pages/register/Register.jsx";
 import ProtectedRoute from "./auth/ProtectedRoute.jsx";
 import DoctorRegister from "./pages/doctor/DoctorRegister.jsx";
 import DoctorDescriptionContainer from "./pages/doctor/DoctorDescriptionContainer.jsx";
-import AdminDoctorDetails from "./pages/dashboard/AdminDoctorDetails.jsx";
 import Cart from "./pages/products/Cart.jsx";
 import ProductDetails from "./pages/products/ProductDetails.jsx";
 
