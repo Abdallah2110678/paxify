@@ -1,5 +1,5 @@
 // src/hooks/homeHook.js (or wherever your hook lives)
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getPublicDoctors } from "../services/doctorService";
@@ -10,6 +10,24 @@ export default function useHome() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t, i18n } = useI18n();
+
+  const apiBase = useMemo(() => {
+    const base = api?.defaults?.baseURL;
+    if (!base || typeof base !== "string") return "";
+    return base.replace(/\/$/, "");
+  }, []);
+
+  const makeAbsoluteUrl = useCallback(
+    (url, fallback = "") => {
+      if (!url || typeof url !== "string") return fallback;
+      if (/^https?:\/\//i.test(url)) return url;
+      if (!apiBase) {
+        return url.startsWith("/") ? url : `/${url}`;
+      }
+      return `${apiBase}${url.startsWith("/") ? "" : "/"}${url}`;
+    },
+    [apiBase]
+  );
 
   // -------------------------
   // UI state
@@ -141,7 +159,6 @@ export default function useHome() {
     ];
   }, [t, i18n.language]);
 
-  // -------------------------
   // Therapists (API)
   // -------------------------
   const [therapists, setTherapists] = useState([]);
@@ -153,12 +170,6 @@ export default function useHome() {
     (async () => {
       try {
         const list = await getPublicDoctors();
-        const base = (api?.defaults?.baseURL || "").replace(/\/$/, "");
-        const toAbsUrl = (u) => {
-          if (!u || typeof u !== "string") return "/therapists/placeholder.jpg";
-          if (/^https?:\/\//i.test(u)) return u;
-          return `${base}${u.startsWith("/") ? "" : "/"}${u}`;
-        };
 
         const mapped = (Array.isArray(list) ? list : [])
           .slice(0, 6)
@@ -175,9 +186,10 @@ export default function useHome() {
             const style = bio
               ? bio.slice(0, 60) + (bio.length > 60 ? "…" : "")
               : "";
-            const avatar = d?.profilePictureUrl
-              ? toAbsUrl(d.profilePictureUrl)
-              : "/therapists/placeholder.jpg";
+            const avatar = makeAbsoluteUrl(
+              d?.profilePictureUrl,
+              "/therapists/placeholder.jpg"
+            );
             const specialty =
               d?.specialty && d.specialty !== "null" ? [d.specialty] : [];
             const rating =

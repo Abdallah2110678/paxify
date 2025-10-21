@@ -94,7 +94,7 @@
     }
   },
   "home": {
-     "cta": {
+    "cta": {
       "title": "Ready to get started?",
       "subtitle": "Join thousands of families who have found their perfect therapist match."
     },
@@ -258,5 +258,131 @@
   },
   "generic": {
     "error": "Something went wrong"
+  },
+  "aboutPage": {
+    "title": "About Paxify",
+    "mission": {
+      "title": "Our Mission",
+      "paragraphs": [
+        "At Paxify, we believe that mental health care should be accessible, affordable, and stigma-free.",
+        "We build products that connect you with qualified professionals and provide clear, evidence-based resources to support your wellness journey."
+      ],
+      "projectsTitle": "Our Projects",
+      "projects": [
+        {
+          "title": "Paxify Therapy Platform",
+          "description": "Book in-person or online sessions with licensed therapists."
+        },
+        {
+          "title": "Mental Health Games Hub",
+          "description": "Engaging mini-games designed to support mental wellness."
+        },
+        {
+          "title": "Resource Library",
+          "description": "Curated articles and guides reviewed by professionals."
+        },
+        {
+          "title": "Community Support",
+          "description": "Safe spaces and tools to connect and share experiences."
+        }
+      ]
+    },
+    "offers": {
+      "title": "What We Offer",
+      "items": [
+        {
+          "title": "Online Therapy 💻",
+          "description": "Connect with therapists from the comfort of your home.",
+          "accent": "blue"
+        },
+        {
+          "title": "Mental Health Games 🎮",
+          "description": "Interactive games to support your mental wellness.",
+          "accent": "green"
+        },
+        {
+          "title": "Resource Library 📚",
+          "description": "Access mental health resources and articles.",
+          "accent": "purple"
+        },
+        {
+          "title": "Community Support 👥",
+          "description": "Join our supportive community of users.",
+          "accent": "yellow"
+        }
+      ]
+    },
+    "contact": {
+      "title": "Contact Us",
+      "text": "Have questions? Reach out to our support team at {{email}} or call us at {{phone}}.",
+      "email": "support@paxify.com",
+      "phone": "1-800-PAXIFY"
+    },
+    "faq": {
+      "badge": "FAQs",
+      "items": [
+        {
+          "question": "How can I book a same day appointment?",
+          "answer": "Use our Find Therapists page to filter by availability and choose a time that works for you."
+        },
+        {
+          "question": "Do you accept medical insurance?",
+          "answer": "Yes. Availability depends on the therapist. You can filter by insurance from the filters."
+        },
+        {
+          "question": "Can I choose a therapist by gender?",
+          "answer": "Absolutely. Use the Gender filter when searching."
+        },
+        {
+          "question": "Is online therapy available?",
+          "answer": "Yes, many of our therapists offer secure video sessions."
+        },
+        {
+          "question": "How are therapists rated?",
+          "answer": "Ratings come from verified patient reviews after each session."
+        }
+      ]
+    },
+    "knowledge": {
+      "badge": "Know more about your health",
+      "items": [
+        {
+          "question": "What is general practice?",
+          "answer": "General practice covers comprehensive health care for people of all ages."
+        },
+        {
+          "question": "What diseases does a general practitioner treat?",
+          "answer": "From common colds to chronic conditions, GPs coordinate your ongoing care."
+        },
+        {
+          "question": "What are Vitamin D deficiency symptoms?",
+          "answer": "Fatigue, bone pain, mood changes, and frequent illness."
+        },
+        {
+          "question": "What is the HbA1c blood test?",
+          "answer": "It measures average blood glucose levels over the last 2–3 months."
+        },
+        {
+          "question": "Is a digital blood pressure device accurate?",
+          "answer": "Yes, when used correctly with the proper cuff size and posture."
+        }
+      ]
+    }
+  },
+  "games": {
+    "title": "Therapeutic Games Library",
+    "subtitle": "Browse our collection of engaging, therapist-approved games crafted to support emotional awareness and mindfulness.",
+    "details": "View Details",
+    "play": "Play Now",
+    "download": "Download Video",
+    "comingSoon": "Online version coming soon",
+    "loading": "Loading games...",
+    "empty": "No games are available right now. Please check again soon.",
+    "back": "Back to games",
+    "featured": "Featured Game",
+    "updatedAt": "Last updated",
+    "watch": "Watch the demo",
+    "browseMore": "Browse more games",
+    "videoNotSupported": "Your browser does not support the video tag."
   }
 }

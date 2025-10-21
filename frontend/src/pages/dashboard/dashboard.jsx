@@ -10,6 +10,8 @@ import AddDoctor from "./AddDoctor";
 import AddPatient from "../patients/AddPatient";
 import Products from "../products/Products";
 import AddProduct from "../products/AddProduct";
+import AdminGames from "./AdminGames";
+import AddGame from "./AddGame";
 import DashboardOverview from "./DashboardOverview";
 import AdminDoctors from "./AdminDoctors";
 
@@ -34,6 +36,8 @@ const Dashboard = () => {
                 "Applications",
                 "product",
                 "add-product",
+                "games",
+                "add-game",
             ]),
         []
     );
@@ -58,14 +62,16 @@ const Dashboard = () => {
 
     const buttons = useMemo(
         () => [
-            { id: "admin", label: "Admin", icon: "🛡️" },
-            { id: "doctor", label: "Doctors", icon: "🩺" },
-            { id: "add-doctor", label: "Add Doctor", icon: "➕" },
-            { id: "patient", label: "Patient", icon: "👤" },
-            { id: "add-patient", label: "Add Patient", icon: "➕" },
-            { id: "Applications", label: "Applications", icon: "🩺" },
-            { id: "product", label: "Products", icon: "💊" },
-            { id: "add-product", label: "Add Product", icon: "➕" },
+            { id: "admin", label: "Admin", icon: "A" },
+            { id: "doctor", label: "Doctors", icon: "D" },
+            { id: "add-doctor", label: "Add Doctor", icon: "+" },
+            { id: "patient", label: "Patient", icon: "P" },
+            { id: "add-patient", label: "Add Patient", icon: "+" },
+            { id: "Applications", label: "Applications", icon: "U" },
+            { id: "product", label: "Products", icon: "Pr" },
+            { id: "add-product", label: "Add Product", icon: "+" },
+            { id: "games", label: "Games", icon: "G" },
+            { id: "add-game", label: "Add Game", icon: "+" },
         ],
         []
     );
@@ -203,6 +209,8 @@ const Dashboard = () => {
                 {active === "Applications" && <AdminDoctors />}
                 {active === "product" && <Products />}
                 {active === "add-product" && <AddProduct />}
+                {active === "games" && <AdminGames />}
+                {active === "add-game" && <AddGame />}
             </main>
         </div>
     );

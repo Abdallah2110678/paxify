@@ -6,6 +6,7 @@ import Dashboard from "./pages/dashboard/dashboard.jsx";
 import OurProducts from "./pages/products/OurProducts.jsx";
 import FindTherapistsContainer from "./pages/therapists/FindTherapistsContainer.jsx";
 import Games from "./pages/games/Games.jsx";
+import GameDetails from "./pages/games/GameDetails.jsx";
 import About from "./pages/about/About.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard.jsx";
@@ -97,7 +98,8 @@ function App() {
                   <Route path="/" element={<Home />} />
                   <Route path="/Our Products" element={<OurProducts />} />
                   <Route path="/products/:id" element={<ProductDetails />} />
-                  
+                  <Route path="/games/:id" element={<GameDetails />} />
+                 
                   <Route
                     path="/therapists"
                     element={
