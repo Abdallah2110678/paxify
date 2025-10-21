@@ -4,29 +4,34 @@ import DoctorHook from "../../hooks/doctorHook";
 import DoctorAppointments from "./DoctorAppointments";
 import AddDoctorAppointment from "./AddDoctorAppointment";
 import DoctorOverview from "./DoctorOverview";
+import useI18n from "../../hooks/useI18n";
 
 const DoctorDashboard = () => {
   const { dashboard } = DoctorHook();
   const { active, setActive, isSidebarOpen, toggleSidebar, goHome } = dashboard;
+  const { t, i18n } = useI18n();
+  const isRTL = i18n.language?.startsWith("ar");
 
-  const buttons = useMemo(() => (
-    [
-      { id: "appointments", label: "Appointments", icon: "📅" },
-      { id: "add-appointment", label: "Add Appointment", icon: "➕" },
-    ]
-  ), []);
+  const buttons = useMemo(
+    () => [
+      { id: "appointments", label: t("doctorDashboard.appointments", { defaultValue: "Appointments" }), icon: "📅" },
+      { id: "add-appointment", label: t("doctorDashboard.addAppointment", { defaultValue: "Add Appointment" }), icon: "➕" },
+    ],
+    [t, i18n.language]
+  );
 
   return (
     <div className="flex min-h-screen bg-gray-100">
       <aside
-        className={`fixed top-0 left-0 h-full transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 ${isRTL ? "right-0" : "left-0"} h-full transition-all duration-300 ease-in-out ${
           isSidebarOpen ? "w-56" : "w-20"
         } bg-gradient-to-b from-blue-600 via-blue-700 to-indigo-800 shadow-xl flex flex-col items-center py-8 z-40`}
+        dir={isRTL ? "rtl" : "ltr"}
       >
         {/* Toggle Button */}
         <button
           onClick={toggleSidebar}
-          className="absolute -right-3 top-9 bg-white p-1.5 rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-200"
+          className={`absolute ${isRTL ? "-left-3" : "-right-3"} top-9 bg-white p-1.5 rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-200`}
         >
           {isSidebarOpen ? "◀️" : "▶️"}
         </button>
@@ -47,7 +52,7 @@ const DoctorDashboard = () => {
           {isSidebarOpen && (
             <>
               <span className="text-xl font-bold text-white tracking-wide">Paxify</span>
-              <span className="text-xs text-blue-200 opacity-80">Doctor Panel</span>
+              <span className="text-xs text-blue-200 opacity-80">{t("doctorDashboard.panelTitle", { defaultValue: "Doctor Panel" })}</span>
             </>
           )}
         </div>
@@ -58,7 +63,7 @@ const DoctorDashboard = () => {
             <button
               key={btn.id}
               onClick={() => setActive(btn.id)}
-              className={`group flex items-center space-x-3 px-5 py-3 rounded-lg font-medium transition-all duration-300 w-full text-left ${
+              className={`group flex items-center ${isRTL ? "space-x-reverse space-x-3" : "space-x-3"} px-5 py-3 rounded-lg font-medium transition-all duration-300 w-full ${isRTL ? "text-right" : "text-left"} ${
                 active === btn.id
                   ? "bg-white bg-opacity-20 text-white shadow-lg backdrop-blur-sm"
                   : "text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10"
@@ -71,7 +76,7 @@ const DoctorDashboard = () => {
                 <>
                   <span className="text-base">{btn.label}</span>
                   {active === btn.id && (
-                    <div className="ml-auto w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                    <div className={`${isRTL ? "mr-auto" : "ml-auto"} w-2 h-2 bg-yellow-400 rounded-full animate-pulse`}></div>
                   )}
                 </>
               )}
@@ -83,17 +88,17 @@ const DoctorDashboard = () => {
         <div className="w-full px-4 pb-4">
           <button
             onClick={goHome}
-            className="group flex items-center space-x-3 px-5 py-3 rounded-lg font-medium transition-all duration-300 w-full text-left text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10"
+            className={`group flex items-center ${isRTL ? "space-x-reverse space-x-3" : "space-x-3"} px-5 py-3 rounded-lg font-medium transition-all duration-300 w-full ${isRTL ? "text-right" : "text-left"} text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10`}
           >
             <span className="text-xl group-hover:scale-110 transition-transform duration-300">🏠</span>
-            {isSidebarOpen && <span className="text-base">Home</span>}
+            {isSidebarOpen && <span className="text-base">{t("dashboardNav.home", { defaultValue: "Home" })}</span>}
           </button>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <main
-        className={`flex-1 ${isSidebarOpen ? "ml-56" : "ml-20"} transition-all duration-300 px-6 py-8`}
+        className={`flex-1 ${isSidebarOpen ? (isRTL ? "mr-56" : "ml-56") : isRTL ? "mr-20" : "ml-20"} transition-all duration-300 px-6 py-8`}
       >
         {active === "overview" && <DoctorOverview />}
         {active === "appointments" && <DoctorAppointments />}
