@@ -187,7 +187,7 @@ const Dashboard = () => {
                                     onClick={() => clearEditParam("editDoctorId")}
                                     className="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50"
                                 >
-                                    ← Back to Doctors
+                                    &lt; Back to Doctors
                                 </button>
                             </div>
                             <UpdateDoctor />
@@ -209,7 +209,7 @@ const Dashboard = () => {
                                     onClick={() => clearEditParam("editPatientId")}
                                     className="px-3 py-1 rounded-lg border hover:bg-gray-50"
                                 >
-                                    ← Back to Patients
+                                    &lt; Back to Patients
                                 </button>
                             </div>
                             <UpdatePatient />
@@ -242,3 +242,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+
