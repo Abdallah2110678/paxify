@@ -91,14 +91,13 @@ const OurProducts = () => {
     const handleAddToCart = async (productId, qty = 1) => {
         try {
             const token = localStorage.getItem("token");
-            const userId = localStorage.getItem("userId");
-            if (!token || !userId) {
+            if (!token) {
                 alert("⚠ Please log in first");
                 navigate("/login");
                 return;
             }
 
-            const cart = await addToCart(userId, productId, qty); // <-- FIXED: send userId
+            const cart = await addToCart(productId, qty);
             if (cart?.id) localStorage.setItem("cartId", String(cart.id));
             alert("✅ Added to cart!");
         } catch (err) {

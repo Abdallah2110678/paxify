@@ -263,6 +263,21 @@
       "linkedin": "LinkedIn"
     }
   },
+  "dashboardNav": {
+    "admin": "Admin",
+    "doctors": "Doctors",
+    "addDoctor": "Add Doctor",
+    "patients": "Patients",
+    "addPatient": "Add Patient",
+    "applications": "Applications",
+    "products": "Products",
+    "addProduct": "Add Product",
+    "games": "Games",
+    "addGame": "Add Game",
+    "home": "Home",
+    "doctorAppointments": "Appointments",
+    "doctorAddAppointment": "Add Appointment"
+  },
   "generic": {
     "error": "Something went wrong"
   },
@@ -391,5 +406,29 @@
     "watch": "Watch the demo",
     "browseMore": "Browse more games",
     "videoNotSupported": "Your browser does not support the video tag."
+  },
+  "cart": {
+    "loading": "Loading your cart…",
+    "emptyTitle": "Your cart is empty",
+    "emptySubtitle": "Browse our products and add the items you love to your cart.",
+    "goShopping": "Browse Products",
+    "title": "Shopping Cart",
+    "itemsCount": "{{count}} items",
+    "clear": "Clear cart",
+    "unknownProduct": "Unnamed product",
+    "remove": "Remove",
+    "summary": "Order Summary",
+    "summarySubtitle": "Review costs before checkout",
+    "subtotal": "Subtotal",
+    "delivery": "Delivery",
+    "tax": "Taxes",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "continueShopping": "Continue Shopping"
+  },
+  "doctorDashboard": {
+    "panelTitle": "Doctor Panel",
+    "appointments": "Appointments",
+    "addAppointment": "Add Appointment"
   }
 }

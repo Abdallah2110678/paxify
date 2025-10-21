@@ -65,19 +65,19 @@
     "emailPlaceholder": "you@example.com"
   },
   "dashboard": {
-    "loading": "جاري تحميل لوحة التحكم...",
-    "loadError": "فشل تحميل لوحة التحكم",
-    "emptyActivity": "لا توجد نشاطات حديثة",
+    "loading": "جاري تحميل لوحة المعلومات...",
+    "loadError": "تعذّر تحميل لوحة المعلومات.",
+    "emptyActivity": "لا توجد نشاطات حديثة.",
     "totalIncome": "إجمالي الدخل",
-    "totalDoctors": "إجمالي المعالجين",
-    "pendingDoctors": "معالجون قيد المراجعة",
-    "totalPatients": "إجمالي المرضى",
-    "totalProducts": "إجمالي المنتجات",
+    "totalDoctors": "عدد الأطباء",
+    "pendingDoctors": "الأطباء قيد المراجعة",
+    "totalPatients": "عدد المرضى",
+    "totalProducts": "عدد المنتجات",
     "lowInStock": "{{count}} منخفضة المخزون",
     "monthlyIncome": "الدخل الشهري",
     "patientStats": "إحصائيات المرضى",
-    "recentActivity": "الأنشطة الحديثة",
-    "regular": "منتظم",
+    "recentActivity": "النشاطات الأخيرة",
+    "regular": "اعتيادي",
     "new": "جديد",
     "emergency": "طارئ"
   },
@@ -391,5 +391,45 @@
         }
       ]
     }
+  },
+  "cart": {
+    "loading": "جاري تحميل سلة المشتريات…",
+    "emptyTitle": "سلة المشتريات فارغة",
+    "emptySubtitle": "تصفح منتجاتنا وأضف العناصر التي تعجبك إلى السلة.",
+    "goShopping": "تصفح المنتجات",
+    "title": "سلة المشتريات",
+    "itemsCount": "{{count}} عناصر",
+    "clear": "تفريغ السلة",
+    "unknownProduct": "منتج بدون اسم",
+    "remove": "إزالة",
+    "summary": "ملخص الطلب",
+    "summarySubtitle": "راجع التكاليف قبل الدفع",
+    "subtotal": "المجموع الفرعي",
+    "delivery": "التوصيل",
+    "tax": "الضرائب",
+    "total": "الإجمالي",
+    "checkout": "المتابعة لإتمام الشراء",
+    "continueShopping": "متابعة التسوق"
+  },
+  "dashboardNav": {
+    "admin": "الإدارة",
+    "doctors": "الأطباء",
+    "addDoctor": "إضافة طبيب",
+    "patients": "المرضى",
+    "addPatient": "إضافة مريض",
+    "applications": "الطلبات",
+    "products": "المنتجات",
+    "addProduct": "إضافة منتج",
+    "games": "الألعاب",
+    "addGame": "إضافة لعبة",
+    "home": "الرئيسية",
+    "doctorAppointments": "المواعيد",
+    "doctorAddAppointment": "إضافة موعد"
+  },
+  "doctorDashboard": {
+    "panelTitle": "لوحة الطبيب",
+    "paxify": "Paxify",
+    "appointments": "المواعيد",
+    "addAppointment": "إضافة موعد"
   }
 }

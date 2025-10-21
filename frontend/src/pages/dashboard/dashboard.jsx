@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import useI18n from "../../hooks/useI18n";
 
 import AdminPanel from "../admin/AdminPanel";
 import Doctors from "../doctor/Doctors";
@@ -20,6 +21,8 @@ const Dashboard = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
+    const { t, i18n } = useI18n();
+    const isRTL = i18n.language?.startsWith("ar");
 
     const toggleSidebar = useCallback(() => setSidebarOpen((s) => !s), []);
     const goHome = useCallback(() => navigate("/"), [navigate]);
@@ -62,18 +65,18 @@ const Dashboard = () => {
 
     const buttons = useMemo(
         () => [
-            { id: "admin", label: "Admin", icon: "A" },
-            { id: "doctor", label: "Doctors", icon: "D" },
-            { id: "add-doctor", label: "Add Doctor", icon: "+" },
-            { id: "patient", label: "Patient", icon: "P" },
-            { id: "add-patient", label: "Add Patient", icon: "+" },
-            { id: "Applications", label: "Applications", icon: "U" },
-            { id: "product", label: "Products", icon: "Pr" },
-            { id: "add-product", label: "Add Product", icon: "+" },
-            { id: "games", label: "Games", icon: "G" },
-            { id: "add-game", label: "Add Game", icon: "+" },
+            { id: "admin", label: t("dashboardNav.admin", { defaultValue: "Admin" }), icon: "A" },
+            { id: "doctor", label: t("dashboardNav.doctors", { defaultValue: "Doctors" }), icon: "D" },
+            { id: "add-doctor", label: t("dashboardNav.addDoctor", { defaultValue: "Add Doctor" }), icon: "+" },
+            { id: "patient", label: t("dashboardNav.patients", { defaultValue: "Patient" }), icon: "P" },
+            { id: "add-patient", label: t("dashboardNav.addPatient", { defaultValue: "Add Patient" }), icon: "+" },
+            { id: "Applications", label: t("dashboardNav.applications", { defaultValue: "Applications" }), icon: "U" },
+            { id: "product", label: t("dashboardNav.products", { defaultValue: "Products" }), icon: "Pr" },
+            { id: "add-product", label: t("dashboardNav.addProduct", { defaultValue: "Add Product" }), icon: "+" },
+            { id: "games", label: t("dashboardNav.games", { defaultValue: "Games" }), icon: "G" },
+            { id: "add-game", label: t("dashboardNav.addGame", { defaultValue: "Add Game" }), icon: "+" },
         ],
-        []
+        [t, i18n.language]
     );
 
     // edit params (if present, show edit pages inside the tab)
@@ -91,13 +94,14 @@ const Dashboard = () => {
         <div className="flex min-h-screen bg-gray-100">
             {/* Sidebar */}
             <aside
-                className={`fixed top-0 left-0 h-full transition-all duration-300 ease-in-out ${isSidebarOpen ? "w-56" : "w-20"
+                className={`fixed top-0 ${isRTL ? "right-0" : "left-0"} h-full transition-all duration-300 ease-in-out ${isSidebarOpen ? "w-56" : "w-20"
                     } bg-gradient-to-b from-blue-600 via-blue-700 to-indigo-800 shadow-xl flex flex-col items-center py-8 z-40`}
+                dir={isRTL ? "rtl" : "ltr"}
             >
                 {/* Toggle Button */}
                 <button
                     onClick={toggleSidebar}
-                    className="absolute -right-3 top-9 bg-white p-1.5 rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-200"
+                    className={`absolute ${isRTL ? "-left-3" : "-right-3"} top-9 bg-white p-1.5 rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-200`}
                 >
                     {isSidebarOpen ? "◀️" : "▶️"}
                 </button>
@@ -128,7 +132,7 @@ const Dashboard = () => {
                         <button
                             key={btn.id}
                             onClick={() => setActive(btn.id)}
-                            className={`group flex items-center space-x-3 px-5 py-3 rounded-lg font-medium transition-all duration-300 w-full text-left ${active === btn.id
+                            className={`group flex items-center ${isRTL ? "space-x-reverse space-x-3" : "space-x-3"} px-5 py-3 rounded-lg font-medium transition-all duration-300 w-full ${isRTL ? "text-right" : "text-left"} ${active === btn.id
                                 ? "bg-white bg-opacity-20 text-white shadow-lg backdrop-blur-sm"
                                 : "text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10"
                                 }`}
@@ -152,16 +156,16 @@ const Dashboard = () => {
                 <div className="w-full px-4 pb-4">
                     <button
                         onClick={goHome}
-                        className="group flex items-center space-x-3 px-5 py-3 rounded-lg font-medium transition-all duration-300 w-full text-left text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10"
+                        className={`group flex items-center ${isRTL ? "space-x-reverse space-x-3" : "space-x-3"} px-5 py-3 rounded-lg font-medium transition-all duration-300 w-full ${isRTL ? "text-right" : "text-left"} text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10`}
                     >
                         <span className="text-xl group-hover:scale-110 transition-transform duration-300">🏠</span>
-                        {isSidebarOpen && <span className="text-base">Home</span>}
+                        {isSidebarOpen && <span className="text-base">{t("dashboardNav.home", { defaultValue: "Home" })}</span>}
                     </button>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className={`flex-1 ${isSidebarOpen ? "ml-56" : "ml-20"} transition-all duration-300`}>
+            <main className={`flex-1 ${isSidebarOpen ? (isRTL ? "mr-56" : "ml-56") : isRTL ? "mr-20" : "ml-20"} transition-all duration-300`}>
                 {active === "overview" && <DashboardOverview />}
                 {active === "admin" && <AdminPanel />}
 
