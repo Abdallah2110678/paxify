@@ -430,5 +430,13 @@
     "panelTitle": "Doctor Panel",
     "appointments": "Appointments",
     "addAppointment": "Add Appointment"
+  },
+  "patientDashboard": {
+    "patientPanel": "Patient Panel",
+    "doctorComments": "Doctor's Comments",
+    "welcome": "Welcome to your dashboard!",
+    "doctor": "Doctor",
+    "at": "at",
+    "cancel": "Cancel"
   }
 }

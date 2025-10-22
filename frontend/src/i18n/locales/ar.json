@@ -431,5 +431,13 @@
     "paxify": "Paxify",
     "appointments": "المواعيد",
     "addAppointment": "إضافة موعد"
+  },
+  "patientDashboard": {
+    "patientPanel": "لوحة المريض",
+    "doctorComments": "تعليقات الطبيب",
+    "welcome": "مرحبًا بك في لوحتك!",
+    "doctor": "الطبيب",
+    "at": "في",
+    "cancel": "إلغاء"
   }
 }

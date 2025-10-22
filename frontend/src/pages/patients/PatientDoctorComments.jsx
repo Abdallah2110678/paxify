@@ -1,4 +1,7 @@
+import useI18n from "../../hooks/useI18n";
+
 const PatientDoctorComments = () => {
+  const { t } = useI18n();
   const comments = [
     { id: 1, date: "2025-07-10", doctor: "Dr. Adams", comment: "Keep monitoring blood sugar daily." },
     { id: 2, date: "2025-06-05", doctor: "Dr. Brown", comment: "Increase water intake and exercise regularly." },
@@ -6,7 +9,7 @@ const PatientDoctorComments = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Doctor's Comments</h2>
+      <h2 className="text-2xl font-bold mb-4">{t("patientDashboard.doctorComments", "Doctor's Comments")}</h2>
       <ul className="space-y-2">
         {comments.map((c) => (
           <li

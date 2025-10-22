@@ -1,34 +1,63 @@
 // PatientDashboard.jsx
 import { useMemo } from "react";
 import usePatient from "../../hooks/patientHook";
+import useI18n from "../../hooks/useI18n";
 import PatientUpcomingAppointments from "./PatientUpcomingAppointments";
 import PatientDoctorComments from "./PatientDoctorComments";
+import {
+  FiHome,
+  FiCalendar,
+  FiMessageCircle,
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
 
 const PatientDashboard = () => {
   const { dashboard } = usePatient();
+  const { t, i18n } = useI18n();
   const { active, setActive, isSidebarOpen, toggleSidebar, goHome } = dashboard;
 
-  const buttons = useMemo(() => (
-    [
-      { id: "upcoming", label: "Upcoming Appointments", icon: "📅" },
-      { id: "comments", label: "Doctor's Comments", icon: "💬" },
-    ]
-  ), []);
+  const buttons = useMemo(
+    () => [
+      {
+        id: "upcoming",
+        label: t("doctor.overview.upcoming", "Upcoming Appointments"),
+        icon: <FiCalendar />,
+      },
+      {
+        id: "comments",
+        label: t("patientDashboard.doctorComments", "Doctor's Comments"),
+        icon: <FiMessageCircle />,
+      },
+    ],
+    [t]
+  );
+
+  const isRtl = (typeof document !== "undefined" && document?.documentElement?.getAttribute("dir") === "rtl")
+    || (typeof i18n?.dir === "function" && i18n.dir() === "rtl");
+  const sidebarSideClass = isRtl ? "right-0" : "left-0";
+  const toggleSideClass = isRtl ? "-left-3" : "-right-3";
+  const mainShiftClass = isRtl
+    ? (isSidebarOpen ? "mr-56" : "mr-20")
+    : (isSidebarOpen ? "ml-56" : "ml-20");
 
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <aside
-         className={`fixed top-0 left-0 h-full transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 ${sidebarSideClass} h-full transition-all duration-300 ease-in-out ${
           isSidebarOpen ? "w-56" : "w-20"
         } bg-gradient-to-b from-blue-600 via-blue-700 to-indigo-800 shadow-xl flex flex-col items-center py-8 z-40`}
       >
         {/* Toggle Button */}
         <button
           onClick={toggleSidebar}
-          className="absolute -right-3 top-9 bg-white p-1.5 rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-200"
+          className={`absolute ${toggleSideClass} top-9 bg-white p-1.5 rounded-full shadow-lg hover:bg-gray-100 transition-colors duration-200`}
+          aria-label={t("actions.toggleMenu", "Toggle menu")}
         >
-          {isSidebarOpen ? "◀️" : "▶️"}
+          {isSidebarOpen
+            ? (isRtl ? <FiChevronRight /> : <FiChevronLeft />)
+            : (isRtl ? <FiChevronLeft /> : <FiChevronRight />)}
         </button>
 
         {/* Logo */}
@@ -46,8 +75,8 @@ const PatientDashboard = () => {
           </div>
           {isSidebarOpen && (
             <>
-              <span className="text-xl font-bold text-white tracking-wide">Paxify</span>
-              <span className="text-xs text-green-200 opacity-80">Patient Panel</span>
+              <span className="text-xl font-bold text-white tracking-wide">{t("appName", "Paxify")}</span>
+              <span className="text-xs text-green-200 opacity-80">{t("patientDashboard.patientPanel", "Patient Panel")}</span>
             </>
           )}
         </div>
@@ -85,18 +114,18 @@ const PatientDashboard = () => {
             onClick={goHome}
             className="group flex items-center space-x-3 px-5 py-3 rounded-lg font-medium transition-colors duration-300 w-full text-left text-green-100 hover:text-white hover:bg-white hover:bg-opacity-10"
           >
-            <span className="text-xl group-hover:scale-110 transition-transform duration-300">🏠</span>
-            {isSidebarOpen && <span className="text-base">Home</span>}
+            <span className="text-xl group-hover:scale-110 transition-transform duration-300"><FiHome /></span>
+            {isSidebarOpen && <span className="text-base">{t("nav.home", "Home")}</span>}
           </button>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <main
-        className={`flex-1 ${isSidebarOpen ? "ml-56" : "ml-20"} transition-all duration-300 px-6 py-8`}
+        className={`flex-1 ${mainShiftClass} transition-all duration-300 px-6 py-8`}
       >
         {active === "overview" && (
-          <div className="text-lg text-gray-700">Welcome to your dashboard!</div>
+          <div className="text-lg text-gray-700">{t("patientDashboard.welcome", "Welcome to your dashboard!")}</div>
         )}
         {active === "upcoming" && <PatientUpcomingAppointments />}
         {active === "comments" && <PatientDoctorComments />}
