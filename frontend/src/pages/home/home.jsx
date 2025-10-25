@@ -342,7 +342,7 @@ export default function Home() {
                         <div className="relative overflow-hidden">
                             <ul
                                 ref={therapistsRowRef}
-                                className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-px-6 pb-6 -mb-6 pr-2 pl-12 md:pl-14 md:pr-14 hide-scrollbar"
+                                className="flex items-stretch gap-6 overflow-x-auto snap-x snap-mandatory scroll-px-6 pb-6 -mb-6 pr-2 pl-12 md:pl-14 md:pr-14 hide-scrollbar"
                                 onMouseEnter={() => (therapistsRowRef.current.__paused = true)}
                                 onMouseLeave={() => (therapistsRowRef.current.__paused = false)}
                             >
@@ -350,7 +350,7 @@ export default function Home() {
                                     <li
                                         key={i}
                                         data-therapist-card="1"
-                                        className="snap-start flex-none w-[88%] sm:w-[70%] md:w-[48%] lg:w-[32%] xl:w-[28%] rounded-2xl border border-[#4CB5AB]/15 shadow-sm p-6 hover:shadow-md transition bg-white"
+                                        className="snap-start flex-none w-[88%] sm:w-[70%] md:w-[48%] lg:w-[32%] xl:w-[28%] rounded-2xl border border-[#4CB5AB]/15 shadow-sm p-6 hover:shadow-md transition bg-white flex flex-col"
                                     >
                                         <div className="flex items-center gap-4">
                                             <img
@@ -371,14 +371,14 @@ export default function Home() {
                                         <dl className="mt-4 text-sm">
                                             {th.specialty?.length > 0 && (
                                                 <div className="flex gap-2 mt-1">
-                                                    <dt className="font-medium text-[#2B2B2B]">{t("home.therapists.areas")}</dt>
-                                                    <dd className="text-[#6B6B6B]">{th.specialty.join(", ")}</dd>
+                                                    <dt className="font-medium text-[#2B2B2B] flex-shrink-0">{t("home.therapists.areas")}</dt>
+                                                    <dd className="text-[#6B6B6B] flex-1 truncate">{th.specialty.join(", ")}</dd>
                                                 </div>
                                             )}
                                             {th.style && (
                                                 <div className="flex gap-2 mt-1">
-                                                    <dt className="font-medium text-[#2B2B2B]">{t("home.therapists.style")}</dt>
-                                                    <dd className="text-[#6B6B6B]">{th.style}</dd>
+                                                    <dt className="font-medium text-[#2B2B2B] flex-shrink-0">{t("home.therapists.style")}</dt>
+                                                    <dd className="text-[#6B6B6B] flex-1 truncate">{th.style}</dd>
                                                 </div>
                                             )}
                                             {th.rating !== undefined && (
@@ -391,7 +391,7 @@ export default function Home() {
 
                                         <button
                                             onClick={handleBrowseTherapists}
-                                            className="mt-4 w-full rounded-full px-5 py-3 font-semibold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow"
+                                            className="mt-auto w-full rounded-full px-5 py-3 font-semibold bg-[#E68A6C] hover:bg-[#d97a5f] text-white shadow"
                                         >
                                             {t("actions.browseTherapists")}
                                         </button>
