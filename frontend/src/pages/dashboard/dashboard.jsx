@@ -103,7 +103,7 @@ const Dashboard = () => {
         <div className="flex min-h-screen bg-gray-100">
             {/* Sidebar */}
             <aside
-                className={`fixed top-0 ${isRTL ? "right-0" : "left-0"} h-full transition-all duration-300 ease-in-out ${isSidebarOpen ? "w-56" : "w-20"
+                className={`fixed top-0 ${isRTL ? "right-0" : "left-0"} h-screen overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out ${isSidebarOpen ? "w-56" : "w-20"
                     } bg-gradient-to-b from-blue-600 via-blue-700 to-indigo-800 shadow-xl flex flex-col items-center py-8 z-40`}
                 dir={isRTL ? "rtl" : "ltr"}
             >
@@ -242,6 +242,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
 
